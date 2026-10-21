@@ -36,7 +36,7 @@ A warning can be transmitted without being **received**. It can be received with
 
 The GitHub Pages experience offers five deterministic, synthetic fault scenarios, a logical route graph, application delivery-attempt comparisons, an evidence inspector, and an accessible attempt-by-attempt table. It visualizes **modeled delivery paths**, not captured RF topology or live devices.
 
-Prefer the terminal? **Mesh Control** provides keyboard navigation, a text-reader view, `--plain`, `--reduced-motion`, and a complete `--report` for sequential evidence inspection.
+Prefer the terminal? **Mesh Control** provides keyboard navigation, a text-reader view, `--plain`, `--reduced-motion`, and a complete `--report` for sequential evidence inspection. Newly instrumented OpenThread POSIX lab runs also capture monotonic **Node-harness** application events and replay their measured inter-event gaps; old evidence remains explicitly labeled as reconstructed phase replay. These are **not RF packet timestamps or proof of human notification**.
 
 ## Run the lab
 
@@ -52,13 +52,16 @@ npm run tui -- --demo
 # Accessible, noninteractive text evidence
 npm run tui -- --demo --report
 
+# After generating local POSIX lab evidence with OT_CLI_PATH:
+# npm run tui -- --input evidence/mesh-run.json
+
 # Deterministic, software-only Thread/direct-LoRa scenarios
 npm run evidence:multiradio
 ```
 
 **Node.js 22+** is required. The TUI `--demo` uses illustrative evidence, not live captures. `npm run tui -- --demo --snapshot --plain` produces a noninteractive, color-free snapshot.
 
-To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PATH` to your own `ot-cli-ftd` and run `bash scripts/run-evidence.sh`. **The OpenThread binary build is not pinned or reproduced here**; interpret results accordingly.
+To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PATH` to your own `ot-cli-ftd` and run `bash scripts/run-evidence.sh`. See [the first timestamped simulation run](docs/monotonic-evidence.md) for the tested source SHA, isolated build instructions, observed results, and limitations. The repository does not pin or automatically build an OpenThread binary; interpret results accordingly.
 
 ## The system
 
@@ -79,7 +82,7 @@ To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PAT
 | **NOAA SDR observer** | Decoder-line parsing and bounded mock/replay observations | Origin authentication, field measurements |
 | **Spinel Flight Recorder** | Offline HDLC-lite frame parsing, CRC-16/FCS and raw command IDs | Live RCP capture, semantic radio state |
 | **Matter adapter** | Pinned SDK seam with mock controller | Commissioned endpoints, verified physical output |
-| **Mesh Control** | Read-only TUI, keyboard and text evidence views | Live neighbor topology, captured packet timing |
+| **Mesh Control** | Read-only TUI, accessible text report, optional measured **harness-monotonic** event replay | Live RF neighbor topology, captured on-air packet timing |
 | **Camel exporter** | Sanitized research evidence export | Live alert routing or production Camel service |
 
 > [!NOTE]
@@ -94,6 +97,7 @@ To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PAT
 | [SDR ingress](docs/sdr-ingress.md) | Receive-only NOAA/SAME observation pipeline |
 | [Spinel Flight Recorder](docs/spinel-flight-recorder.md) | Byte-level parsing and FCS validation |
 | [Mesh Control](docs/mesh-control-tui.md) | TUI controls, plain text, accessibility |
+| [Monotonic simulator evidence](docs/monotonic-evidence.md) | One four-node simulated run, 49 observed application events, exact provenance and cautions |
 | [Matter adapter](src/matter/README.md) | SDK adapter and mock boundary |
 | [Alert schema](docs/alert-schema.json) | Machine-readable synthetic message format |
 | [Threat model](docs/threat-model.md) | Spoofing, replay, missing receipts and safety limits |

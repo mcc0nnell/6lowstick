@@ -1,6 +1,8 @@
 // Copyright 2026 Robert McConnell
 // SPDX-License-Identifier: Apache-2.0
-// Evidence-only replay: the lab JSON contains ordered phases, not packet timestamps.
+// Phase-only compatibility for old labs; use measured monotonic harness events where present.
+import {validateTelemetry} from '../telemetry/monotonic.mjs';
+import {buildTimedTimeline} from './timed.mjs';
 export const RECEIVERS = Object.freeze(['strobe', 'display', 'haptic']);
 const PHASES = Object.freeze([
   ['baseline', 'BASELINE DELIVERY'],
@@ -29,11 +31,13 @@ export function parseEvidence(value) {
       throw new Error(`Inconsistent ${key} receiver evidence`);
     }
   }
+  if (value.timing !== undefined) validateTelemetry(value.timing);
   return value;
 }
 
 export function buildTimeline(input) {
   const data = parseEvidence(input);
+  if (data.timing) return buildTimedTimeline(data.timing);
   const steps = [];
   const add = (phase, kind, receiver, title, detail, latency = null) => {
     steps.push({index: steps.length, phase, kind, receiver, title, detail, latency});
@@ -91,13 +95,18 @@ export function replayState(steps, cursor) {
       phase = step.phase;
       for (const name of RECEIVERS) status[name] = {state: 'idle', latency: null, detail: 'Not targeted in current phase'};
     }
-    if (step.kind === 'send') {
+    if (step.kind === 'send' && !step.time_kind) {
       const nextPhaseTargets = steps.slice(i + 1).filter(s => s.phase === phase &&
         ['ack', 'missing', 'unknown'].includes(s.kind)).map(s => s.receiver);
       for (const name of nextPhaseTargets) status[name] = {state: 'pending', latency: null, detail: 'Awaiting recorded result in replay'};
     }
-    if (step.receiver && ['ack', 'missing', 'unknown', 'error', 'reject', 'duplicate'].includes(step.kind)) {
-      status[step.receiver] = {state: step.kind, latency: step.latency, detail: step.detail};
+    if (step.receiver && step.kind === 'attempt') {
+      status[step.receiver] = {state:'pending', latency:null, detail:step.detail};
+    }
+    if (step.receiver && ['ack', 'missing', 'unknown', 'error', 'reject', 'duplicate', 'received', 'activated', 'offline'].includes(step.kind)) {
+      // A forged-message rejection is more specific than its expected lack of ACK.
+      if (!(step.kind === 'missing' && status[step.receiver].state === 'reject'))
+        status[step.receiver] = {state: step.kind, latency: step.latency, detail: step.detail};
     }
   }
   return {cursor: safe, phase, status, current: safe < 0 ? null : steps[safe],
