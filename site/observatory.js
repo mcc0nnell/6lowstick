@@ -1,27 +1,204 @@
-// Read-only research visualization. No radio, device or alert-control APIs.
-const $=id=>document.getElementById(id);
-const graph=window.echarts?.init($('network'));
-const timeline=window.echarts?.init($('timeline'));
-let scenarios=[],scenarioIndex=0,eventIndex=0,playing=false,clock=null;
-const labels={no_authenticated_receipt:'No authenticated receipt',authenticated_app_receipt:'Authenticated application receipt',synthetic_activation:'Synthetic receiver activation',duplicate_suppressed:'Duplicate suppressed'};
-const pretty=s=>String(s??'unknown').replaceAll('_',' ');
-function eventsFor(s){return [...s.receipt.attempts.map(a=>({type:'attempt',route:a.route,outcome:a.outcome,step:a.step})),...s.receiverEvents.map((e,i)=>({type:'receiver',route:e.route,outcome:e.outcome,step:i+1}))]}
-function describe(e){if(!e)return 'No event';if(e.type==='receiver')return e.outcome==='duplicate_suppressed'?'The replay journal rejected a second synthetic activation. This does not mean the fallback radio transmitted.':'The simulated receiver recorded an application-level activation. No physical haptic device was measured.';if(e.outcome==='authenticated_app_receipt')return 'The synthetic receiver returned an authenticated application receipt on this scripted route. This does not establish human notification.';return 'No authenticated application receipt was available on this route. Delivery remains unconfirmed; fallback may be attempted.'}
-function stop(){playing=false;clearTimeout(clock);clock=null;$('play').textContent='Play sequence'}
-function draw(){const s=scenarios[scenarioIndex];if(!s)return;const es=eventsFor(s),e=es[eventIndex];$('scenario').value=String(scenarioIndex);$('stepCount').textContent=`EVENT ${eventIndex+1} / ${es.length}`;$('eventType').textContent=e.type==='attempt'?'TRANSPORT ATTEMPT':'RECEIVER JOURNAL';$('eventTitle').textContent=labels[e.outcome]??pretty(e.outcome);$('eventDescription').textContent=describe(e);$('raw').textContent=JSON.stringify(e,null,2);$('liveStatus').textContent=`${pretty(s.scenario)} · ${s.receipt.status.replaceAll('_',' ')} · RF unverified`;
-$('prev').disabled=eventIndex===0;$('next').disabled=eventIndex===es.length-1;
-for(const id of ['visual','text','haptic']){$(id).classList.remove('active')}
-const active=es.slice(0,eventIndex+1).some(x=>x.type==='receiver'&&x.outcome==='synthetic_activation');if(active)$('haptic').classList.add('active');$('haptic').querySelector('span').textContent=active?'Synthetic activation recorded':'Not yet recorded';
-$('rows').replaceChildren();es.forEach((x,i)=>{const tr=document.createElement('tr');if(i===eventIndex)tr.style.background='#173e4b';for(const val of [i+1,x.route,labels[x.outcome]??pretty(x.outcome)]){const td=document.createElement('td');td.textContent=String(val);tr.append(td)}$('rows').append(tr)});
-$('textReport').textContent=`Scenario: ${pretty(s.scenario)}\nEvidence: deterministic software simulation\nPhysical radio verified: NO\nHuman delivery verified: NO\nConfirmed application route: ${s.receipt.confirmedRoute??'none'}\n\n${es.map((x,i)=>`${i+1}. ${x.type}: ${x.route} — ${labels[x.outcome]??pretty(x.outcome)}${i===eventIndex?' [SELECTED]':''}`).join('\n')}\n\nSelected: ${describe(e)}`;
-if(!graph||!timeline)return;
-const nodes=[{id:'gateway',name:'GATEWAY',x:90,y:170,symbolSize:72},{id:'thread',name:'THREAD\nSIMULATED',x:290,y:70,symbolSize:74},{id:'lora-p2p',name:'LoRa P2P\nSIMULATED',x:290,y:270,symbolSize:74},{id:'haptic',name:'HAPTIC\nSIMULATED',x:505,y:170,symbolSize:75}];
-const links=[];const visited=es.slice(0,eventIndex+1).filter(x=>x.type==='attempt');for(const a of visited){const good=a.outcome==='authenticated_app_receipt';const style={color:good?'#75e8bb':'#f5bc68',width:good?4:2,type:good?'solid':'dashed',opacity:.9};links.push({source:'gateway',target:a.route,lineStyle:style},{source:a.route,target:'haptic',lineStyle:{...style,opacity:.45}})}
-graph.setOption({backgroundColor:'transparent',animation:!reduced(),tooltip:{formatter:p=>p.dataType==='edge'?'Scripted application attempt, not observed RF':p.name},series:[{type:'graph',layout:'none',roam:false,data:nodes,links,label:{show:true,position:'bottom',color:'#dff9ff',fontWeight:700,fontSize:12},itemStyle:{color:'#164d61',borderColor:'#77e7d0',borderWidth:2},emphasis:{focus:'adjacency'},lineStyle:{curveness:.08}}]},true);
-timeline.setOption({animation:!reduced(),grid:{left:130,right:20,top:18,bottom:32},xAxis:{type:'value',min:0,max:1,show:false},yAxis:{type:'category',inverse:true,data:es.map((x,i)=>`${i+1} · ${x.route}`),axisLabel:{color:'#b7d4e2'}},series:[{type:'bar',barWidth:19,data:es.map((x,i)=>({value:1,itemStyle:{color:i===eventIndex?'#75e8bb':i<eventIndex?'#356e7c':'#1b3c4b'}}))}]},true);
+// 6lowStick Field Station: read-only interpretation of committed research JSON.
+// No radio, actuator, messaging, protocol dispatch, or external write APIs.
+import { validateResearchFixture, stationSummary, eventsFor, labelFor, descriptionFor } from './station-model.mjs';
+
+const $ = id => document.getElementById(id);
+const graph = window.echarts?.init($('network')) ?? null;
+const timeline = window.echarts?.init($('timeline')) ?? null;
+let scenarios = [];
+let scenarioIndex = 0;
+let eventIndex = 0;
+let playing = false;
+let timer = null;
+const pretty = labelFor;
+const palette = { signal: '#c4ef79', cyan: '#8cddea', amber: '#ffd08a', text: '#edf6f2', muted: '#a0b4b5' };
+
+const reduced = () => $('motion').checked || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function stop() {
+  playing = false;
+  clearTimeout(timer);
+  timer = null;
+  $('play').textContent = 'Play sequence';
 }
-function reduced(){return $('motion').checked||window.matchMedia('(prefers-reduced-motion: reduce)').matches}
-function next(){const es=eventsFor(scenarios[scenarioIndex]);if(eventIndex<es.length-1){eventIndex++;draw();return true}return false}
-function tick(){if(!playing)return;if(!next()){stop();return}clock=setTimeout(tick,1150)}
-$('scenario').addEventListener('change',()=>{stop();scenarioIndex=Number($('scenario').value);eventIndex=0;draw()});$('prev').addEventListener('click',()=>{stop();eventIndex=Math.max(0,eventIndex-1);draw()});$('next').addEventListener('click',()=>{stop();next()});$('play').addEventListener('click',()=>{if(playing){stop();return}if(reduced()){stop();$('liveStatus').textContent='Automatic playback disabled in reduced-motion mode; use Next event.';return}if(eventIndex===eventsFor(scenarios[scenarioIndex]).length-1)eventIndex=0;playing=true;$('play').textContent='Pause sequence';draw();clock=setTimeout(tick,1150)});$('motion').addEventListener('change',()=>{if(reduced())stop();draw()});window.addEventListener('resize',()=>{graph?.resize();timeline?.resize()});document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});
-(async()=>{try{const res=await fetch('./multiradio.json');if(!res.ok)throw Error(`HTTP ${res.status}`);const data=await res.json();if(data.schema!=='6lowstick.multiradio-research.v0'||data.physicalRadio!==false||data.humanDelivery!==false||!Array.isArray(data.scenarios)||!data.scenarios.length)throw Error('Invalid or unsupported evidence');scenarios=data.scenarios;scenarios.forEach((s,i)=>{const opt=document.createElement('option');opt.value=String(i);opt.textContent=pretty(s.scenario);$('scenario').append(opt)});draw()}catch(err){$('liveStatus').textContent='Evidence unavailable: '+err.message;$('eventTitle').textContent='Unable to load evidence';$('eventDescription').textContent='Check the research JSON fixture and reload.'}})();
+
+function displayGraph(events) {
+  if (!graph) return;
+  const nodes = [
+    { id: 'gateway', name: 'GATEWAY', x: 65, y: 160, symbolSize: 66 },
+    { id: 'thread', name: 'THREAD\nSIMULATED', x: 255, y: 70, symbolSize: 72 },
+    { id: 'lora-p2p', name: 'DIRECT LoRa\nSIMULATED', x: 255, y: 250, symbolSize: 78 },
+    { id: 'haptic', name: 'HAPTIC\nSYNTHETIC', x: 475, y: 160, symbolSize: 78 },
+  ];
+  const links = [];
+  for (const event of events.slice(0, eventIndex + 1).filter(e => e.type === 'attempt')) {
+    const confirmed = event.outcome === 'authenticated_app_receipt';
+    const lineStyle = {
+      color: confirmed ? palette.signal : palette.amber,
+      width: confirmed ? 3 : 2,
+      type: confirmed ? 'solid' : 'dashed',
+      opacity: .95,
+    };
+    links.push({ source: 'gateway', target: event.route, lineStyle });
+    links.push({ source: event.route, target: 'haptic', lineStyle: { ...lineStyle, opacity: .4 } });
+  }
+  graph.setOption({
+    animation: !reduced(),
+    tooltip: { formatter: p => p.dataType === 'edge'
+      ? 'Scripted application attempt; no on-air measurement'
+      : p.name + ' (simulation)' },
+    series: [{
+      type: 'graph', layout: 'none', roam: false, data: nodes, links,
+      label: { show: true, position: 'bottom', color: palette.text, fontWeight: 700, fontSize: 11 },
+      itemStyle: { color: '#1d3935', borderColor: palette.signal, borderWidth: 2 },
+      emphasis: { focus: 'adjacency' }, lineStyle: { curveness: .08 },
+    }],
+  }, true);
+}
+
+function displayTimeline(events) {
+  if (!timeline) return;
+  timeline.setOption({
+    animation: !reduced(),
+    grid: { left: 105, right: 20, top: 16, bottom: 18 },
+    xAxis: { type: 'value', min: 0, max: 1, show: false },
+    yAxis: {
+      type: 'category', inverse: true, data: events.map((e, i) => `${i + 1} · ${e.route}`),
+      axisLabel: { color: palette.muted, fontSize: 10 },
+    },
+    series: [{
+      type: 'bar', barWidth: 16,
+      data: events.map((event, i) => ({
+        value: 1, itemStyle: {
+          color: i === eventIndex
+            ? palette.signal
+            : i < eventIndex
+              ? '#537f6b'
+              : '#294145',
+        },
+      })),
+    }],
+  }, true);
+}
+
+function draw() {
+  const scenario = scenarios[scenarioIndex];
+  if (!scenario) return;
+  const events = eventsFor(scenario);
+  const event = events[eventIndex];
+  $('scenario').value = String(scenarioIndex);
+  $('stepCount').textContent = `EVENT ${eventIndex + 1} / ${events.length}`;
+  $('eventType').textContent = event.type === 'attempt' ? 'TRANSPORT ATTEMPT' : 'RECEIVER JOURNAL';
+  $('eventTitle').textContent = labelFor(event.outcome);
+  $('eventDescription').textContent = descriptionFor(event);
+  $('raw').textContent = JSON.stringify(event, null, 2);
+  $('liveStatus').textContent = `${pretty(scenario.scenario)} · ${pretty(scenario.receipt.status)} · RF unverified`;
+  $('prev').disabled = eventIndex === 0;
+  $('next').disabled = eventIndex === events.length - 1;
+
+  for (const id of ['visual', 'text', 'haptic']) $(id).classList.remove('active');
+  const syntheticActivation = events.slice(0, eventIndex + 1)
+    .some(e => e.type === 'receiver' && e.outcome === 'synthetic_activation');
+  if (syntheticActivation) $('haptic').classList.add('active');
+  $('haptic').querySelector('small').textContent =
+    syntheticActivation ? 'Synthetic activation in journal' : 'Not yet recorded';
+
+  $('rows').replaceChildren();
+  events.forEach((e, i) => {
+    const row = document.createElement('tr');
+    if (i === eventIndex) row.setAttribute('aria-current', 'true');
+    for (const val of [
+      i + 1,
+      pretty(e.route),
+      labelFor(e.outcome),
+      i === eventIndex ? 'Current' : '—',
+    ]) {
+      const td = document.createElement('td');
+      td.textContent = String(val);
+      row.append(td);
+    }
+    $('rows').append(row);
+  });
+
+  $('textReport').textContent =
+    `Scenario: ${pretty(scenario.scenario)}\n` +
+    `Fixture: deterministic software simulation\n` +
+    `Physical radio verified: NO\nHuman perception verified: NO\n` +
+    `Confirmed application route: ${scenario.receipt.confirmedRoute ?? 'none'}\n` +
+    `Receiver: ${scenario.receipt.receiver} (synthetic)\n\n` +
+    events.map((e, i) => `${i + 1}. ${e.type}: ${e.route} — ${labelFor(e.outcome)}${i === eventIndex ? ' [CURRENT]' : ''}`).join('\n') +
+    `\n\nSelected: ${descriptionFor(event)}`;
+  displayGraph(events);
+  displayTimeline(events);
+}
+
+function next() {
+  if (eventIndex < eventsFor(scenarios[scenarioIndex]).length - 1) {
+    eventIndex++;
+    draw();
+    return true;
+  }
+  return false;
+}
+
+function tick() {
+  if (!playing) return;
+  if (!next()) { stop(); return; }
+  timer = setTimeout(tick, 1100);
+}
+
+$('scenario').addEventListener('change', () => {
+  stop();
+  scenarioIndex = Number($('scenario').value);
+  eventIndex = 0;
+  draw();
+});
+$('prev').addEventListener('click', () => {
+  stop();
+  eventIndex = Math.max(0, eventIndex - 1);
+  draw();
+});
+$('next').addEventListener('click', () => {
+  stop();
+  next();
+});
+$('play').addEventListener('click', () => {
+  if (playing) { stop(); return; }
+  if (reduced()) {
+    stop();
+    $('liveStatus').textContent = 'Autoplay unavailable in reduced-motion mode; use Next.';
+    return;
+  }
+  if (eventIndex === eventsFor(scenarios[scenarioIndex]).length - 1) eventIndex = 0;
+  playing = true;
+  $('play').textContent = 'Pause sequence';
+  draw();
+  timer = setTimeout(tick, 1100);
+});
+$('motion').addEventListener('change', () => { if (reduced()) stop(); draw(); });
+window.addEventListener('resize', () => { graph?.resize(); timeline?.resize(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+
+(async () => {
+  try {
+    const response = await fetch('./multiradio.json', { cache: 'no-cache' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const fixture = validateResearchFixture(await response.json());
+    scenarios = fixture.scenarios;
+    const summary = stationSummary(fixture);
+    $('scenarioMetric').textContent = String(summary.scenarios).padStart(2, '0');
+    $('routeMetric').textContent = String(summary.modeledRoutes).padStart(2, '0');
+    scenarios.forEach((scenario, i) => {
+      const option = document.createElement('option');
+      option.value = String(i);
+      option.textContent = pretty(scenario.scenario);
+      $('scenario').append(option);
+    });
+    draw();
+  } catch (err) {
+    stop();
+    $('liveStatus').textContent = 'Research fixture unavailable';
+    $('eventTitle').textContent = 'Unable to load evidence';
+    $('eventDescription').textContent = err.message;
+    $('textReport').textContent = `Cannot load the synthetic fixture: ${err.message}\nInspect ./multiradio.json or the repository tests.`;
+  }
+})();

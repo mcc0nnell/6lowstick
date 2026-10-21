@@ -38,9 +38,11 @@ A warning can be transmitted without being **received**. It can be received with
 
 ## See the experiment
 
-**[Open the Mesh Observatory →](https://mcc0nnell.github.io/6lowstick/)**
+**[Open the Field Station →](https://mcc0nnell.github.io/6lowstick/)**
 
-The GitHub Pages experience offers five deterministic, synthetic fault scenarios, a logical route graph, application delivery-attempt comparisons, an evidence inspector, and an accessible attempt-by-attempt table. It visualizes **modeled delivery paths**, not captured RF topology or live devices.
+The [Field Station design notes](docs/field-station-design.md) document the shared visual language, accessible inspector, event table, and static read-only security boundaries. The current interactive Pages site is an evidence-oriented research interface; it is not a device console.
+
+The GitHub Pages **Field Station** offers five deterministic synthetic fault scenarios, a logical route graph, application delivery-attempt comparisons, an evidence inspector, a plain-text report, methodology entry points, and an accessible attempt-by-attempt table. Its shared CSS design tokens keep the status language and visual presentation consistent. It visualizes **modeled delivery paths**, not captured RF topology or live devices.
 
 Prefer the terminal? **Mesh Control** provides keyboard navigation, a text-reader view, `--plain`, `--reduced-motion`, and a complete `--report` for sequential evidence inspection. Newly instrumented OpenThread POSIX lab runs also capture monotonic **Node-harness** application events and replay their measured inter-event gaps; old evidence remains explicitly labeled as reconstructed phase replay. These are **not RF packet timestamps or proof of human notification**.
 
@@ -77,6 +79,8 @@ npm run tui -- --demo --report
 # Deterministic, software-only Thread/direct-LoRa scenarios
 npm run evidence:multiradio
 ```
+
+Field Station visual design, test expectations, and the optional WindAnvil Blade → TalkPipe development-time evidence gate are explained in [the Field Station design notes](docs/field-station.md). Blade and TalkPipe are **not** included in the deployed website.
 
 **Node.js 22+** is required. The TUI `--demo` uses illustrative evidence, not live captures. `npm run tui -- --demo --snapshot --plain` produces a noninteractive, color-free snapshot.
 

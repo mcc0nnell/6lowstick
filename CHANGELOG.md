@@ -6,6 +6,10 @@ certified accessible emergency notification capabilities.
 
 ## [Unreleased]
 
+### Changed
+- Redesign Mesh Observatory as the Field Station: dedicated experiments, evidence and methods navigation, responsive design tokens, independent text/JSON inspection, and documented synthetic-only state indicators.
+- Add a read-only deterministic `site:check` for fixture/view consistency and SHA-256 input provenance, executable under WindAnvil Blade/TalkPipe without granting browser execution authority.
+
 ### Planned
 - Instrumented, explicitly authorized 802.15.4 hardware tests and
   passive Spinel capture through an existing RCP host-driver boundary
