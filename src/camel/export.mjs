@@ -13,7 +13,7 @@ const MEANINGS = Object.freeze({
   attempt: 'synthetic_lab_send_attempt',
   received: 'simulated_receiver_accepted_authenticated_message',
   activated: 'synthetic_application_activation_recorded_no_physical_actuator',
-  offline: 'synthetic_receiver_process_stopped',
+  offline: 'synthetic_receiver_process_stop_requested',
   ack: 'simulated_application_ack_not_human_receipt',
   missing: 'missing_fresh_application_ack_at_deadline',
   unknown: 'receipt_not_established',
