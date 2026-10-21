@@ -20,7 +20,9 @@ npm run tui -- --demo --snapshot --plain
 npm run tui -- --demo --report   # complete accessible text export
 ```
 
-The demo is labeled illustrative, not a measured experiment. Recorded replay is a reconstruction from final lab JSON, not packet-by-packet live telemetry. Lines show logical intended recipients, **not radio topology**; application ACKs do not prove human receipt. See [TUI guide](docs/mesh-control-tui.md). Camel 4.22 is a potential future read-only integration and not a runtime requirement.
+For Camel route/activity inspection, use `npm run camel:export -- --demo` and run `camel run integrations/camel/mesh-observe.camel.yaml` with Camel CLI **4.22.1**. Its route is read-only and logs only sanitized JSON observation copies.
+
+The demo is labeled illustrative, not a measured experiment. Recorded replay is a reconstruction from final lab JSON, not packet-by-packet live telemetry. Lines show logical intended recipients, **not radio topology**; application ACKs do not prove human receipt. See [TUI guide](docs/mesh-control-tui.md). The **optional Camel 4.22.1 observer** now reads allowlisted *copies* of lab evidence; it has no alert-sending path and is not required to run the TUI. See [the verified Camel observer guide](integrations/camel/README.md).
 
 **Not a life-safety product.** No physical actuators, real emergency authority, CAP/IPAWS integration, production key management, or human delivery guarantee is provided. Do not use for actual emergency warnings.
 
