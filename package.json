@@ -9,8 +9,10 @@
   },
   "scripts": {
     "test": "node --test test/*.test.mjs experiments/thread-alert/*.test.mjs",
-    "evidence:multiradio": "node experiments/multiradio/drill.mjs",
-    "check": "npm test && git diff --check"
+    "check": "npm test && git diff --check",
+    "tui": "node src/tui/cli.mjs",
+    "camel:export": "node src/camel/export.mjs",
+    "evidence:multiradio": "node experiments/multiradio/drill.mjs"
   },
   "repository": {
     "type": "git",
