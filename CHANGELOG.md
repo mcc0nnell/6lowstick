@@ -6,6 +6,10 @@ certified accessible emergency notification capabilities.
 
 ## [Unreleased]
 
+### Documentation
+- Rewrite the README and Field Station explanation around the delivery-versus-perception research question, with a guided documentation index and a clear reader path from claims to reproducible evidence and limitations.
+- Add editorial navigation tests for section order, safety language and local documentation links.
+
 ### Changed
 - Redesign Mesh Observatory as the Field Station: dedicated experiments, evidence and methods navigation, responsive design tokens, independent text/JSON inspection, and documented synthetic-only state indicators.
 - Add a read-only deterministic `site:check` for fixture/view consistency and SHA-256 input provenance, executable under WindAnvil Blade/TalkPipe without granting browser execution authority.

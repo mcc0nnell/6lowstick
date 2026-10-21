@@ -29,12 +29,30 @@ The text report and table list attempt entries followed by receiver journal entr
 ECharts CDN is unavailable. Controls are keyboard-accessible. Automatic
 playback respects reduced-motion preferences and stops when the tab hides.
 
+## Editorial hierarchy
+
+The page answers the visitor's questions in this order:
+
+1. **What is the problem?** The hero poses the sent/received/perceived gap
+   without a reliability claim; the research question explains its significance.
+2. **What can be seen?** Every station metric comes from the deterministic
+   fixture or is explicitly labeled as zero/unverified.
+3. **What can I do?** The failure laboratory plays a selected scripted record
+   while the inspector translates it into plain language.
+4. **What supports the interpretation?** A full text table, original fixture,
+   research guide and methodology follow the display.
+
+Technical detail belongs behind a clear reader path, not in the first
+paragraph. Each claim identifies whether it is observed in software,
+modeled as a scenario, or still requires physical and human evaluation.
+
 ## Sections
 
-1. Overview: scope, synthetic drill counts, research baseline and safety note
-2. Experiments: scripted route graph, stateful replay and selected event
-3. Evidence: actual JSON fields, accessible trace and original fixture
-4. Methods: deep links to the experimental methodology and threat model
+1. Overview: research question, scope and synthetic drill counts
+2. Why: the difference between an attempted send, application processing, and human receipt
+3. Experiments: scripted route graph, stateful replay and selected entry
+4. Evidence: actual JSON fields, accessible trace and original fixture
+5. Methods: deep links to the [research guide](README.md), methodology and threat model
 
 The **haptic** indicator represents a *synthetic receiver journal* in this
 fixture. Text and visual modalities are explicitly not exercised. Neither
