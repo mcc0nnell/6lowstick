@@ -27,3 +27,31 @@ meaningful repeated trial set and examine convergence, packet capture,
 receiver journals, retransmission policy, and duplicate handling. A resend
 must preserve the same alert ID and must never count duplicate notifications
 as new alerts. Do not merely extend the timeout to make the failure disappear.
+
+## Synthetic cross-radio failover boundary (2026-10-20)
+
+The multi-radio prototype is **scripted simulation only**. Each application
+receipt binds a recipient, synthetic alert ID and newly issued 96-bit attempt
+challenge under a lab HMAC key. Lack of authenticated application receipt means
+unconfirmed; it does not prove that the receiver did not activate. A durable
+application journal suppresses duplicate simulated activations across routes.
+
+The model does not authenticate NOAA, provision devices, isolate per-receiver
+keys, guarantee anti-replay following key compromise, validate true physical
+actuation, handle radio regulation or LoRaWAN receive windows, or observe the
+Thread Spinel interface. The simulation transport contract refuses non-simulation
+drivers and live-mode calls. See [dual-radio research](multiradio-fabric.md).
+
+## Added receive-only SDR ingress boundary (2026-10-20)
+
+The SDR observation program reads stdout from an external third-party EAS
+decoder. It treats all lines as untrusted, filters oversized/malformed
+inputs, outputs bounded JSON objects and has a short in-memory suppression
+window. The radio pipeline and the decoder are independently installed;
+neither is attested or controlled by this repository.
+
+A successful decode **does not** prove the transmitter was NOAA, that the
+radio wasn't jammed/spoofed, that coverage was complete, or that independent
+copies of the SAME header agreed. No alert authentication, Thread/Matter
+dispatch, external notification, or physical response is available on this
+path. See [SDR ingress](sdr-ingress.md).
