@@ -113,6 +113,8 @@ To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PAT
 | [Multi-radio experiment](docs/multiradio-fabric.md) | Attempt challenges, failover and deduplication |
 | [SDR ingress](docs/sdr-ingress.md) | Receive-only NOAA/SAME observation pipeline |
 | [Spinel Flight Recorder](docs/spinel-flight-recorder.md) | Byte-level parsing, command validation and 15 fixed offline reference vectors |
+| [Rizzer offline Spinel adapter](docs/rizzer-spinel-fuzzing.md) | Bounded native fuzzing with a separate JS differential replay; no radio access |
+| [Physical radio lab protocol](docs/physical-radio-test-protocol.md) | Proposed test equipment, authorization gates and independent actuation measurements |
 | [Mesh Control](docs/mesh-control-tui.md) | TUI controls, plain text, accessibility |
 | [Monotonic simulator evidence](docs/monotonic-evidence.md) | One four-node simulated run, 49 observed application events, exact provenance and cautions |
 | [Reliability trial collector](docs/reliability-trials.md) | Bounded serial POSIX simulations, strict receipt invariants, failure-inclusive summaries |
@@ -122,7 +124,7 @@ To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PAT
 
 ## Independent fuzzing research: Rizzer
 
-**Rizzer the Siamese Polo Shirts** is the source-vector mascot in our README hero, and [Rizzer](https://github.com/mcc0nnell/rizzer) is also the name of the independent Apache-2.0 native coverage-guided fuzzer, originating from the IHB synthetic-fuzzing prototype. It is one character with two distinct roles, not two separate mascots. It retains independent source control, release decisions and evidence. Potential 6lowStick targets include offline Spinel parsing, protocol input validation and synthetic alert-state invariants. **No Rizzer integration is implemented in this repository yet**, and there is no claim of a confirmed OpenThread vulnerability, radio transmission, or production-grade containment. See the [Rizzer README](https://github.com/mcc0nnell/rizzer#readme) for its current experimental scope and reproducible tests.
+**Rizzer the Siamese Polo Shirts** is the source-vector mascot in our README hero, and [Rizzer](https://github.com/mcc0nnell/rizzer) is also the name of the independent Apache-2.0 native coverage-guided fuzzer, originating from the IHB synthetic-fuzzing prototype. It is one character with two distinct roles, not two separate mascots. It retains independent source control, release decisions and evidence. Potential 6lowStick targets include offline Spinel parsing, protocol input validation and synthetic alert-state invariants. **An opt-in, offline native fuzzing + JavaScript differential replay adapter is now implemented**, and there is no claim of a confirmed OpenThread vulnerability, radio transmission, or production-grade containment. See the [Rizzer README](https://github.com/mcc0nnell/rizzer#readme) for its current experimental scope and reproducible tests. Run `npm run fuzz:spinel -- --rizzer /absolute/path/to/rizzer --out evidence/rizzer-spinel-01` after reading the [offline fuzzing guide](docs/rizzer-spinel-fuzzing.md). Rizzer guides native coverage, **not JavaScript coverage**; retained inputs are replayed against the actual JavaScript Spinel recorder.
 
 ### Next experiments
 
