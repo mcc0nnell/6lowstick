@@ -32,3 +32,22 @@ The sample size is explicitly reported. `completed_as_expected` is **not** a sta
 ## Follow-on investigation
 
 If a trial fails, investigate its phase, receiver, simulator state and reproducible source/binary hashes. Preserve the failure evidence and reproduce under the same OpenThread build before modifying deadlines. When confidence from simulation is adequate, physical RF, independent actuator measurements, and human-centered accessible notification studies must be designed and evaluated separately, with applicable radio controls and safety review.
+
+## Recorded ten-trial sample — October 21, 2026
+
+A clean-checkout run on Butcher completed all **10 of 10** independent,
+serial OpenThread POSIX simulated-radio trials as expected, with **zero**
+unexpected healthy-phase application ACK gaps, 49 monotonic parent-harness
+events per trial (490 total), and the intended missing haptic receipt after
+each deliberate simulated receiver stop. Individual trial durations ranged
+from **17,638 to 19,219 ms**. Source commit:
+`16472255aebf2b55bec4b208b4fdfa5683cd2569`
+(clean worktree); Node `v22.23.3`. Simulator binary SHA-256:
+`679e6a0f719f98c04049f7a7f35f615b8a1c155999c66f317616e46810a8d543`.
+
+Local ignored evidence:
+`evidence/reliability-trials-10.json`. The report was not committed
+and should not be described as public machine-verifiable evidence.
+The earlier intermittent ACK gap did **not** recur in these ten trials,
+but remains an unresolved reliability question. This limited sample
+does **not** estimate real-world radio reliability or human receipt.

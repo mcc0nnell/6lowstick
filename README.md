@@ -112,7 +112,7 @@ To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PAT
 | [Thread lab](experiments/thread-alert/README.md) | Reproduction and observed limitations |
 | [Multi-radio experiment](docs/multiradio-fabric.md) | Attempt challenges, failover and deduplication |
 | [SDR ingress](docs/sdr-ingress.md) | Receive-only NOAA/SAME observation pipeline |
-| [Spinel Flight Recorder](docs/spinel-flight-recorder.md) | Byte-level parsing and FCS validation |
+| [Spinel Flight Recorder](docs/spinel-flight-recorder.md) | Byte-level parsing, command validation and 15 fixed offline reference vectors |
 | [Mesh Control](docs/mesh-control-tui.md) | TUI controls, plain text, accessibility |
 | [Monotonic simulator evidence](docs/monotonic-evidence.md) | One four-node simulated run, 49 observed application events, exact provenance and cautions |
 | [Reliability trial collector](docs/reliability-trials.md) | Bounded serial POSIX simulations, strict receipt invariants, failure-inclusive summaries |

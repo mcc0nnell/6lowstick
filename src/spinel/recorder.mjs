@@ -13,13 +13,19 @@ export function spinelFcs(data) {
   return (fcs ^ 0xffff) & 0xffff;
 }
 
-function parseUnsignedPacked(bytes, offset) {
+// A Spinel command is a packed uint limited to 21 bits / three octets.
+// This is narrower than generic packed uint32 properties.
+function parseCommand(bytes, offset) {
   let result = 0;
-  for (let i = 0; i < 5 && offset + i < bytes.length; i++) {
+  for (let i = 0; i < 3 && offset + i < bytes.length; i++) {
     const byte = bytes[offset + i];
     result += (byte & 0x7f) * 2 ** (7 * i);
-    if (result > 0xffffffff) return null;
-    if (!(byte & 0x80)) return {value: result, length: i + 1};
+    if (!(byte & 0x80)) {
+      // Reject overlong encodings so corrupted command prefixes never
+      // acquire a false semantic identity.
+      if (i > 0 && result < 2 ** (7 * i)) return null;
+      return {value: result, length: i + 1};
+    }
   }
   return null;
 }
@@ -36,11 +42,13 @@ export function recordSpinelCapture(bytes, {maxFrameBytes = 2048} = {}) {
     const receivedFcs = complete ? raw[raw.length - 2] | (raw[raw.length - 1] << 8) : null;
     const crcVerified = complete && spinelFcs(body) === receivedFcs;
     const header = crcVerified ? body[0] : null;
-    const command = crcVerified ? parseUnsignedPacked(body, 1) : null;
+    // Spinel headers must begin with binary 10 (0x80..0xbf).
+    const headerValid = crcVerified && (header & 0xc0) === 0x80;
+    const command = headerValid ? parseCommand(body, 1) : null;
     frames.push({schema:'6lowstick.spinel-frame.v1',index:frames.length,
       bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex'),
       truncated:overflow || escaped,framing:'hdlc-lite',crcVerified,
-      header:crcVerified ? header : null,
+      header:crcVerified ? header : null,headerValid,
       commandId:command?.value ?? null,
       commandDecoded:command !== null,
       radioStateVerified:false,source:'offline-capture'});
