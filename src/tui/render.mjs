@@ -5,6 +5,7 @@ import {RECEIVERS, phaseLabel, replayState} from './evidence.mjs';
 const ANSI = /\x1b\[[\d;]*m/g;
 const palette = {bright:97, dim:90, cyan:96, good:92, warn:93, bad:91};
 export const unstyle = s => String(s).replace(ANSI, '');
+const safe = s => String(s ?? '').replace(/[\\x00-\\x1f\\x7f-\\x9f\\u202a-\\u202e\\u2066-\\u2069]/g, ' ').slice(0, 4096);
 const color = (s, tone, plain) => plain ? String(s) : '\x1b[' + (palette[tone] || 97) + 'm' + s + '\x1b[0m';
 const clip = (s, width) => {
   const text = unstyle(s);
@@ -38,12 +39,12 @@ const inspector = (state, selected) => {
   return [
     selected.toUpperCase() + '    ' + marker(r.state) + ' ' + r.state.toUpperCase(),
     'Receipt latency: ' + (Number.isFinite(r.latency) ? r.latency + ' ms (harness send start)' : 'not recorded'),
-    r.detail,
+    safe(r.detail),
     'Application ACK ≠ physical actuation ≠ human acknowledgment'
   ];
 };
 const observationRows = (steps, cursor) => steps.slice(Math.max(0, cursor - 6), cursor + 1).map(s =>
-  String(s.index + 1).padStart(2, '0') + '  ' + marker(s.kind) + ' ' + s.title);
+  String(s.index + 1).padStart(2, '0') + '  ' + marker(s.kind) + ' ' + safe(s.title));
 
 export function renderScreen({data, steps, cursor, selected = 'strobe', view = 'topology',
                               width = 90, height = 34, plain = false, help = false, playing = false}) {
@@ -67,10 +68,23 @@ export function renderScreen({data, steps, cursor, selected = 'strobe', view = '
       'Home/End    beginning/end; r rewinds',
       'Space       play/pause reconstructed phase sequence',
       '↑/↓ or j/k  select receiver',
-      '1 / 2 / 3   topology / timeline / provenance',
+      '1 / 2 / 3 / 4   topology / timeline / provenance / text',
       '? help      q quit',
       '',
       'Playback is an illustration of ordered lab phases, NOT RF timing.'
+    ], w, plain));
+  } else if (view === 'text') {
+    out.push(...panel('TEXT READER / SAME RECORDED EVIDENCE', [
+      'Phase: ' + phaseLabel(state.phase),
+      'Selected: ' + selected.toUpperCase(),
+      'Step: ' + (state.cursor + 1) + ' of ' + steps.length,
+      'Observation: ' + safe(state.current?.title || 'before first observation'),
+      'Details: ' + safe(state.current?.detail || 'No event selected'),
+      '',
+      ...RECEIVERS.map(name => name.toUpperCase() + ': ' + state.status[name].state.toUpperCase() +
+        ' / ' + safe(state.status[name].detail)),
+      '',
+      'NO HUMAN RECEIPT OR RF PROPAGATION VERIFIED'
     ], w, plain));
   } else if (view === 'timeline') {
     const max = Math.max(4, Math.min(16, height - 13));
@@ -81,24 +95,24 @@ export function renderScreen({data, steps, cursor, selected = 'strobe', view = '
         phaseLabel(s.phase).padEnd(19) + ' ' + s.title), w, plain));
   } else if (view === 'evidence') {
     out.push(...panel('PROVENANCE / LIMITATIONS', [
-      'Schema: ' + data.schema,
-      'Transport: ' + (data.transport || 'not recorded'),
-      'Payload: ' + (data.payload || 'not recorded'),
+      'Schema: ' + safe(data.schema),
+      'Transport: ' + safe(data.transport || 'not recorded'),
+      'Payload: ' + safe(data.payload || 'not recorded'),
       'Phase: ' + phaseLabel(state.phase),
-      'Observation: ' + (state.current?.title || 'before first recorded event'),
+      'Observation: ' + safe(state.current?.title || 'before first recorded event'),
       'Diagnostics: ' + (data.errors || []).length + ' entries',
       '',
       'Final JSON gives ordered phases, NOT timestamped packet events.',
       'Application ACK means simulated receipt, not physical/human delivery.',
       'Gateway HMAC does not authenticate NOAA. RF paths unmeasured.',
-      'Warning: ' + (data.warning || 'Experimental research only')
+      'Warning: ' + safe(data.warning || 'Experimental research only')
     ], w, plain));
   } else {
     out.push(...panel('LOGICAL MESH / APPLICATION DELIVERY', topology(state, selected, plain), w, plain));
     out.push('', ...panel('RECEIVER INSPECTOR', inspector(state, selected), w, plain));
     out.push('', ...panel('OBSERVATION STREAM', observationRows(steps, state.cursor), w, plain));
   }
-  const footer = color(clip('1 TOPOLOGY  2 TIMELINE  3 EVIDENCE   ←/→ STEP  SPACE PLAY  ↑/↓ NODE  ? HELP  Q QUIT', w), 'dim', plain);
+  const footer = color(clip('1 MESH  2 TIMELINE  3 EVIDENCE  4 TEXT   ←/→ STEP  SPACE PLAY  ↑/↓ NODE  ? HELP  Q QUIT', w), 'dim', plain);
   if (out.length > height - 2) out.splice(Math.max(1, height - 2));
   out.push('', footer);
   return out.map(s => clip(s, w)).join('\n') + '\n';
