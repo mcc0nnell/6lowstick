@@ -9,6 +9,7 @@
   },
   "scripts": {
     "test": "node --test test/*.test.mjs experiments/thread-alert/*.test.mjs",
+    "evidence:multiradio": "node experiments/multiradio/drill.mjs",
     "check": "npm test && git diff --check"
   },
   "repository": {

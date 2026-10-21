@@ -27,3 +27,17 @@ meaningful repeated trial set and examine convergence, packet capture,
 receiver journals, retransmission policy, and duplicate handling. A resend
 must preserve the same alert ID and must never count duplicate notifications
 as new alerts. Do not merely extend the timeout to make the failure disappear.
+
+## Synthetic cross-radio failover boundary (2026-10-20)
+
+The multi-radio prototype is **scripted simulation only**. Each application
+receipt binds a recipient, synthetic alert ID and newly issued 96-bit attempt
+challenge under a lab HMAC key. Lack of authenticated application receipt means
+unconfirmed; it does not prove that the receiver did not activate. A durable
+application journal suppresses duplicate simulated activations across routes.
+
+The model does not authenticate NOAA, provision devices, isolate per-receiver
+keys, guarantee anti-replay following key compromise, validate true physical
+actuation, handle radio regulation or LoRaWAN receive windows, or observe the
+Thread Spinel interface. The simulation transport contract refuses non-simulation
+drivers and live-mode calls. See [dual-radio research](multiradio-fabric.md).

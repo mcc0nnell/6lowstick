@@ -21,3 +21,15 @@ writes local TAP, JSON event logs and a summary to the ignored `evidence/`
 directory. It does not prove RF, real Matter device, NOAA receiver or human
 notification performance. The build of the OpenThread CLI is not yet pinned
 or reproduced by this repository.
+
+## Synthetic Thread/LoRa dual-radio failover
+
+A software-only experiment models one HMAC-authenticated notification delivered
+over **scripted Thread and direct peer-to-peer LoRa transports**. It signs
+per-attempt application receipts and tests route loss, missing or forged
+acknowledgments, and duplicate suppression across both links. It **does not**
+operate LoRa hardware, Spinel, ChirpStack/LoRaWAN or a real Thread link, and
+cannot issue live warnings or activate devices.
+
+Run `npm run evidence:multiradio` to see five JSON research traces. See
+[the failover design and limitations](docs/multiradio-fabric.md).
