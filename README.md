@@ -69,6 +69,7 @@ Newly instrumented OpenThread POSIX lab runs include monotonic **Node harness** 
 
 - [Thread lab and reproduction](experiments/thread-alert/README.md)
 - [Mesh Control TUI and accessibility](docs/mesh-control-tui.md)
+- [First measured monotonic POSIX simulation: reproduction and limits](docs/monotonic-evidence.md)
 - [Synthetic Thread/LoRa failover](docs/multiradio-fabric.md)
 - [Receive-only SDR ingestion](docs/sdr-ingress.md)
 - [Spinel Flight Recorder](docs/spinel-flight-recorder.md)
