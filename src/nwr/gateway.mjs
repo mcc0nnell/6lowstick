@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 import {parseSameHeader, matchesArea} from './same.mjs';
 import {signAlert} from '../../experiments/thread-alert/auth.mjs';
 
-const EVENT_ACTION = Object.freeze({TOR: 'EVACUATE', SVR: 'EVACUATE'});
+const EVENT_ACTION = Object.freeze({TOR: 'NOTIFY', SVR: 'NOTIFY'});
 export function evaluateSame(input, {areas, key, now, year}) {
   const header = parseSameHeader(input);
   if (!header) return {accepted: false, reason: 'invalid_header'};

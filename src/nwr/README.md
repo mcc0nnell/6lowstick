@@ -12,7 +12,7 @@ Before hardware deployment: verify against the full NWR SAME specification, incl
 area codes, an explicit UTC clock/year, and a local HMAC key. It rejects
 unrecognized event codes, mismatched areas, and messages outside their validity
 window. It currently permits only `TOR` and `SVR` **for a synthetic drill** and
-maps both to the existing lab-only `EVACUATE` token. This mapping is not an
+maps both to the existing lab-only `NOTIFY` token. This mapping is not an
 appropriate real-world protective-action recommendation. No real warning should
 be distributed using this mapping. The derived identifier is stable for an
 identical header, enabling downstream replay suppression; it does not establish

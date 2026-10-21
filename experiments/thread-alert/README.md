@@ -7,9 +7,9 @@ not create a real emergency warning, access IPAWS, or operate physical devices.
 ```text
 synthetic evacuation gateway  (OpenThread leader, UDP 61617)
             │
-            ├── UDP EA2|drill001|EVACUATE|<tag> --> "strobe"  (UDP 61616)
-            ├── UDP EA2|drill001|EVACUATE|<tag> --> "display" (UDP 61616)
-            └── UDP EA2|drill001|EVACUATE|<tag> --> "haptic"  (UDP 61616)
+            ├── UDP EA2|drill001|NOTIFY|<tag> --> "strobe"  (UDP 61616)
+            ├── UDP EA2|drill001|NOTIFY|<tag> --> "display" (UDP 61616)
+            └── UDP EA2|drill001|NOTIFY|<tag> --> "haptic"  (UDP 61616)
                       <-- UDP ACK1|drill001|<receiver> from each live receiver
 ```
 
@@ -73,7 +73,7 @@ receipt as a measured observation, not a delivery guarantee.
 
 ## EA2 authentication prototype (integrated into simulated mesh)
 
-`auth.mjs` provides a lab-only HMAC-SHA-256 envelope (`EA2|id|EVACUATE|tag`),
+`auth.mjs` provides a lab-only HMAC-SHA-256 envelope (`EA2|id|NOTIFY|tag`),
 with a 128-bit truncated tag and constant-time comparison. Run its focused
 negative tests with `node --test experiments/thread-alert/auth.test.mjs`.
 The key must be provisioned out-of-band; this prototype does not define key
@@ -100,6 +100,6 @@ policy adapter, verifies that an out-of-area policy rejects it, and sends an
 in-area, time-valid alert over the same real simulated OpenThread UDP path.
 All three simulated accessible receivers must acknowledge the HMAC-authenticated
 EA2 message. The synthetic `TOR` event is mapped to the lab's generic
-`EVACUATE` token only to exercise the protocol; **this is not safe real-world
+`NOTIFY` token only to exercise the protocol; **this is not safe real-world
 tornado guidance**. No NOAA radio receiver, audio demodulation, CAP feed,
 physical actuator, or real public warning is involved.

@@ -9,7 +9,7 @@ test('offline policy produces gateway-authenticated local synthetic alert', () =
   const result = evaluateSame(input, args);
   assert.equal(result.accepted, true);
   assert.equal(result.event, 'TOR');
-  assert.deepEqual(verifyAlert(key, result.wire), {id: result.id, action: 'EVACUATE'});
+  assert.deepEqual(verifyAlert(key, result.wire), {id: result.id, action: 'NOTIFY'});
   assert.equal(evaluateSame(input, args).id, result.id);
 });
 test('out-of-area, unsupported, expired, future and invalid input fail closed', () => {
