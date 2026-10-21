@@ -2,60 +2,74 @@
 
 **Light the mesh. Make alerts accessible.**
 
-Experimental, open-source research into authenticated, accessible alerting over low-power IPv6 mesh networks, beginning with OpenThread's simulated radio environment.
+6lowStick is an experimental, open-source research platform for understanding how low-power networks could support **accessible emergency notifications**. It explores the chain from untrusted alert observations through policy, simulated transport, receiver acknowledgments, and evidence inspection. It is **not** an emergency warning service or life-safety product.
 
-The first lab exercises three receiver modalities—visual strobe, text display, and haptic vibration—using synthetic messages and application acknowledgments. It tests forged-alert rejection, replay suppression, and missing receiver detection.
+## Architecture and trust boundaries
 
-See [the Thread alert experiment](experiments/thread-alert/README.md) for setup, verification, and limitations.
+```text
+NOAA Weather Radio / SAME → receive-only SDR observations
+                                       │ (not authenticated, not dispatchable)
+Synthetic SAME fixtures → offline policy gateway → locally HMAC-signed NOTIFY
+                                                    │
+                             simulated Thread / simulated direct LoRa
+                                                    │
+                                synthetic strobe / display / haptic receivers
+                                                    │
+                                  signed app receipts + replay journal
+                                                    │
+                            JSON evidence → read-only Mesh Control TUI
 
-## Mesh Control — terminal-native evidence replay
+Separate offline Spinel capture copies → frame integrity metadata (CRC, IDs)
+Separate optional Matter adapter → mock/commissioned-controller seam only
+```
 
-6lowStick now has a keyboard-driven, **read-only** terminal UI (Node 22+). Inspect a logical receiver map, scrub experimental phases, review authentication rejections, replay suppression, missing ACKs, and inspect the provenance of each observation.
+These paths are **not automatically connected**: receiving a SAME observation does not authorize a mesh notification. The synthetic fabric does not send real RF traffic. A valid Spinel CRC proves only frame integrity, and an authenticated application receipt is **not** proof of physical actuation or human acknowledgment.
+
+## Quick start (Node.js 22+)
 
 ```sh
 npm ci
+npm test
 npm run tui -- --demo
-npm run tui -- --input evidence/mesh-run.json
 npm run tui -- --demo --snapshot --plain
-npm run tui -- --demo --report   # complete accessible text export
+npm run tui -- --demo --report
+npm run evidence:multiradio
 ```
 
-The demo is labeled illustrative, not a measured experiment. Recorded replay is a reconstruction from final lab JSON, not packet-by-packet live telemetry. Lines show logical intended recipients, **not radio topology**; application ACKs do not prove human receipt. See [TUI guide](docs/mesh-control-tui.md). Camel 4.22 is a potential future read-only integration and not a runtime requirement.
+The TUI demo is illustrative; `--report` emits a sequential accessible text view. The multiradio command generates software-only research traces. Neither uses physical radios. To reproduce the separately built OpenThread POSIX lab, set `OT_CLI_PATH=/absolute/path/to/ot-cli-ftd` and run `bash scripts/run-evidence.sh`; the OpenThread binary build is **not** pinned or reproduced by this repository.
 
-**Not a life-safety product.** No physical actuators, real emergency authority, CAP/IPAWS integration, production key management, or human delivery guarantee is provided. Do not use for actual emergency warnings.
+## What exists today
 
-WindAnvil and TalkPipe are development/testing tools, not required runtime components of 6lowStick.
+| Component | Verified scope | Not established |
+| --- | --- | --- |
+| Thread alert lab | POSIX simulation, local HMAC, replay journal, three synthetic modalities | Real RF, human notification |
+| Dual-radio fabric | Scripted Thread/direct-LoRa fallback, per-attempt signed receipts, duplicate suppression | LoRa hardware, LoRaWAN, physical failover |
+| NOAA SDR observer | Receive-only decoder-line parsing, bounded observation records, mock replay | NOAA origin authentication, real receiver measurements |
+| Spinel Flight Recorder | Offline HDLC-lite parsing, CRC-16 FCS checks, raw header/command IDs | Live RCP capture, radio state, payload semantics |
+| Mesh Control | Read-only keyboard-driven evidence replay, plain-text report | Live topology or packet-level timing |
+| Matter adapter | Pinned SDK integration seam exercised against mock controller | Commissioned device or verified illumination |
+| Camel export | Research evidence export, not an alert-routing runtime | Live Camel deployment |
 
-## Reproduce synthetic research evidence
+## Documentation
 
-On a Linux host with a separately built OpenThread POSIX `ot-cli-ftd` binary,
-run `OT_CLI_PATH=/absolute/path/to/ot-cli-ftd bash scripts/run-evidence.sh`.
-The script runs unit tests and the simulated Thread mesh experiment, then
-writes local TAP, JSON event logs and a summary to the ignored `evidence/`
-directory. It does not prove RF, real Matter device, NOAA receiver or human
-notification performance. The build of the OpenThread CLI is not yet pinned
-or reproduced by this repository.
+- [Thread lab and reproduction](experiments/thread-alert/README.md)
+- [Mesh Control TUI and accessibility](docs/mesh-control-tui.md)
+- [Synthetic Thread/LoRa failover](docs/multiradio-fabric.md)
+- [Receive-only SDR ingestion](docs/sdr-ingress.md)
+- [Spinel Flight Recorder](docs/spinel-flight-recorder.md)
+- [Matter adapter](src/matter/README.md)
+- [Threat model and known gaps](docs/threat-model.md)
+- [Synthetic alert schema](docs/alert-schema.json)
 
-## Synthetic Thread/LoRa dual-radio failover
+## Research priorities
 
-A software-only experiment models one HMAC-authenticated notification delivered
-over **scripted Thread and direct peer-to-peer LoRa transports**. It signs
-per-attempt application receipts and tests route loss, missing or forged
-acknowledgments, and duplicate suppression across both links. It **does not**
-operate LoRa hardware, Spinel, ChirpStack/LoRaWAN or a real Thread link, and
-cannot issue live warnings or activate devices.
+1. Capture repeatable, timestamped **simulated** Thread evidence and characterize intermittent missing acknowledgments without weakening timeout gates.
+2. Validate offline Spinel decoding against independently sourced frames and correlate evidence without claiming radio delivery.
+3. Build isolated, authorized hardware experiments for SDR, Thread, and LoRa, with explicit provenance and regulatory constraints.
+4. Evaluate accessible outcomes separately for visual, textual, and haptic notification, including whether people can perceive and understand them.
 
-Run `npm run evidence:multiradio` to see five JSON research traces. See
-[the failover design and limitations](docs/multiradio-fabric.md).
+## Safety and license
 
-## Receive-only software-defined radio research
+Never connect this prototype to public warning origination, operational emergency dispatch, or uncommissioned actuators. NOAA SAME radio reception is unauthenticated; a gateway HMAC authenticates only the **local gateway**. Application receipts do not establish human receipt. See the [threat model](docs/threat-model.md).
 
-6lowStick now has an **SDR observation path**, separate from the synthetic
-OpenThread alert-delivery lab. With locally installed `rtl_fm` and
-`multimon-ng`, it can turn NOAA Weather Radio SAME decoder text into
-bounded JSON Lines research records. There is also a no-hardware replay
-path with tests. The observer **never authenticates an on-air broadcaster,
-issues an active alert, or actuates a mesh endpoint**.
-
-See [SDR ingress and replay](docs/sdr-ingress.md) for the receiver pipeline,
-supported frequencies, safety boundary, and limitations.
+Licensed under [Apache License 2.0](LICENSE). WindAnvil and TalkPipe may support development but are not runtime requirements.

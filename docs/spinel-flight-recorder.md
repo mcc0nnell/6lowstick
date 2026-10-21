@@ -1,16 +1,11 @@
-# Spinel Flight Recorder — offline-first research boundary
+# Spinel Flight Recorder — offline frame-integrity research
 
-The initial module consumes **copies of captured bytes**, never the live
-OpenThread RCP serial device. The Thread border router must retain exclusive
-control of its RCP. Do not attach a second controller to the port.
+**Status:** offline-only, metadata-only. The recorder never opens a live radio co-processor (RCP) port, sends Spinel commands, or acquires control of a Thread border router. Keep exclusive RCP ownership with the existing host driver.
 
-`recordSpinelCapture` splits HDLC-lite delimited frames, handles escape bytes,
-limits frame sizes, and records only length and SHA-256 fingerprints. It does
-not store sensitive payloads, validate frame CRC/FCS, decode Spinel commands,
-prove frame integrity, or assert actual radio activity. Incomplete trailing
-frames are discarded. A later version should add FCS verification, read-only
-command/property decoding, timestamps and documented capture provenance.
+`recordSpinelCapture(bytes, {maxFrameBytes})` consumes a `Uint8Array` copy of a captured HDLC-lite stream. It recognizes `0x7e` delimiters, unescapes `0x7d` sequences, enforces a bounded frame length, and discards incomplete trailing frames. It validates the little-endian CRC-16/CCITT reflected FCS (PPP FCS-16) on complete frames. For CRC-valid frames it records the raw Spinel header byte and a bounded unsigned packed command identifier; malformed or CRC-invalid frames do **not** receive decoded command IDs.
 
-For hardware testing, obtain authorized mirrored traffic or instrument the
-existing host driver without modifying its behavior. No capture is authorized
-merely by having this recorder in the repository.
+Output schema `6lowstick.spinel-frame.v1` includes a frame index, byte count, SHA-256 fingerprint of unescaped bytes including FCS, `truncated`, `crcVerified`, `header`, `commandId`, `commandDecoded`, `radioStateVerified:false`, and `source:'offline-capture'`. No frame payload bytes are stored in output. Frame fingerprints are **not** proof of source authenticity. The recorder does not validate property values, timestamp capture events, reconstruct packet timing, or prove transmission or reception over RF.
+
+Run focused tests with `node --test test/spinel-recorder.test.mjs`; they cover a CRC reference vector, escaped bytes, tampering, oversize frames, and incomplete input. These are software tests, not independently measured RCP traces.
+
+For future hardware testing, obtain explicitly authorized mirrored traffic or instrument the existing host driver without changing its behavior. Do not attach a second controller to the serial port. Correlating Spinel metadata with synthetic application receipts must preserve the distinction between **frame integrity**, **application acknowledgment**, **physical actuation**, and **human notification**.
