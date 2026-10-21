@@ -1,8 +1,9 @@
 <div align="center">
-  <img src="assets/6lowstick-two-polos.webp" alt="6lowStick: a six formed by two overlapping polo-shirt collars in hot pink and neon green." width="460" />
+  <img src="assets/6lowstick-two-polos.webp" alt="Rizzer, the official 6lowStick mascot: a six-shaped figure made from joined hot-pink and lime-green polo shirts with two popped collars." width="460" />
 
   <h1>6lowStick</h1>
   <p><strong>Light the mesh. Make alerts accessible.</strong></p>
+  <p><a href="https://github.com/mcc0nnell/rizzer/blob/main/docs/character.md"><strong>Meet Rizzer ↗</strong></a> &nbsp;·&nbsp; Two collars. Zero trust.</p>
 
   <p>
     <a href="https://mcc0nnell.github.io/6lowstick/"><strong>Explore Mesh Observatory ↗</strong></a>
@@ -107,7 +108,7 @@ To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PAT
 
 ## Independent fuzzing research: Rizzer
 
-[Rizzer](https://github.com/mcc0nnell/rizzer) is a separate Apache-2.0 native coverage-guided fuzzer, originating from the IHB synthetic-fuzzing prototype. It retains independent source control, release decisions and evidence. Potential 6lowStick targets include offline Spinel parsing, protocol input validation and synthetic alert-state invariants. **No Rizzer integration is implemented in this repository yet**, and there is no claim of a confirmed OpenThread vulnerability, radio transmission, or production-grade containment. See the [Rizzer README](https://github.com/mcc0nnell/rizzer#readme) for its current experimental scope and reproducible tests.
+**Rizzer the Siamese Polo Shirts** is the mascot in our README hero, and [Rizzer](https://github.com/mcc0nnell/rizzer) is also the name of the independent Apache-2.0 native coverage-guided fuzzer, originating from the IHB synthetic-fuzzing prototype. It is one character with two distinct roles, not two separate mascots. It retains independent source control, release decisions and evidence. Potential 6lowStick targets include offline Spinel parsing, protocol input validation and synthetic alert-state invariants. **No Rizzer integration is implemented in this repository yet**, and there is no claim of a confirmed OpenThread vulnerability, radio transmission, or production-grade containment. See the [Rizzer README](https://github.com/mcc0nnell/rizzer#readme) for its current experimental scope and reproducible tests.
 
 ### Next experiments
 
