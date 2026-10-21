@@ -39,8 +39,11 @@ const errorEvents = [];
 const nodes = [];
 const trace = createTelemetryRecorder();
 let activeSend = null;
-const recordWhileActive = (kind, receiver, at) => {
-  if (activeSend) trace.record(activeSend.phase, kind, receiver, at);
+const recordWhileActive = (kind, receiver, at, alertId = null) => {
+  if (activeSend && activeSend.targets.has(receiver) &&
+      (at === undefined || at >= activeSend.start) &&
+      (alertId === null || alertId === activeSend.id))
+    trace.record(activeSend.phase, kind, receiver, at);
 };
 
 class OtNode {
@@ -226,13 +229,13 @@ try {
         events.push({node: node.name, event: 'rejected_auth'});
         return;
       }
-      recordWhileActive('receiver_accept', node.name, item.time);
+      recordWhileActive('receiver_accept', node.name, item.time, alert.id);
       if (node.replayJournal.accept(alert.id)) {
         node.activations.push(alert.id);
-        recordWhileActive('activation_recorded', node.name);
+        recordWhileActive('activation_recorded', node.name, undefined, alert.id);
         events.push({node: node.name, event: 'activated', alert_id: alert.id});
       } else {
-        recordWhileActive('duplicate', node.name);
+        recordWhileActive('duplicate', node.name, undefined, alert.id);
         events.push({node: node.name, event: 'duplicate_suppressed', alert_id: alert.id});
       }
       await node.command('udp send ' + gateway.address + ' ' + PORT_ACK +
