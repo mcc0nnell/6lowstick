@@ -21,3 +21,17 @@ supplied. A completed command is not evidence that a light illuminated.
 Next: implement and test a version-pinned Matter controller against a virtual
 Matter bulb; only then commission a physical Matter-over-Thread bulb and measure
 command, device-state, and visible-light outcomes independently.
+
+## matter.js 0.18 integration seam
+
+`controller.mjs` provides the actual OnOff command mapping against a pre-existing
+commissioned peer using the `@matter/main` 0.18 API. Pass the `OnOffClient`
+behavior from `@matter/main/behaviors/on-off` and a peer obtained from your
+commissioned controller. It invokes `peer.start()`, resolves the requested
+endpoint, and calls `endpoint.commandsOf(OnOffClient).on()`. Its tests use a
+fake peer; this is not yet an end-to-end virtual-device integration test.
+
+Reference: https://github.com/matter-js/matter.js/blob/main/examples/control-onoff/src/OnOffController.ts
+
+No automated commissioning or credentials are stored by 6lowStick. Do not
+commission devices on someone else's fabric without authorization.
