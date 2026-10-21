@@ -21,3 +21,15 @@ writes local TAP, JSON event logs and a summary to the ignored `evidence/`
 directory. It does not prove RF, real Matter device, NOAA receiver or human
 notification performance. The build of the OpenThread CLI is not yet pinned
 or reproduced by this repository.
+
+## Receive-only software-defined radio research
+
+6lowStick now has an **SDR observation path**, separate from the synthetic
+OpenThread alert-delivery lab. With locally installed `rtl_fm` and
+`multimon-ng`, it can turn NOAA Weather Radio SAME decoder text into
+bounded JSON Lines research records. There is also a no-hardware replay
+path with tests. The observer **never authenticates an on-air broadcaster,
+issues an active alert, or actuates a mesh endpoint**.
+
+See [SDR ingress and replay](docs/sdr-ingress.md) for the receiver pipeline,
+supported frequencies, safety boundary, and limitations.
