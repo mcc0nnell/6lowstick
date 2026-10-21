@@ -105,6 +105,10 @@ To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PAT
 | [Alert schema](docs/alert-schema.json) | Machine-readable synthetic message format |
 | [Threat model](docs/threat-model.md) | Spoofing, replay, missing receipts and safety limits |
 
+## Independent fuzzing research: Rizzer
+
+[Rizzer](https://github.com/mcc0nnell/rizzer) is a separate Apache-2.0 native coverage-guided fuzzer, originating from the IHB synthetic-fuzzing prototype. It retains independent source control, release decisions and evidence. Potential 6lowStick targets include offline Spinel parsing, protocol input validation and synthetic alert-state invariants. **No Rizzer integration is implemented in this repository yet**, and there is no claim of a confirmed OpenThread vulnerability, radio transmission, or production-grade containment. See the [Rizzer README](https://github.com/mcc0nnell/rizzer#readme) for its current experimental scope and reproducible tests.
+
 ### Next experiments
 
 1. Run repeated **timestamped simulated Thread trials** and characterize missing ACKs without weakening the confirmation gate.
