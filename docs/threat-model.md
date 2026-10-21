@@ -15,3 +15,15 @@ The prototype has HMAC-SHA256 authentication, bounded synthetic message syntax, 
 ## Evaluation plan
 
 Test malformed input, inconsistent repeated SAME headers, stale and future warnings, area mismatch, spoofed gateway, key loss, reboot and power-loss behavior, partitioned networks, RF interference, Matter command failures, and alert fatigue. Report failed delivery explicitly rather than inferring it from send success.
+
+## Observed reliability caveat (2026-10-20)
+
+A four-node POSIX simulation run missed the haptic ACK during an otherwise
+healthy three-receiver drill; an immediate subsequent run acknowledged all
+three. The current sender transmits one UDP datagram per receiver and waits
+2.5 seconds for ACKs. This is an observed intermittent delivery failure, not
+a solved problem. Before claiming reliable delivery, run a statistically
+meaningful repeated trial set and examine convergence, packet capture,
+receiver journals, retransmission policy, and duplicate handling. A resend
+must preserve the same alert ID and must never count duplicate notifications
+as new alerts. Do not merely extend the timeout to make the failure disappear.

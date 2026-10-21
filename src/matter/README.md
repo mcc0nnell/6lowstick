@@ -39,3 +39,9 @@ commission devices on someone else's fabric without authorization.
 The dependency is pinned to `@matter/main@0.18.0` in `package-lock.json`.
 Import of `OnOffClient` was smoke-tested against that installed package.
 Commissioning and a live virtual-bulb protocol exchange remain unverified.
+
+A new integration-seam test imports the **real** pinned SDK `OnOffClient`
+behavior and exercises the complete `sendVisualDrill` → controller adapter
+path against a fake commissioned peer. This catches SDK import/API-token
+regressions, but still does **not** exchange Matter protocol messages or
+commission a virtual bulb.
