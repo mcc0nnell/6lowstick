@@ -1,86 +1,141 @@
-# 6lowStick
+<div align="center">
+  <img src="assets/6lowstick-hero.svg" alt="6lowStick: Light the mesh. Make alerts accessible. A conceptual diagram of a synthetic gateway, simulated Thread and direct LoRa paths, and text, light, and haptic outputs." width="100%" />
 
-**Light the mesh. Make alerts accessible.**
+  <p>
+    <a href="https://mcc0nnell.github.io/6lowstick/"><strong>Explore Mesh Observatory ↗</strong></a>
+    &nbsp; · &nbsp;
+    <a href="#run-the-lab">Run the lab</a>
+    &nbsp; · &nbsp;
+    <a href="#the-system">Inspect the architecture</a>
+    &nbsp; · &nbsp;
+    <a href="docs/threat-model.md">Threat model</a>
+  </p>
 
-6lowStick is an experimental, open-source research platform for understanding how low-power networks could support **accessible emergency notifications**. It explores the chain from untrusted alert observations through policy, simulated transport, receiver acknowledgments, and evidence inspection. It is **not** an emergency warning service or life-safety product.
+  <p>
+    <code>NODE 22+</code> &nbsp; <code>APACHE-2.0</code> &nbsp; <code>SIMULATION FIRST</code> &nbsp; <code>READ-ONLY OBSERVABILITY</code>
+  </p>
+</div>
 
-## Architecture and trust boundaries
+> [!IMPORTANT]
+> **6lowStick is a research instrument, not an emergency warning system.** The notification fabric, Thread/LoRa failover, receivers, and observatory scenarios are **software-only simulations**. No operational alert is originated; no physical radio delivery or human receipt has been established.
 
-```mermaid
-flowchart LR
-  subgraph observation["Observation · not dispatch authority"]
-    SDR["NOAA SAME · receive-only SDR"] --> OBS["Bounded observation records"]
-    SP["Offline Spinel bytes"] --> CRC["CRC-checked frame metadata"]
-  end
-  subgraph lab["Synthetic notification laboratory"]
-    FIX["Synthetic SAME fixtures"] --> GATE["Offline policy gateway"]
-    GATE --> AUTH["Locally HMAC-signed NOTIFY"]
-    AUTH --> THREAD["Simulated Thread"]
-    AUTH --> LORA["Simulated direct LoRa fallback"]
-    THREAD --> RCV["Synthetic strobe · display · haptic"]
-    LORA --> RCV
-    RCV --> ACK["Signed app receipts + replay journal"]
-  end
-  ACK --> EV["JSON evidence"]
-  EV --> TUI["Read-only Mesh Control TUI"]
-  EV --> CAMEL["Camel evidence export"]
-  classDef untrusted fill:#fff0db,stroke:#b66b18,color:#603b10
-  classDef synthetic fill:#e7f0ff,stroke:#3768ae,color:#173963
-  classDef evidence fill:#e5f5ed,stroke:#258358,color:#134a31
-  class SDR,OBS,SP,CRC untrusted
-  class FIX,GATE,AUTH,THREAD,LORA,RCV,ACK synthetic
-  class EV,TUI,CAMEL evidence
-```
+# A research platform for the last meter of accessible alerting
 
-**Legend:** amber = untrusted/offline observations; blue = synthetic laboratory path; green = read-only evidence. Missing arrows are intentional: SDR and Spinel observations are **not connected to alert dispatch**. Edges show logical data flow, not RF topology or measured timing.
+A warning can be transmitted without being **received**. It can be received without being **perceived**. And it can be perceived without being **understood**.
 
-These paths are **not automatically connected**: receiving a SAME observation does not authorize a mesh notification. The synthetic fabric does not send real RF traffic. A valid Spinel CRC proves only frame integrity, and an authenticated application receipt is **not** proof of physical actuation or human acknowledgment.
+6lowStick asks how low-power networks, diverse receiver modalities, authenticated application receipts, and reproducible evidence could help us study those gaps—without confusing a successful send with a successful warning.
 
-## Quick start (Node.js 22+)
+| 01 / OBSERVE | 02 / MODEL | 03 / INSPECT | 04 / EVALUATE |
+| :--- | :--- | :--- | :--- |
+| Receive-only NOAA/SAME observations and offline Spinel bytes | Synthetic Thread delivery with scripted direct-LoRa fallback | Signed application receipts, replay suppression, JSON traces | Read-only terminal UI, ECharts observatory, accessible text reports |
+| **Never grants dispatch authority** | **No physical RF** | **Not proof of actuation** | **Not proof of human comprehension** |
 
-```sh
+## See the experiment
+
+**[Open the Mesh Observatory →](https://mcc0nnell.github.io/6lowstick/)**
+
+The GitHub Pages experience offers five deterministic, synthetic fault scenarios, a logical route graph, application delivery-attempt comparisons, an evidence inspector, and an accessible attempt-by-attempt table. It visualizes **modeled delivery paths**, not captured RF topology or live devices.
+
+Prefer the terminal? **Mesh Control** provides keyboard navigation, a text-reader view, `--plain`, `--reduced-motion`, and a complete `--report` for sequential evidence inspection.
+
+## Run the lab
+
+```bash
+git clone https://github.com/mcc0nnell/6lowstick.git
+cd 6lowstick
 npm ci
 npm test
+
+# Navigate the read-only evidence TUI
 npm run tui -- --demo
-npm run tui -- --demo --snapshot --plain
+
+# Accessible, noninteractive text evidence
 npm run tui -- --demo --report
+
+# Deterministic, software-only Thread/direct-LoRa scenarios
 npm run evidence:multiradio
 ```
 
-The TUI demo is illustrative; `--report` emits a sequential accessible text view. The multiradio command generates software-only research traces. Neither uses physical radios. To reproduce the separately built OpenThread POSIX lab, set `OT_CLI_PATH=/absolute/path/to/ot-cli-ftd` and run `bash scripts/run-evidence.sh`; the OpenThread binary build is **not** pinned or reproduced by this repository.
+**Node.js 22+** is required. The TUI `--demo` uses illustrative evidence, not live captures. `npm run tui -- --demo --snapshot --plain` produces a noninteractive, color-free snapshot.
 
-## What exists today
+To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PATH` to your own `ot-cli-ftd` and run `bash scripts/run-evidence.sh`. **The OpenThread binary build is not pinned or reproduced here**; interpret results accordingly.
 
-| Component | Verified scope | Not established |
-| --- | --- | --- |
-| Thread alert lab | POSIX simulation, local HMAC, replay journal, three synthetic modalities | Real RF, human notification |
-| Dual-radio fabric | Scripted Thread/direct-LoRa fallback, per-attempt signed receipts, duplicate suppression | LoRa hardware, LoRaWAN, physical failover |
-| NOAA SDR observer | Receive-only decoder-line parsing, bounded observation records, mock replay | NOAA origin authentication, real receiver measurements |
-| Spinel Flight Recorder | Offline HDLC-lite parsing, CRC-16 FCS checks, raw header/command IDs | Live RCP capture, radio state, payload semantics |
-| Mesh Control | Read-only keyboard-driven evidence replay, plain-text report | Live topology or packet-level timing |
-| Matter adapter | Pinned SDK integration seam exercised against mock controller | Commissioned device or verified illumination |
-| Camel export | Research evidence export, not an alert-routing runtime | Live Camel deployment |
+## The system
 
-## Documentation
+```mermaid
+flowchart LR
+    subgraph O["OBSERVE — untrusted or offline"]
+      direction TB
+      NWR["NOAA SAME<br/>receive-only SDR"] --> REC["Bounded observations"]
+      SPI["Offline Spinel frames"] --> CRC["CRC-checked metadata"]
+    end
 
-- [Thread lab and reproduction](experiments/thread-alert/README.md)
-- [Mesh Control TUI and accessibility](docs/mesh-control-tui.md)
-- [Synthetic Thread/LoRa failover](docs/multiradio-fabric.md)
-- [Receive-only SDR ingestion](docs/sdr-ingress.md)
-- [Spinel Flight Recorder](docs/spinel-flight-recorder.md)
-- [Matter adapter](src/matter/README.md)
-- [Threat model and known gaps](docs/threat-model.md)
-- [Synthetic alert schema](docs/alert-schema.json)
+    subgraph S["SIMULATE — no physical RF"]
+      direction TB
+      FIX["Synthetic alert fixtures"] --> GATE["Offline policy gate"]
+      GATE --> SIGN["Local HMAC NOTIFY"]
+      SIGN --> TH["Thread path"]
+      SIGN -. "fallback" .-> LO["Direct LoRa path"]
+      TH --> RX["Synthetic text / light / haptic"]
+      LO --> RX
+      RX --> ACK["Signed application receipts<br/>and replay journal"]
+    end
 
-## Research priorities
+    subgraph E["INSPECT — read-only"]
+      direction TB
+      JSON["JSON research evidence"] --> TUI["Mesh Control TUI"]
+      JSON --> WEB["ECharts observatory"]
+      JSON --> CAM["Camel evidence export"]
+    end
+    ACK --> JSON
 
-1. Capture repeatable, timestamped **simulated** Thread evidence and characterize intermittent missing acknowledgments without weakening timeout gates.
-2. Validate offline Spinel decoding against independently sourced frames and correlate evidence without claiming radio delivery.
-3. Build isolated, authorized hardware experiments for SDR, Thread, and LoRa, with explicit provenance and regulatory constraints.
-4. Evaluate accessible outcomes separately for visual, textual, and haptic notification, including whether people can perceive and understand them.
+    classDef observe fill:#ffe8ca,stroke:#bf7c2d,color:#523108
+    classDef model fill:#d9edff,stroke:#407baa,color:#123a56
+    classDef inspect fill:#ddf5eb,stroke:#2d8b6d,color:#104e40
+    class NWR,REC,SPI,CRC observe
+    class FIX,GATE,SIGN,TH,LO,RX,ACK model
+    class JSON,TUI,WEB,CAM inspect
+```
 
-## Safety and license
+**Read the boundaries, not just the arrows.** The observation and simulation lanes are intentionally disconnected: a received SAME line does **not** authorize a synthetic alert. The Spinel CRC checks frame integrity, **not** authenticity or message meaning. The fallback arrows are scripted application routes, not measured radio links. Signed ACKs attest to simulated application processing, **not** device actuation, visual perception, or human acknowledgment.
 
-Never connect this prototype to public warning origination, operational emergency dispatch, or uncommissioned actuators. NOAA SAME radio reception is unauthenticated; a gateway HMAC authenticates only the **local gateway**. Application receipts do not establish human receipt. See the [threat model](docs/threat-model.md).
+## Built vs. demonstrated
 
-Licensed under [Apache License 2.0](LICENSE). WindAnvil and TalkPipe may support development but are not runtime requirements.
+| Instrument | Demonstrated in the repository | Still to establish |
+| :--- | :--- | :--- |
+| **Thread alert lab** | OpenThread POSIX simulation, local HMAC, replay journal, synthetic modalities | RF delivery, reliable notifications, user outcomes |
+| **Multi-radio fabric** | Scripted Thread/direct-LoRa fallback, per-attempt authenticated receipts, duplicate suppression | LoRa hardware, LoRaWAN, real failover |
+| **NOAA SDR observer** | Decoder-line parsing and bounded mock/replay observations | Origin authentication, field measurements |
+| **Spinel Flight Recorder** | Offline HDLC-lite frame parsing, CRC-16/FCS and raw command IDs | Live RCP capture, semantic radio state |
+| **Matter adapter** | Pinned SDK seam with mock controller | Commissioned endpoints, verified physical output |
+| **Mesh Control** | Read-only TUI, keyboard and text evidence views | Live neighbor topology, captured packet timing |
+| **Camel exporter** | Sanitized research evidence export | Live alert routing or production Camel service |
+
+> [!NOTE]
+> **Reliability is an open research problem.** A previous four-node POSIX simulation intermittently missed a haptic ACK. A missing receipt is *unconfirmed*, not proof that no actuation occurred. We keep the failure visible rather than relaxing timeouts to make a chart green. See [known reliability gaps](docs/threat-model.md#observed-reliability-caveat-2026-10-20).
+
+## Field notes & reproducibility
+
+| Start here | What it contains |
+| :--- | :--- |
+| [Thread lab](experiments/thread-alert/README.md) | Reproduction and observed limitations |
+| [Multi-radio experiment](docs/multiradio-fabric.md) | Attempt challenges, failover and deduplication |
+| [SDR ingress](docs/sdr-ingress.md) | Receive-only NOAA/SAME observation pipeline |
+| [Spinel Flight Recorder](docs/spinel-flight-recorder.md) | Byte-level parsing and FCS validation |
+| [Mesh Control](docs/mesh-control-tui.md) | TUI controls, plain text, accessibility |
+| [Matter adapter](src/matter/README.md) | SDK adapter and mock boundary |
+| [Alert schema](docs/alert-schema.json) | Machine-readable synthetic message format |
+| [Threat model](docs/threat-model.md) | Spoofing, replay, missing receipts and safety limits |
+
+### Next experiments
+
+1. Run repeated **timestamped simulated Thread trials** and characterize missing ACKs without weakening the confirmation gate.
+2. Cross-check offline Spinel decodes against independent frame specimens before interpreting radio evidence.
+3. Conduct authorized, isolated **physical-radio experiments** with provenance and applicable regulatory controls.
+4. Evaluate whether text, light, and haptic outputs are actually **perceived and understood** by people—not merely accepted by software.
+
+---
+
+**Safety.** Do not connect this prototype to public warning origination, operational emergency dispatch, or uncommissioned actuators. NOAA/SAME reception is not authenticated; a local gateway HMAC does not authenticate NOAA. [Apache License 2.0](LICENSE).
+
+<sub>Built as an experimental accessibility and low-power networking laboratory. WindAnvil and TalkPipe can support development workflows; neither is required at runtime.</sub>
