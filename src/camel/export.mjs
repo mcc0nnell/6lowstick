@@ -38,6 +38,7 @@ export function makeObservations(input, fingerprint) {
       sequence: index + 1,
       phase: step.phase,
       observation: step.kind,
+      source_observation: step.source_kind ?? null,
       receiver: step.receiver,
       meaning: MEANINGS[step.kind],
       ack_latency_ms: step.kind === 'ack' && Number.isFinite(step.latency) &&
