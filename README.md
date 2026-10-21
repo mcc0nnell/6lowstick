@@ -54,7 +54,7 @@ The TUI demo is illustrative; `--report` emits a sequential accessible text view
 | Component | Verified scope | Not established |
 | --- | --- | --- |
 | Thread alert lab | POSIX simulation, local HMAC, replay journal, three synthetic modalities | Real RF, human notification |
-| Dual-radio fabric | Scripted Thread/direct-LoRa fallback, per-attempt signed receipts, duplicate suppression | LoRa hardware, LoRaWAN, physical failover |
+| Dual-radio fabric | Scripted failover plus OpenThread POSIX UDP integration, signed receipts, duplicate suppression | Physical Thread/LoRa RF, LoRaWAN, human delivery |
 | NOAA SDR observer | Receive-only decoder-line parsing, bounded observation records, mock replay | NOAA origin authentication, real receiver measurements |
 | Spinel Flight Recorder | Offline HDLC-lite parsing, CRC-16 FCS checks, raw header/command IDs | Live RCP capture, radio state, payload semantics |
 | Mesh Control | Read-only keyboard-driven evidence replay, plain-text report | Live topology or packet-level timing |
@@ -84,3 +84,15 @@ The TUI demo is illustrative; `--report` emits a sequential accessible text view
 Never connect this prototype to public warning origination, operational emergency dispatch, or uncommissioned actuators. NOAA SAME radio reception is unauthenticated; a gateway HMAC authenticates only the **local gateway**. Application receipts do not establish human receipt. See the [threat model](docs/threat-model.md).
 
 Licensed under [Apache License 2.0](LICENSE). WindAnvil and TalkPipe may support development but are not runtime requirements.
+
+## OpenThread POSIX multi-radio integration
+
+The simulated Thread lab now exercises **real OpenThread UDP processing**
+using `ot-cli-ftd` processes, rather than only scripted Thread adapters.
+It validates application receipts, deliberate receipt loss, and synthetic
+LoRa fallback without duplicate activation. See the
+[multi-radio evidence and reproduction guide](docs/multiradio-fabric.md)
+and the `multiradio` field in the Thread lab's JSON output.
+
+The Thread radio is POSIX simulated, LoRa is still scripted, and nothing
+sends public warnings or actuates real accessibility hardware.

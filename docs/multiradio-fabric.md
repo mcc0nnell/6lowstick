@@ -79,3 +79,62 @@ handling. Never feed live SDR/SAME observations into this synthetic engine.
 References:
 - [OpenThread co-processor design](https://openthread.io/platforms/co-processor)
 - [OpenThread Spinel implementation](https://github.com/openthread/openthread/blob/main/src/lib/spinel/spinel.h)
+
+## OpenThread POSIX simulated-radio integration
+
+`experiments/thread-alert/lab.mjs` also exercises `createPosixThreadAdapter`
+against actual `ot-cli-ftd` processes on OpenThread's POSIX *simulated
+radio*. This is a real execution of OpenThread's protocol stack and UDP
+application path, **not physical Thread RF and not a Spinel RCP test**.
+The LoRa transport is still a scripted peer-to-peer model.
+
+A separate `F1|nonce|EA2|id|NOTIFY|tag` framing layer carries the
+per-attempt receipt challenge through OpenThread UDP. The receiving simulator
+checks the existing EA2 HMAC and uses its fsync-backed receiver journal to
+suppress repeated synthetic activations across both transports. It returns
+`R2|id|haptic|nonce|HMAC` by UDP, and the sender checks the application
+HMAC before claiming an acknowledgment. OpenThread CLI `Done` is *never*
+counted as recipient delivery. Invalid F1 payloads are ignored.
+
+The lab adds three observable scenarios after its existing SAME and mesh
+tests:
+
+1. Healthy simulated Thread path -> R2 is actually returned across OpenThread
+   UDP, so the modeled LoRa adapter is not used.
+2. Thread data arrives but the receiver *deliberately withholds* R2 ->
+   sender records no authenticated Thread receipt, falls back to modeled
+   LoRa, and receiving app suppresses a second activation of the same ID.
+   **This models application receipt loss, not measured RF packet loss.**
+3. After the OpenThread haptic process is stopped -> Thread send yields
+   no application acknowledgment and modeled LoRa acknowledges.
+
+### Reproduce with a separately built OpenThread simulator
+
+OpenThread's standard simulation build produces `ot-cli-ftd` under
+`build/simulation/examples/apps/cli`. From the OpenThread source checkout:
+
+```sh
+./script/cmake-build simulation
+```
+
+From this repository, with that absolute binary path:
+
+```sh
+npm ci
+npm test
+OT_CLI_PATH=/absolute/path/to/openthread/build/simulation/examples/apps/cli/ot-cli-ftd \
+  node experiments/thread-alert/lab.mjs > evidence-mesh.json
+```
+
+Inspect `multiradio.healthy`, `multiradio.lostThreadReceipt`,
+`multiradio.stoppedThreadNode`, and `multiradio.receiverEvents`. The
+OpenThread version/build is not pinned by this repo; local evidence must
+identify the binary source and commit. The existing simulated mesh lab has
+previously shown intermittent ACK losses, so a single successful experiment
+cannot establish reliability. Do not relax the existing baseline assertions
+or infer a service-level delivery guarantee.
+
+This code path does not use the live SDR observer, NOAA source authority,
+LoRaWAN/ChirpStack, Spinel, physical LoRa modems, Matter devices, or human
+notification. The `createSyntheticFabric` contract intentionally permits
+simulation adapters and drill messages only.
