@@ -24,7 +24,7 @@ An ACK means receipt by the simulated receiver application, not physical strobe/
 
 The TUI remains independent of Apache Camel and ECharts. The optional Camel 4.22.1 adapter exports allowlisted, read-only copies of evidence, including `harness_elapsed_ms` only when genuinely measured; it never exports raw alert IDs or wire payloads, and it must not acquire gateway authority.
 
-Next: verify timestamp instrumentation during a real POSIX-simulated OpenThread run, instrument observed Thread router/neighbor relationships, compare recorded runs, and separately test physical radios. Neither synthetic TUI playback nor local Node unit tests prove those future milestones.
+One four-process POSIX simulated-radio run has now exercised the timestamp instrumentation successfully; see [the measured simulation evidence and its limitations](monotonic-evidence.md). Next: repeat trials to characterize intermittent missing ACKs, instrument observed Thread router/neighbor relationships, compare runs, and separately test physical radios. A single successful synthetic trial cannot establish reliability or human delivery.
 
 **Not a life-safety product. Never use this for real emergency warning dispatch.**
 
