@@ -6,22 +6,33 @@
 
 ## Architecture and trust boundaries
 
-```text
-NOAA Weather Radio / SAME → receive-only SDR observations
-                                       │ (not authenticated, not dispatchable)
-Synthetic SAME fixtures → offline policy gateway → locally HMAC-signed NOTIFY
-                                                    │
-                             simulated Thread / simulated direct LoRa
-                                                    │
-                                synthetic strobe / display / haptic receivers
-                                                    │
-                                  signed app receipts + replay journal
-                                                    │
-                            JSON evidence → read-only Mesh Control TUI
-
-Separate offline Spinel capture copies → frame integrity metadata (CRC, IDs)
-Separate optional Matter adapter → mock/commissioned-controller seam only
+```mermaid
+flowchart LR
+  subgraph observation["Observation · not dispatch authority"]
+    SDR["NOAA SAME · receive-only SDR"] --> OBS["Bounded observation records"]
+    SP["Offline Spinel bytes"] --> CRC["CRC-checked frame metadata"]
+  end
+  subgraph lab["Synthetic notification laboratory"]
+    FIX["Synthetic SAME fixtures"] --> GATE["Offline policy gateway"]
+    GATE --> AUTH["Locally HMAC-signed NOTIFY"]
+    AUTH --> THREAD["Simulated Thread"]
+    AUTH --> LORA["Simulated direct LoRa fallback"]
+    THREAD --> RCV["Synthetic strobe · display · haptic"]
+    LORA --> RCV
+    RCV --> ACK["Signed app receipts + replay journal"]
+  end
+  ACK --> EV["JSON evidence"]
+  EV --> TUI["Read-only Mesh Control TUI"]
+  EV --> CAMEL["Camel evidence export"]
+  classDef untrusted fill:#fff0db,stroke:#b66b18,color:#603b10
+  classDef synthetic fill:#e7f0ff,stroke:#3768ae,color:#173963
+  classDef evidence fill:#e5f5ed,stroke:#258358,color:#134a31
+  class SDR,OBS,SP,CRC untrusted
+  class FIX,GATE,AUTH,THREAD,LORA,RCV,ACK synthetic
+  class EV,TUI,CAMEL evidence
 ```
+
+**Legend:** amber = untrusted/offline observations; blue = synthetic laboratory path; green = read-only evidence. Missing arrows are intentional: SDR and Spinel observations are **not connected to alert dispatch**. Edges show logical data flow, not RF topology or measured timing.
 
 These paths are **not automatically connected**: receiving a SAME observation does not authorize a mesh notification. The synthetic fabric does not send real RF traffic. A valid Spinel CRC proves only frame integrity, and an authenticated application receipt is **not** proof of physical actuation or human acknowledgment.
 
