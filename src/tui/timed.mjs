@@ -13,7 +13,7 @@ const MAPPING = Object.freeze({
   activation_recorded: ['activated', 'HARNESS ACTIVATION RECORDED', 'Synthetic application activation recorded; no physical output'],
   missing: ['missing', 'APPLICATION ACK MISSING', 'No matching fresh ACK by the harness deadline'],
   send_error: ['error', 'SIMULATED SEND ERROR', 'Gateway send command reported failure'],
-  receiver_offline: ['offline', 'RECEIVER PROCESS STOPPED', 'Harness stopped the simulated receiver process'],
+  receiver_offline: ['offline', 'RECEIVER STOP REQUESTED', 'Harness requested receiver shutdown; actual process exit not independently timestamped'],
   policy_reject: ['gate', 'OUT-OF-AREA POLICY REJECTION', 'Synthetic SAME geographic policy rejected input'],
   policy_accept: ['gate', 'SYNTHETIC POLICY ACCEPTANCE', 'Synthetic SAME input passed local policy; NOAA origin unverified']
 });
