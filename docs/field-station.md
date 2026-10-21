@@ -23,9 +23,9 @@ The source of truth for displayed counts is `site/multiradio.json`, generated
 from `experiments/multiradio/drill.mjs` by the Pages workflow.
 `station-model.mjs` rejects evidence that claims physical radio verification
 or human delivery, or that contains unknown routes/outcomes. Charts are not
-used as assertions, nor are temporal values invented from event order.
+used as assertions, nor are temporal values or receiver/attempt interleavings invented from the fixture.
 
-The text report and table provide full access to ordered events if the
+The text report and table list attempt entries followed by receiver journal entries. Their display order is **not** an observed interleaving or timestamp. Both remain accessible if the
 ECharts CDN is unavailable. Controls are keyboard-accessible. Automatic
 playback respects reduced-motion preferences and stops when the tab hides.
 

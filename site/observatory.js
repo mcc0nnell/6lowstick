@@ -86,7 +86,7 @@ function draw() {
   const events = eventsFor(scenario);
   const event = events[eventIndex];
   $('scenario').value = String(scenarioIndex);
-  $('stepCount').textContent = `EVENT ${eventIndex + 1} / ${events.length}`;
+  $('stepCount').textContent = `ENTRY ${eventIndex + 1} / ${events.length}`;
   $('eventType').textContent = event.type === 'attempt' ? 'TRANSPORT ATTEMPT' : 'RECEIVER JOURNAL';
   $('eventTitle').textContent = labelFor(event.outcome);
   $('eventDescription').textContent = descriptionFor(event);
