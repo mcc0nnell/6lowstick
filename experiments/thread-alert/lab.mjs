@@ -14,9 +14,11 @@ import {ReplayJournal} from './replay.mjs';
 import {evaluateSame} from '../../src/nwr/gateway.mjs';
 import {reconcileSameHeaders} from '../../src/nwr/repetition.mjs';
 import {createTelemetryRecorder} from '../../src/telemetry/monotonic.mjs';
+import {signReceipt, verifyReceipt} from '../../src/fabric/receipts.mjs';
 
 const cli = process.env.OT_CLI_PATH;
 const base = Number(process.env.THREAD_ALERT_BASE_ID ?? 10);
+const enableR2 = process.env.THREAD_ALERT_R2 === '1';
 if (!cli || !isAbsolute(cli) || !existsSync(cli) ||
     !Number.isInteger(base) || base < 1 || base > 28) {
   console.error('Set OT_CLI_PATH to an absolute ot-cli-ftd binary; base ID must be 1..28');
@@ -37,6 +39,7 @@ const PORT_ACK = 61617;
 const events = [];
 const errorEvents = [];
 const nodes = [];
+const r2Verified = []; // optional R2 verification log (only populated when THREAD_ALERT_R2=1)
 const trace = createTelemetryRecorder();
 let activeSend = null;
 let activePhase = null;
@@ -92,7 +95,7 @@ class OtNode {
       if (process.env.THREAD_ALERT_DEBUG === '1' && (/bytes from/.test(line) || /^Error \d+:/.test(line))) {
         console.error(this.name + ' CLI: ' + line.slice(0, 180));
       }
-      const packet = /^\d+ bytes from \S+ \d+ ((?:EA2\|[A-Za-z0-9_-]+\|[A-Za-z0-9_-]+\|[a-f0-9]{32}|ACK1\|[A-Za-z0-9_-]+\|[A-Za-z0-9_-]+))$/.exec(line);
+      const packet = /^\d+ bytes from \S+ \d+ ((?:EA2\|[A-Za-z0-9_-]+\|[A-Za-z0-9_-]+\|[a-f0-9]{32}|ACK1\|[A-Za-z0-9_-]+\|[A-Za-z0-9_-]+|R2\|[A-Za-z0-9_-]+\|[A-Za-z0-9_-]+\|[a-f0-9]{24}\|[a-f0-9]{32}))$/.exec(line);
       if (packet) {
         const item = {node: this.name, body: packet[1], time: performance.now()};
         this.received.push(item);
@@ -102,6 +105,16 @@ class OtNode {
               item.time >= activeSend.start && !activeSend.seen.has(ack[2])) {
             activeSend.seen.add(ack[2]);
             trace.record(activeSend.phase, 'gateway_ack', ack[2], item.time);
+          }
+          // Optional R2 verification (does not affect ACK1 assertions)
+          const r2m = /^R2\|([A-Za-z0-9_-]+)\|(strobe|display|haptic)\|([a-f0-9]{24})\|([a-f0-9]{32})$/.exec(item.body);
+          if (enableR2 && r2m && r2m[1] === activeSend.id && activeSend.targets.has(r2m[2]) &&
+              item.time >= activeSend.start) {
+            const ok = verifyReceipt(alertKey, item.body, {id: r2m[1], receiver: r2m[2], nonce: r2m[3]});
+            if (ok) {
+              r2Verified.push({phase: activeSend.phase, id: r2m[1], receiver: r2m[2], nonce: r2m[3]});
+              trace.record(activeSend.phase, 'r2_verified', r2m[2], item.time);
+            }
           }
         }
         if (this.onPacket) Promise.resolve().then(() => this.onPacket(item)).catch(err => {
@@ -245,8 +258,15 @@ try {
         recordWhileActive('duplicate', node.name, undefined, alert.id);
         events.push({node: node.name, event: 'duplicate_suppressed', alert_id: alert.id});
       }
+      // Existing ACK1 path (unchanged)
       await node.command('udp send ' + gateway.address + ' ' + PORT_ACK +
                          ' ACK1|' + alert.id + '|' + node.name);
+      // Optional challenge-bound R2 (additive only)
+      if (enableR2) {
+        const nonce = randomBytes(12).toString('hex');
+        const r2 = signReceipt(alertKey, alert.id, node.name, nonce);
+        await node.command('udp send ' + gateway.address + ' ' + PORT_ACK + ' ' + r2);
+      }
     };
   }
   const targets = [strobe, display, haptic];
@@ -260,6 +280,11 @@ try {
     }
   }
   assert.equal(baseline.acknowledged.length, 3, 'healthy simulated nodes must all ACK');
+  if (enableR2) {
+    await sleep(200); // allow R2 packets to arrive
+    const r2ForBaseline = r2Verified.filter(r => r.phase === 'baseline' && r.id === 'drill001');
+    assert.equal(r2ForBaseline.length, 3, 'R2 mode: all three receivers must emit verifiable R2');
+  }
   const forged = signAlert(alertKey, 'forged001').replace('forged001', 'forged002');
   const rejected = await sendAlert(gateway, [strobe], 'forged002', forged, 'rejected');
   assert.deepEqual(rejected.acknowledged, [], 'forged alert must not be acknowledged');
@@ -297,6 +322,8 @@ try {
     schema: 'tronix.thread-alert-lab.v1',
     transport: 'OpenThread ot-cli-ftd UDP POSIX simulation (no physical radio)',
     payload: 'synthetic HMAC-authenticated EA2 alert and ACK1 receipt; not CAP',
+    r2Enabled: enableR2,
+    r2VerifiedCount: r2Verified.length,
     baseline, rejected, replay, sameGateway: {policyRejected, policyAlert: {id: policyAlert.id, event: policyAlert.event, areaCodes: policyAlert.areaCodes}, delivery: sameDelivery}, degraded, activations: Object.fromEntries(targets.map(n => [n.name, n.activations])),
     events, errors: errorEvents,
     timing: trace.snapshot(),
