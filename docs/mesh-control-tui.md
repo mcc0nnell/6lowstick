@@ -32,6 +32,20 @@ The **4 / t text-reader** view presents the current event and each receiver's st
 
 `--report` prints the complete ordered phase sequence with each observation, its interpretation and recorded application ACK latency. Unlike the interactive view, it does not truncate to terminal height or emit ANSI control sequences. This output is accessible text, not reconstructed packet timings.
 
+## Rizzer mascot cameo
+
+Press **m** in the interactive Mesh Control viewer to see Rizzer the Siamese Polo Shirts, and **m** again to return to the same evidence position. This pauses playback; no observations, receipts or routes are modified.
+
+For a stand-alone cameo independent of evidence loading:
+
+```bash
+npm run tui -- --mascot --plain
+npm run tui -- --mascot --animate
+npm run tui -- --mascot --reduced-motion
+```
+
+The four-frame animation requires a terminal and explicit `--animate`. Piped output, `--plain`, and reduced motion produce one static frame; screen readers can use the one-line plain form. The terminal picture is decoration, not a device, acknowledgement, security finding or claim of an actual warning.
+
 ## Clock and ordering contract
 
 `timing.schema` is `6lowstick.harness-monotonic.v1`, with `clock: node.performance.now`, `unit: ms`, and ordered `events` containing a sequence number, `t_ms` relative to the harness recorder start, phase, event kind and receiver identifier. Raw datagrams and keys are deliberately excluded. The receiver's application acceptance, a gateway-observed ACK, and a missing ACK at the deadline are separate event kinds. Distinct Node processes are observed by one parent harness and asynchronously surfaced through the CLI, so clock values should **not** be treated as synchronized device clocks or packet-on-air timings. The harness sorts observations by captured monotonic time, preserving insertion order for ties. Its `activation_recorded` event is not proof of a physical strobe, display, or haptic output.

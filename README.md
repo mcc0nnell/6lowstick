@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/6lowstick-two-polos.webp" alt="Rizzer, the official 6lowStick mascot: a six-shaped figure made from joined hot-pink and lime-green polo shirts with two popped collars." width="460" />
+  <img src="assets/rizzer.svg" alt="Rizzer, the official 6lowStick mascot: a six-shaped figure made from joined hot-pink and lime-green polo shirts with two popped collars." width="460" />
 
   <h1>6lowStick</h1>
   <p><strong>Light the mesh. Make alerts accessible.</strong></p>
@@ -41,6 +41,19 @@ A warning can be transmitted without being **received**. It can be received with
 The GitHub Pages experience offers five deterministic, synthetic fault scenarios, a logical route graph, application delivery-attempt comparisons, an evidence inspector, and an accessible attempt-by-attempt table. It visualizes **modeled delivery paths**, not captured RF topology or live devices.
 
 Prefer the terminal? **Mesh Control** provides keyboard navigation, a text-reader view, `--plain`, `--reduced-motion`, and a complete `--report` for sequential evidence inspection. Newly instrumented OpenThread POSIX lab runs also capture monotonic **Node-harness** application events and replay their measured inter-event gaps; old evidence remains explicitly labeled as reconstructed phase replay. These are **not RF packet timestamps or proof of human notification**.
+
+### Rizzer cameos in Mesh Control
+
+Rizzer is our official mascot: two popped polo collars, one six, and a strong opinion on trust boundaries. His independently developed [fuzzing engine](https://github.com/mcc0nnell/rizzer) is **not** required to display him.
+
+```bash
+npm run tui -- --mascot --plain                # one screen-reader-friendly line
+npm run tui -- --mascot --animate              # four frames, interactive TTY only
+npm run tui -- --mascot --reduced-motion       # always static
+npm run tui -- --demo                          # press m to see Rizzer and m to return
+```
+
+Mascot mode is decorative and **read-only**: no radio transmission, alert origination, evidence mutation, or automatic fuzzing. Logs, piped output, plain text, and reduced-motion settings remain static and available.
 
 ## Run the lab
 
@@ -108,7 +121,7 @@ To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PAT
 
 ## Independent fuzzing research: Rizzer
 
-**Rizzer the Siamese Polo Shirts** is the mascot in our README hero, and [Rizzer](https://github.com/mcc0nnell/rizzer) is also the name of the independent Apache-2.0 native coverage-guided fuzzer, originating from the IHB synthetic-fuzzing prototype. It is one character with two distinct roles, not two separate mascots. It retains independent source control, release decisions and evidence. Potential 6lowStick targets include offline Spinel parsing, protocol input validation and synthetic alert-state invariants. **No Rizzer integration is implemented in this repository yet**, and there is no claim of a confirmed OpenThread vulnerability, radio transmission, or production-grade containment. See the [Rizzer README](https://github.com/mcc0nnell/rizzer#readme) for its current experimental scope and reproducible tests.
+**Rizzer the Siamese Polo Shirts** is the source-vector mascot in our README hero, and [Rizzer](https://github.com/mcc0nnell/rizzer) is also the name of the independent Apache-2.0 native coverage-guided fuzzer, originating from the IHB synthetic-fuzzing prototype. It is one character with two distinct roles, not two separate mascots. It retains independent source control, release decisions and evidence. Potential 6lowStick targets include offline Spinel parsing, protocol input validation and synthetic alert-state invariants. **No Rizzer integration is implemented in this repository yet**, and there is no claim of a confirmed OpenThread vulnerability, radio transmission, or production-grade containment. See the [Rizzer README](https://github.com/mcc0nnell/rizzer#readme) for its current experimental scope and reproducible tests.
 
 ### Next experiments
 
