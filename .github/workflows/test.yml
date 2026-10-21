@@ -23,4 +23,14 @@ jobs:
           npm run release:source
           after="$(sha256sum dist/6lowstick-v0.1.0-rc.1.tar.gz | cut -d' ' -f1)"
           test "$before" = "$after"
+      - name: Verify source archive works WITHOUT Git metadata
+        run: |
+          scratch="$(mktemp -d)"
+          trap 'rm -rf "$scratch"' EXIT
+          tar -xzf dist/6lowstick-v0.1.0-rc.1.tar.gz -C "$scratch"
+          cd "$scratch/6lowstick-v0.1.0-rc.1"
+          test ! -e .git
+          npm ci
+          npm test
+          npm run release:check
       - run: git diff --check

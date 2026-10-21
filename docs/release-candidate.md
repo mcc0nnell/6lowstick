@@ -58,7 +58,10 @@ cat dist/6lowstick-v0.1.0-rc.1.provenance.json
 different from committed HEAD. The source archive uses `git archive`
 and deterministic gzip metadata, excluding local evidence and installed
 packages. Rebuilding the same commit on a compatible toolchain should
-reproduce the same archive digest. Checksums certify only byte
+reproduce the same archive digest. **The extracted archive is also
+CI-tested with `npm ci && npm test && npm run release:check` without a
+`.git` directory.** The archive can validate metadata but cannot assert
+Git-tracked-file status without Git metadata. Checksums certify only byte
 integrity, **not the author of the artifact**.
 
 The generated artifacts remain ignored local files until explicitly

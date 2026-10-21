@@ -44,11 +44,16 @@ export function checkReleaseTree() {
   for (const path of ['evidence/', 'dist/', 'node_modules/'])
     if (!ignore.split(/\r?\n/).some(line => line.trim() === path))
       errors.push('generated path not ignored: ' + path);
-  const files = execFileSync('git', ['ls-files', '-z'], {
-    cwd: root, encoding: 'utf8', timeout: 5000}).split('\0').filter(Boolean);
-  for (const file of files)
-    if (/^(?:evidence|dist|node_modules)\//.test(file))
-      errors.push('generated/host-specific file tracked by git: ' + file);
+  // Source tarballs legitimately have no .git. Only a checkout can assert
+  // which paths are tracked; archive construction separately verifies its
+  // file list and excludes generated output.
+  if (existsSync(resolve(root, '.git'))) {
+    const files = execFileSync('git', ['ls-files', '-z'], {
+      cwd: root, encoding: 'utf8', timeout: 5000}).split('\0').filter(Boolean);
+    for (const file of files)
+      if (/^(?:evidence|dist|node_modules)\//.test(file))
+        errors.push('generated/host-specific file tracked by git: ' + file);
+  }
   return errors;
 }
 
@@ -61,6 +66,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     const pkg = read('package.json');
     console.log(JSON.stringify({status:'metadata_ok', version:pkg.version,
       source_only:true, operational_alerting:false, npm_publishable:false,
-      checked_files:true, tracked_local_evidence:false}));
+      checked_files:true, tracked_local_evidence:existsSync(resolve(root, '.git')) ? false : null}));
   }
 }
