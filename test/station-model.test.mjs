@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 import {
   validateResearchFixture, stationSummary, eventsFor,
   labelFor, descriptionFor,
@@ -62,4 +64,19 @@ test('Field Station remains an inspect-only static interface with functional tex
   assert.match(script, /validateResearchFixture/);
   assert.match(script, /\.\.?\/multiradio\.json/);
   assert.match(css, /prefers-reduced-motion/);
+});
+
+test('Field Station source verifier inventories six assets with SHA-256 provenance', () => {
+  const root = fileURLToPath(new URL('../', import.meta.url));
+  const output = execFileSync(process.execPath, ['scripts/check-field-station.mjs'], {
+    cwd: root, encoding: 'utf8', timeout: 10000,
+  });
+  const evidence = JSON.parse(output);
+  assert.equal(evidence.result, 'PASS');
+  assert.equal(evidence.readOnly, true);
+  assert.equal(evidence.humanReceiptVerified, false);
+  assert.equal(evidence.physicalRadioVerified, false);
+  assert.equal(Object.keys(evidence.assetDigestsSha256).length, 6);
+  assert.ok(Object.values(evidence.assetDigestsSha256).every(
+    digest => /^[0-9a-f]{64}$/.test(digest)));
 });
