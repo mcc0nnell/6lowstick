@@ -115,6 +115,7 @@ To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PAT
 | [Spinel Flight Recorder](docs/spinel-flight-recorder.md) | Byte-level parsing and FCS validation |
 | [Mesh Control](docs/mesh-control-tui.md) | TUI controls, plain text, accessibility |
 | [Monotonic simulator evidence](docs/monotonic-evidence.md) | One four-node simulated run, 49 observed application events, exact provenance and cautions |
+| [Reliability trial collector](docs/reliability-trials.md) | Bounded serial POSIX simulations, strict receipt invariants, failure-inclusive summaries |
 | [Matter adapter](src/matter/README.md) | SDK adapter and mock boundary |
 | [Alert schema](docs/alert-schema.json) | Machine-readable synthetic message format |
 | [Threat model](docs/threat-model.md) | Spoofing, replay, missing receipts and safety limits |
@@ -125,7 +126,7 @@ To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PAT
 
 ### Next experiments
 
-1. Run repeated **timestamped simulated Thread trials** and characterize missing ACKs without weakening the confirmation gate.
+1. Run bounded **timestamped simulated Thread trials** with `npm run evidence:reliability -- --trials 3` and [inspect every failure](docs/reliability-trials.md) without weakening the confirmation gate.
 2. Cross-check offline Spinel decodes against independent frame specimens before interpreting radio evidence.
 3. Conduct authorized, isolated **physical-radio experiments** with provenance and applicable regulatory controls.
 4. Evaluate whether text, light, and haptic outputs are actually **perceived and understood** by people—not merely accepted by software.
