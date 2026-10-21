@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/rizzer.svg" alt="Rizzer, the official 6lowStick mascot: a six-shaped figure made from joined hot-pink and lime-green polo shirts with two popped collars." width="460" />
+  <img src="assets/6lowstick-two-polos.webp" alt="Rizzer, the original two-polo-shirt 6lowStick mascot: joined hot-pink and lime-green polos with two popped collars." width="460" />
 
   <h1>6lowStick</h1>
   <p><strong>Light the mesh. Make alerts accessible.</strong></p>
@@ -44,7 +44,7 @@ Prefer the terminal? **Mesh Control** provides keyboard navigation, a text-reade
 
 ### Rizzer cameos in Mesh Control
 
-Rizzer is our official mascot: two popped polo collars, one six, and a strong opinion on trust boundaries. His independently developed [fuzzing engine](https://github.com/mcc0nnell/rizzer) is **not** required to display him.
+Rizzer is our official mascot: two popped polo collars, one six, and a strong opinion on trust boundaries. The original two-polo illustration is his canonical public logo; the vector expressions are optional supporting artwork. His independently developed [fuzzing engine](https://github.com/mcc0nnell/rizzer) is **not** required to display him.
 
 ```bash
 npm run tui -- --mascot --plain                # one screen-reader-friendly line
