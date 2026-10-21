@@ -6,14 +6,14 @@ import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildTimeline, parseEvidence, RECEIVERS} from './evidence.mjs';
-import {renderScreen} from './render.mjs';
+import {renderScreen, renderReport} from './render.mjs';
 
 const args = process.argv.slice(2);
 const usage = '6lowStick Mesh Control (experimental, read-only)\n' +
-  'Usage: npm run tui -- [--demo | --input evidence/mesh-run.json] [--snapshot] [--plain] [--reduced-motion]\n' +
+  'Usage: npm run tui -- [--demo | --input evidence/mesh-run.json] [--snapshot | --report] [--plain] [--reduced-motion]\n' +
   'Keys: arrows/h/l step; j/k select receiver; space play; 1/2/3/4 views; ? help; q quit\n';
 if (args.includes('--help') || args.includes('-h')) { console.log(usage); process.exit(0); }
-const known = new Set(['--demo', '--input', '--snapshot', '--plain', '--reduced-motion']);
+const known = new Set(['--demo', '--input', '--snapshot', '--report', '--plain', '--reduced-motion']);
 if (args.some((a,i) => !known.has(a) && !(i > 0 && args[i-1] === '--input')) ||
     args.filter(a => a === '--input').length > 1 ||
     (args.includes('--demo') && args.includes('--input')) ||
@@ -34,6 +34,10 @@ try {
   process.exit(1);
 }
 const steps = buildTimeline(data);
+if (args.includes('--snapshot') && args.includes('--report')) {
+  console.error('Choose --snapshot or --report, not both'); process.exit(2);
+}
+if (args.includes('--report')) { process.stdout.write(renderReport({data, steps})); process.exit(0); }
 if (!steps.length) { console.error('No observations'); process.exit(1); }
 const snapshot = args.includes('--snapshot') || !process.stdin.isTTY || !process.stdout.isTTY;
 const plain = args.includes('--plain') || process.env.NO_COLOR !== undefined || snapshot;
