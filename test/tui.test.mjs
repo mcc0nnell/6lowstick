@@ -59,7 +59,7 @@ test('evidence strings cannot inject terminal escape/control sequences', () => {
   for (const view of ['timeline','evidence','text']) {
     const frame = renderScreen({data:attacker, steps, cursor:steps.length - 1,
       view, width:110, height:48, plain:true});
-    assert.doesNotMatch(frame, /[\x00-\x1f\x7f-\x9f]/u);
+    assert.doesNotMatch(frame, /[\x00-\x09\x0b-\x1f\x7f-\x9f]/u);
     assert.match(frame, /READ ONLY/);
   }
 });
