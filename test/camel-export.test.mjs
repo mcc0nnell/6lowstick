@@ -21,7 +21,7 @@ test('Camel bridge exposes allowlisted observation fields only', () => {
   assert.ok(events.some(x => x.observation === 'missing' && x.receiver === 'haptic'));
   assert.ok(events.some(x => x.observation === 'reject'));
   assert.ok(events.some(x => x.observation === 'duplicate'));
-  const allowed = ['schema','source','evidence_sha256','sequence','phase','observation',
+  const allowed = ['schema','source','evidence_sha256','sequence','phase','observation','source_observation',
     'receiver','meaning','ack_latency_ms','harness_elapsed_ms','event_clock','measured_packet_timestamp',
     'physical_actuation_verified','human_receipt_verified'];
   for (const ev of events) {
