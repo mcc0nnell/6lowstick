@@ -33,7 +33,7 @@ test('terminal views remain read-only and explicit about evidence boundaries', (
   assert.match(frame, /MISSING/);
   assert.match(frame, /Application ACK ≠ physical actuation ≠ human acknowledgment/);
   assert.match(frame, /NOT measured RF paths/);
-  for (const view of ['topology','timeline','evidence']) {
+  for (const view of ['topology','timeline','evidence','text']) {
     const out = unstyle(renderScreen({data, steps, cursor:0, view, width:60, height:22, plain:true}));
     assert.match(out, /READ ONLY/);
     assert.ok(out.split('\n').length <= 23);
@@ -46,4 +46,20 @@ test('noninteractive CLI is usable without terminals or external services', () =
   assert.match(stdout, /MESH CONTROL/);
   assert.match(stdout, /DEGRADED DELIVERY/);
   assert.match(stdout, /MISSING/);
+});
+
+test('evidence strings cannot inject terminal escape/control sequences', () => {
+  const attacker = {
+    ...data,
+    warning: '\x1b[2JFAKE\nWARNING',
+    transport: '\x1b]52;c;Y2xpcGJvYXJk\x07',
+    degraded: {...data.degraded, id: 'drill002\x1b[2J'}
+  };
+  const steps = buildTimeline(attacker);
+  for (const view of ['timeline','evidence','text']) {
+    const frame = renderScreen({data:attacker, steps, cursor:steps.length - 1,
+      view, width:110, height:48, plain:true});
+    assert.doesNotMatch(frame, /[\x00-\x1f\x7f-\x9f]/u);
+    assert.match(frame, /READ ONLY/);
+  }
 });
