@@ -117,3 +117,29 @@ export function renderScreen({data, steps, cursor, selected = 'strobe', view = '
   out.push('', footer);
   return out.map(s => clip(s, w)).join('\n') + '\n';
 }
+
+export function renderReport({data, steps}) {
+  const rows = [
+    '6LOWSTICK — COMPLETE TEXT EVIDENCE REPORT',
+    'SIMULATED RESEARCH / READ ONLY / NOT A LIFE-SAFETY SYSTEM',
+    'Transport: ' + safe(data.transport || 'not recorded'),
+    'Schema: ' + safe(data.schema),
+    'Application ACK is not physical activation or human acknowledgment.',
+    'Event order is reconstructed by test phase and receiver order, NOT packet arrival time.',
+    ''
+  ];
+  let phase = null;
+  for (const event of steps) {
+    if (event.phase !== phase) {
+      phase = event.phase;
+      rows.push('== ' + phaseLabel(phase) + ' ==');
+    }
+    rows.push(String(event.index + 1).padStart(3, '0') + '. ' + safe(event.title));
+    rows.push('     ' + safe(event.detail));
+    if (event.kind === 'ack' && Number.isFinite(event.latency) && event.latency >= 0)
+      rows.push('     Harness send-to-application-ACK latency: ' + event.latency + ' ms');
+  }
+  rows.push('');
+  rows.push('No actual NOAA origin authentication, radio paths, device actuation or human delivery measured.');
+  return rows.join('\n') + '\n';
+}
