@@ -29,7 +29,7 @@ export function buildTimedTimeline(timing) {
       index, phase:event.phase, kind, receiver:event.receiver,
       title:event.receiver ? event.receiver.toUpperCase() + ' ' + name : name,
       detail, latency: Number.isFinite(latency) && latency >= 0 ? latency : null,
-      time_ms:event.t_ms, time_kind:'harness_elapsed_monotonic'
+      time_ms:event.t_ms, time_kind:'harness_elapsed_monotonic', source_kind:event.kind
     };
   });
 }
