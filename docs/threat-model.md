@@ -27,3 +27,17 @@ meaningful repeated trial set and examine convergence, packet capture,
 receiver journals, retransmission policy, and duplicate handling. A resend
 must preserve the same alert ID and must never count duplicate notifications
 as new alerts. Do not merely extend the timeout to make the failure disappear.
+
+## Added receive-only SDR ingress boundary (2026-10-20)
+
+The SDR observation program reads stdout from an external third-party EAS
+decoder. It treats all lines as untrusted, filters oversized/malformed
+inputs, outputs bounded JSON objects and has a short in-memory suppression
+window. The radio pipeline and the decoder are independently installed;
+neither is attested or controlled by this repository.
+
+A successful decode **does not** prove the transmitter was NOAA, that the
+radio wasn't jammed/spoofed, that coverage was complete, or that independent
+copies of the SAME header agreed. No alert authentication, Thread/Matter
+dispatch, external notification, or physical response is available on this
+path. See [SDR ingress](sdr-ingress.md).
