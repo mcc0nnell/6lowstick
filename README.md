@@ -20,7 +20,7 @@ npm run tui -- --demo --snapshot --plain
 npm run tui -- --demo --report   # complete accessible text export
 ```
 
-The demo is labeled illustrative, not a measured experiment. Recorded replay is a reconstruction from final lab JSON, not packet-by-packet live telemetry. Lines show logical intended recipients, **not radio topology**; application ACKs do not prove human receipt. See [TUI guide](docs/mesh-control-tui.md). Camel 4.22 is a potential future read-only integration and not a runtime requirement.
+The demo is labeled illustrative, not a measured experiment. New OpenThread POSIX lab evidence records **monotonic harness event times** for application-level activity; Mesh Control replays their measured gaps and shows them in its timeline. Older evidence still uses explicitly labeled reconstructed phase replay. Neither mode shows RF packet timestamps or measured **radio topology**; application ACKs do not prove physical actuation or human receipt. See [TUI guide](docs/mesh-control-tui.md). Camel 4.22 is a potential future read-only integration and not a runtime requirement.
 
 **Not a life-safety product.** No physical actuators, real emergency authority, CAP/IPAWS integration, production key management, or human delivery guarantee is provided. Do not use for actual emergency warnings.
 
