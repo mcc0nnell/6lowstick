@@ -1,5 +1,8 @@
 <div align="center">
-  <img src="assets/6lowstick-hero.svg" alt="6lowStick: Light the mesh. Make alerts accessible. A conceptual diagram of a synthetic gateway, simulated Thread and direct LoRa paths, and text, light, and haptic outputs." width="100%" />
+  <img src="assets/6lowstick-two-polos.webp" alt="6lowStick: a six formed by two overlapping polo-shirt collars in hot pink and neon green." width="460" />
+
+  <h1>6lowStick</h1>
+  <p><strong>Light the mesh. Make alerts accessible.</strong></p>
 
   <p>
     <a href="https://mcc0nnell.github.io/6lowstick/"><strong>Explore Mesh Observatory ↗</strong></a>
