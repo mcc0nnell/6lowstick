@@ -22,3 +22,8 @@ The parser and gateway are not yet wired to the live OpenThread simulator or a
 physical NWR receiver. Year rollover, actual SAME event policy, threat modeling,
 radio spoofing, CAP text enrichment, and safety-reviewed user instructions are
 open work. Run `node --test test/*.test.mjs experiments/thread-alert/*.test.mjs`.
+
+`repetition.mjs` provides an initial strict-equality agreement gate for up to
+three already-decoded synthetic headers, requiring two identical copies. This
+is a laboratory approximation, not SAME audio framing, bit-level error
+correction, or a specification-complete repeated-header algorithm.
