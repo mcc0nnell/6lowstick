@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="1540" viewBox="0 0 640 1540" role="img" aria-labelledby="title description">
+<title id="title">6lowStick architecture: observe, simulate, inspect</title>
+<desc id="description">Three separate trust boundaries. Receive-only NOAA SAME and offline Spinel feed observations but do not authorize alert dispatch. An independent synthetic alert fixture passes through an offline policy gate and locally signed notification, uses simulated Thread or direct LoRa, reaches synthetic text, light, and haptic receivers, and produces authenticated application receipts. Receipts are exported as JSON to read-only TUI, ECharts observatory, and Camel evidence exporter. The drawing depicts logical data flow, not physical radios or RF topology.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#071724"/><stop offset="1" stop-color="#08111b"/></linearGradient><linearGradient id="line" x1="0" x2="1"><stop stop-color="#73e8ca"/><stop offset="1" stop-color="#7dbef8"/></linearGradient><pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#608ba3" stroke-opacity=".08"/></pattern></defs>
+<rect x="0" y="0" width="640" height="1540" rx="22" fill="url(#bg)" stroke="none" stroke-width="1"/>
+<rect x="0" y="0" width="640" height="1540" rx="22" fill="url(#g)" stroke="none" stroke-width="1"/>
+<text x="32" y="57" font-size="30" font-weight="800" fill="#e5faf6" text-anchor="start" letter-spacing="1.2">6LOWSTICK / SYSTEM MAP</text>
+<text x="32" y="98" font-size="22" font-weight="400" fill="#a6c5d5" text-anchor="start" letter-spacing="0">Three domains. Explicit trust boundaries.</text>
+<rect x="31" y="115" width="336" height="39" rx="18" fill="#143742" stroke="#488f85" stroke-width="1.3"/>
+<text x="50" y="142" font-size="20" font-weight="700" fill="#87eecb" text-anchor="start" letter-spacing="0.5">CONCEPTUAL · SOFTWARE-ONLY</text>
+<rect x="25" y="178" width="590" height="325" rx="22" fill="#0e2534" stroke="#d1a661" stroke-width="1.6"/>
+<text x="47" y="219" font-size="28" font-weight="800" fill="#f3d99f" text-anchor="start" letter-spacing="0">01  /  OBSERVE</text>
+<text x="47" y="250" font-size="19" font-weight="600" fill="#f4c78f" text-anchor="start" letter-spacing="0">UNTRUSTED INPUTS · NO DISPATCH AUTHORITY</text>
+<rect x="47" y="272" width="242" height="71" rx="14" fill="#142f40" stroke="#b99560" stroke-width="1.7"/><text x="168" y="303" font-size="22" font-weight="700" fill="#f5fbfe" text-anchor="middle" letter-spacing="0">NOAA SAME</text><text x="168" y="327" font-size="18" font-weight="400" fill="#b6d3de" text-anchor="middle" letter-spacing="0">Receive-only observer</text>
+<path d="M300 308H326" fill="none" stroke="#e1bd7d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="313" y="297" font-size="23" font-weight="700" fill="#ecd29d" text-anchor="middle" letter-spacing="0">›</text>
+<rect x="338" y="272" width="255" height="71" rx="14" fill="#142f40" stroke="#b99560" stroke-width="1.7"/><text x="465.5" y="303" font-size="22" font-weight="700" fill="#f5fbfe" text-anchor="middle" letter-spacing="0">Bounded records</text><text x="465.5" y="327" font-size="18" font-weight="400" fill="#b6d3de" text-anchor="middle" letter-spacing="0">Untrusted observation</text>
+<rect x="47" y="358" width="242" height="71" rx="14" fill="#142f40" stroke="#b99560" stroke-width="1.7"/><text x="168" y="389" font-size="22" font-weight="700" fill="#f5fbfe" text-anchor="middle" letter-spacing="0">Spinel frames</text><text x="168" y="413" font-size="18" font-weight="400" fill="#b6d3de" text-anchor="middle" letter-spacing="0">Offline decoder</text>
+<path d="M300 395H326" fill="none" stroke="#e1bd7d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="313" y="384" font-size="23" font-weight="700" fill="#ecd29d" text-anchor="middle" letter-spacing="0">›</text>
+<rect x="338" y="358" width="255" height="71" rx="14" fill="#142f40" stroke="#b99560" stroke-width="1.7"/><text x="465.5" y="389" font-size="22" font-weight="700" fill="#f5fbfe" text-anchor="middle" letter-spacing="0">CRC metadata</text><text x="465.5" y="413" font-size="18" font-weight="400" fill="#b6d3de" text-anchor="middle" letter-spacing="0">Integrity, not authenticity</text>
+<rect x="47" y="444" width="546" height="39" rx="10" fill="#3f3225" stroke="#755735" stroke-width="1"/>
+<text x="320" y="470" font-size="20" font-weight="600" fill="#fae3bb" text-anchor="middle" letter-spacing="0">STOP  /  Nothing here can originate an alert</text>
+<rect x="28" y="513" width="584" height="52" rx="13" fill="#1b222d" stroke="#526171" stroke-width="1"/>
+<text x="320" y="548" font-size="20" font-weight="750" fill="#d4e2ed" text-anchor="middle" letter-spacing="0.4">NO BRIDGE FROM OBSERVATIONS TO DISPATCH</text>
+<rect x="25" y="575" width="590" height="586" rx="22" fill="#0e2534" stroke="#4bcdaa" stroke-width="1.6"/>
+<text x="47" y="616" font-size="28" font-weight="800" fill="#8ef1d2" text-anchor="start" letter-spacing="0">02  /  SIMULATE</text>
+<text x="47" y="647" font-size="19" font-weight="600" fill="#8ad1bb" text-anchor="start" letter-spacing="0">DETERMINISTIC LAB · NO PHYSICAL RF</text>
+<rect x="46" y="672" width="174" height="77" rx="14" fill="#142f40" stroke="#42bda6" stroke-width="1.7"/><text x="133" y="703" font-size="22" font-weight="700" fill="#f5fbfe" text-anchor="middle" letter-spacing="0">Synthetic</text><text x="133" y="727" font-size="18" font-weight="400" fill="#b6d3de" text-anchor="middle" letter-spacing="0">alert fixtures</text>
+<rect x="233" y="672" width="174" height="77" rx="14" fill="#142f40" stroke="#42bda6" stroke-width="1.7"/><text x="320" y="703" font-size="22" font-weight="700" fill="#f5fbfe" text-anchor="middle" letter-spacing="0">Offline</text><text x="320" y="727" font-size="18" font-weight="400" fill="#b6d3de" text-anchor="middle" letter-spacing="0">policy gate</text>
+<rect x="420" y="672" width="173" height="77" rx="14" fill="#142f40" stroke="#42bda6" stroke-width="1.7"/><text x="506.5" y="703" font-size="22" font-weight="700" fill="#f5fbfe" text-anchor="middle" letter-spacing="0">Local HMAC</text><text x="506.5" y="727" font-size="18" font-weight="400" fill="#b6d3de" text-anchor="middle" letter-spacing="0">signed NOTIFY</text>
+<path d="M220 711H233" fill="none" stroke="#83e8cf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M407 711H420" fill="none" stroke="#83e8cf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M508 749V781M508 781H169V808M508 781V808" fill="none" stroke="#83e8cf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="47" y="808" width="244" height="80" rx="14" fill="#142f40" stroke="#72d6fd" stroke-width="1.7"/><text x="169" y="839" font-size="22" font-weight="700" fill="#f5fbfe" text-anchor="middle" letter-spacing="0">Thread path</text><text x="169" y="863" font-size="18" font-weight="400" fill="#b6d3de" text-anchor="middle" letter-spacing="0">Simulated</text>
+<rect x="339" y="808" width="254" height="80" rx="14" fill="#142f40" stroke="#e3b46d" stroke-width="1.7"/><text x="466" y="839" font-size="22" font-weight="700" fill="#f5fbfe" text-anchor="middle" letter-spacing="0">Direct LoRa</text><text x="466" y="863" font-size="18" font-weight="400" fill="#b6d3de" text-anchor="middle" letter-spacing="0">Simulated fallback</text>
+<path d="M169 888V915H320V936M466 888V915H320" fill="none" stroke="#89eed1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="83" y="936" width="474" height="76" rx="14" fill="#142f40" stroke="#64c6ba" stroke-width="1.7"/><text x="320" y="967" font-size="22" font-weight="700" fill="#f5fbfe" text-anchor="middle" letter-spacing="0">Accessible receiver</text><text x="320" y="991" font-size="18" font-weight="400" fill="#b6d3de" text-anchor="middle" letter-spacing="0">Synthetic text · light · haptic</text>
+<path d="M320 1012V1031" fill="none" stroke="#85ecd3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="83" y="1031" width="474" height="76" rx="14" fill="#142f40" stroke="#64c6ba" stroke-width="1.7"/><text x="320" y="1062" font-size="22" font-weight="700" fill="#f5fbfe" text-anchor="middle" letter-spacing="0">Authenticated application receipts</text><text x="320" y="1086" font-size="18" font-weight="400" fill="#b6d3de" text-anchor="middle" letter-spacing="0">Receiver replay journal</text>
+<text x="320" y="1140" font-size="19" font-weight="700" fill="#c1e1dd" text-anchor="middle" letter-spacing="0">APP RECEIPT ≠ ACTUATION OR HUMAN RECEIPT</text>
+<path d="M320 1161V1200" fill="none" stroke="#86c8fe" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="219" y="1170" width="202" height="37" rx="12" fill="#17354b" stroke="#467ba0" stroke-width="1"/>
+<text x="320" y="1195" font-size="20" font-weight="750" fill="#a8dcff" text-anchor="middle" letter-spacing="0">JSON EVIDENCE</text>
+<rect x="25" y="1213" width="590" height="248" rx="22" fill="#0e2534" stroke="#6098ca" stroke-width="1.6"/>
+<text x="47" y="1254" font-size="28" font-weight="800" fill="#a3d8ff" text-anchor="start" letter-spacing="0">03  /  INSPECT</text>
+<text x="47" y="1283" font-size="19" font-weight="600" fill="#a7c5db" text-anchor="start" letter-spacing="0">READ-ONLY · EVIDENCE DOES NOT SEND</text>
+<rect x="47" y="1311" width="546" height="54" rx="13" fill="#15394b" stroke="#648fb0" stroke-width="1"/>
+<text x="320" y="1346" font-size="22" font-weight="650" fill="#e0f4ff" text-anchor="middle" letter-spacing="0">Receipt traces  /  Replay-safe JSON</text>
+<path d="M320 1365V1382M134 1382H506M134 1382V1392M320 1382V1392M506 1382V1392" fill="none" stroke="#83c5ec" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="47" y="1392" width="173" height="51" rx="10" fill="#1d3b4b" stroke="#4b86a0" stroke-width="1"/>
+<rect x="234" y="1392" width="173" height="51" rx="10" fill="#1d3b4b" stroke="#4b86a0" stroke-width="1"/>
+<rect x="421" y="1392" width="172" height="51" rx="10" fill="#1d3b4b" stroke="#4b86a0" stroke-width="1"/>
+<text x="133" y="1425" font-size="21" font-weight="700" fill="#e3f4ff" text-anchor="middle" letter-spacing="0">TUI / text</text>
+<text x="320" y="1425" font-size="21" font-weight="700" fill="#e3f4ff" text-anchor="middle" letter-spacing="0">ECharts</text>
+<text x="507" y="1425" font-size="20" font-weight="700" fill="#e3f4ff" text-anchor="middle" letter-spacing="0">Camel export</text>
+<text x="320" y="1507" font-size="18" font-weight="700" fill="#8fb2c2" text-anchor="middle" letter-spacing="0.1">LOGICAL DATA FLOW   /   NOT MEASURED RF TOPOLOGY</text>
+</svg>

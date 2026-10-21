@@ -1,7 +1,8 @@
 node_modules/
 .openthread-sim-build/
 __pycache__/
-evidence/
-
 # Local generated research evidence (may contain environment-specific data)
 evidence/
+
+# Reproducible local source archives and checksums
+dist/
