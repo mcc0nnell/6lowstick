@@ -92,3 +92,14 @@ actuator protocol: journal/actuator ordering, storage failures, concurrent
 writers, journal corruption, unbounded growth, key rotation and alert expiry
 still need engineering. Journals are discarded with the private simulation
 working directory at the end of each lab run.
+
+## Synthetic NOAA SAME end-to-end path
+
+The lab also feeds a **fixed synthetic** SAME header into the offline NWR
+policy adapter, verifies that an out-of-area policy rejects it, and sends an
+in-area, time-valid alert over the same real simulated OpenThread UDP path.
+All three simulated accessible receivers must acknowledge the HMAC-authenticated
+EA2 message. The synthetic `TOR` event is mapped to the lab's generic
+`EVACUATE` token only to exercise the protocol; **this is not safe real-world
+tornado guidance**. No NOAA radio receiver, audio demodulation, CAP feed,
+physical actuator, or real public warning is involved.

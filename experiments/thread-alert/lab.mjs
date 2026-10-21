@@ -11,6 +11,7 @@ import {tmpdir} from 'node:os';
 import {randomBytes, randomInt} from 'node:crypto';
 import {signAlert, verifyAlert} from './auth.mjs';
 import {ReplayJournal} from './replay.mjs';
+import {evaluateSame} from '../../src/nwr/gateway.mjs';
 
 const cli = process.env.OT_CLI_PATH;
 const base = Number(process.env.THREAD_ALERT_BASE_ID ?? 10);
@@ -234,6 +235,18 @@ try {
   const replay = await sendAlert(gateway, [strobe], 'drill001');
   assert.deepEqual(strobe.activations, ['drill001'], 'duplicate alert must not reactivate');
   assert.deepEqual(replay.acknowledged, ['strobe'], 'duplicate still receives ACK');
+  // Offline synthetic SAME -> geographic/time policy -> signed EA2 -> real simulated Thread UDP.
+  const same = 'ZCZC-WXR-TOR-024510-+0030-2941830-KLWX-';
+  const gatewayPolicy = {areas: ['024510'], key: alertKey, year: 2026,
+    now: new Date('2026-10-21T18:45:00Z')};
+  const policyRejected = evaluateSame(same, {...gatewayPolicy, areas: ['036001']});
+  assert.equal(policyRejected.accepted, false, 'out-of-area SAME must be rejected');
+  const policyAlert = evaluateSame(same, gatewayPolicy);
+  assert.equal(policyAlert.accepted, true, 'synthetic SAME must pass policy');
+  const sameDelivery = await sendAlert(gateway, targets, policyAlert.id, policyAlert.wire);
+  assert.deepEqual(sameDelivery.missing, [], 'all nodes must ACK the SAME-derived alert');
+  assert.ok(targets.every(n => n.activations.includes(policyAlert.id)),
+            'all nodes must activate for authenticated SAME-derived synthetic alert');
   haptic.stop();
   await sleep(300);
   const degraded = await sendAlert(gateway, targets, 'drill002');
@@ -243,7 +256,7 @@ try {
     schema: 'tronix.thread-alert-lab.v1',
     transport: 'OpenThread ot-cli-ftd UDP POSIX simulation (no physical radio)',
     payload: 'synthetic HMAC-authenticated EA2 alert and ACK1 receipt; not CAP',
-    baseline, rejected, replay, degraded, activations: Object.fromEntries(targets.map(n => [n.name, n.activations])),
+    baseline, rejected, replay, sameGateway: {policyRejected, policyAlert: {id: policyAlert.id, event: policyAlert.event, areaCodes: policyAlert.areaCodes}, delivery: sameDelivery}, degraded, activations: Object.fromEntries(targets.map(n => [n.name, n.activations])),
     events, errors: errorEvents,
     warning: 'ACK means simulator application receipt, not human acknowledgement or certified alerting'
   };
