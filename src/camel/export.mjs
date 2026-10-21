@@ -10,6 +10,10 @@ import {buildTimeline, parseEvidence, RECEIVERS} from '../tui/evidence.mjs';
 const PHASES = new Set(['baseline', 'rejected', 'replay', 'same', 'degraded']);
 const MEANINGS = Object.freeze({
   send: 'synthetic_lab_send_attempt',
+  attempt: 'synthetic_lab_send_attempt',
+  received: 'simulated_receiver_accepted_authenticated_message',
+  activated: 'synthetic_application_activation_recorded_no_physical_actuator',
+  offline: 'synthetic_receiver_process_stopped',
   ack: 'simulated_application_ack_not_human_receipt',
   missing: 'missing_fresh_application_ack_at_deadline',
   unknown: 'receipt_not_established',
@@ -36,8 +40,10 @@ export function makeObservations(input, fingerprint) {
       observation: step.kind,
       receiver: step.receiver,
       meaning: MEANINGS[step.kind],
-      ack_latency_ms: step.kind === 'ack' && Number.isSafeInteger(step.latency) &&
+      ack_latency_ms: step.kind === 'ack' && Number.isFinite(step.latency) &&
         step.latency >= 0 && step.latency <= 600000 ? step.latency : null,
+      harness_elapsed_ms: Number.isFinite(step.time_ms) ? step.time_ms : null,
+      event_clock: Number.isFinite(step.time_ms) ? 'harness_monotonic' : 'reconstructed_phase_sequence',
       measured_packet_timestamp: null,
       physical_actuation_verified: false,
       human_receipt_verified: false
