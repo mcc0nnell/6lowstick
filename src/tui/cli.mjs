@@ -6,6 +6,7 @@ import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildTimeline, parseEvidence, RECEIVERS} from './evidence.mjs';
+import {playbackDelayMs} from './timed.mjs';
 import {renderScreen, renderReport} from './render.mjs';
 
 const args = process.argv.slice(2);
@@ -56,7 +57,7 @@ if (snapshot) {
   process.stdin.setRawMode(true);
   process.stdin.setEncoding('utf8');
   process.stdin.resume();
-  function pause() { playing = false; if (timer) clearInterval(timer); timer = undefined; }
+  function pause() { playing = false; if (timer) clearTimeout(timer); timer = undefined; }
   function cleanup() {
     pause(); process.stdin.setRawMode(false); process.stdin.pause();
     process.stdout.write('\x1b[?25h\x1b[?1049l');
@@ -67,11 +68,16 @@ if (snapshot) {
     if (reduced) { seek(steps.length - 1); return; }
     if (cursor >= steps.length - 1) cursor = -1;
     playing = true;
-    timer = setInterval(() => {
-      cursor++;
-      if (cursor >= steps.length - 1) pause();
-      render();
-    }, 850);
+    function scheduleNext() {
+      const delay = playbackDelayMs(steps, cursor);
+      timer = setTimeout(() => {
+        cursor++;
+        if (cursor >= steps.length - 1) pause();
+        render();
+        if (playing) scheduleNext();
+      }, delay);
+    }
+    scheduleNext();
     render();
   }
   process.stdin.on('data', key => {
