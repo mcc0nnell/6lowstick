@@ -11,7 +11,7 @@ import {renderScreen} from './render.mjs';
 const args = process.argv.slice(2);
 const usage = '6lowStick Mesh Control (experimental, read-only)\n' +
   'Usage: npm run tui -- [--demo | --input evidence/mesh-run.json] [--snapshot] [--plain] [--reduced-motion]\n' +
-  'Keys: arrows/h/l step; j/k select receiver; space play; 1/2/3 views; ? help; q quit\n';
+  'Keys: arrows/h/l step; j/k select receiver; space play; 1/2/3/4 views; ? help; q quit\n';
 if (args.includes('--help') || args.includes('-h')) { console.log(usage); process.exit(0); }
 const known = new Set(['--demo', '--input', '--snapshot', '--plain', '--reduced-motion']);
 if (args.some((a,i) => !known.has(a) && !(i > 0 && args[i-1] === '--input')) ||
@@ -83,6 +83,7 @@ if (snapshot) {
     if (key === '1') { view = 'topology'; help = false; }
     if (key === '2') { view = 'timeline'; help = false; }
     if (key === '3') { view = 'evidence'; help = false; }
+    if (key === '4' || key === 't') { view = 'text'; help = false; }
     if (key === '?') help = !help;
     render();
   });
