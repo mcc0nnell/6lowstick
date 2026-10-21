@@ -1,0 +1,23 @@
+# 6lowStick / Camel 4.22.x read-only synthetic research observation route
+# RUN ONLY against locally exported, allowlisted evidence. No gateway I/O.
+# The Camel CLI/TUI has full developer control of its own routes.
+- route:
+    id: sixlowstick-evidence-observe
+    description: "Observe sanitized lab event copies; no alert dispatch"
+    from:
+      uri: "file:./evidence/camel-observations"
+      parameters:
+        noop: true
+        idempotent: true
+        autoCreate: false
+        preSort: true
+        include: '.*\.json'
+        readLock: none
+        delay: 1000
+      steps:
+        - to:
+            uri: "log:org.sixlowstick.observation"
+            parameters:
+              showBody: true
+              showHeaders: false
+              showExchangeId: false
