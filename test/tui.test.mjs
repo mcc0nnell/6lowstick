@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {buildTimeline, parseEvidence, replayState} from '../src/tui/evidence.mjs';
-import {renderScreen, unstyle} from '../src/tui/render.mjs';
+import {renderScreen, renderReport, unstyle} from '../src/tui/render.mjs';
 const data = JSON.parse(readFileSync(new URL('../fixtures/tui/illustrative-drill.json', import.meta.url)));
 
 test('rejects invalid schema and contradictory receipts', () => {
@@ -62,4 +62,20 @@ test('evidence strings cannot inject terminal escape/control sequences', () => {
     assert.doesNotMatch(frame, /[\x00-\x09\x0b-\x1f\x7f-\x9f]/u);
     assert.match(frame, /READ ONLY/);
   }
+});
+
+test('complete text export retains every phase and no terminal escapes', () => {
+  const steps = buildTimeline(data);
+  const report = renderReport({data:{...data, warning:'\x1b[2J'}, steps});
+  assert.match(report, /BASELINE DELIVERY/);
+  assert.match(report, /FORGED ENVELOPE/);
+  assert.match(report, /DUPLICATE REPLAY/);
+  assert.match(report, /SYNTHETIC SAME/);
+  assert.match(report, /DEGRADED DELIVERY/);
+  assert.match(report, /No actual NOAA origin authentication/);
+  assert.doesNotMatch(report, /\x1b/);
+  const cli = new URL('../src/tui/cli.mjs', import.meta.url).pathname;
+  const printed = execFileSync(process.execPath, [cli, '--demo', '--report'], {encoding:'utf8'});
+  assert.match(printed, /COMPLETE TEXT EVIDENCE REPORT/);
+  assert.doesNotMatch(printed, /\x1b/);
 });
