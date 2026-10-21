@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/6lowstick-two-polos.webp" alt="Rizzer, the original two-polo-shirt 6lowStick mascot: joined hot-pink and lime-green polos with two popped collars." width="460" />
+  <img src="assets/rizzer-transparent.webp" alt="Rizzer, the original two-polo-shirt six in hot pink and lime green, with two popped collars, on a transparent background" width="320" />
 
   <h1>6lowStick</h1>
   <p><strong>Light the mesh. Make alerts accessible.</strong></p>
@@ -44,7 +44,7 @@ Prefer the terminal? **Mesh Control** provides keyboard navigation, a text-reade
 
 ### Rizzer cameos in Mesh Control
 
-Rizzer is our official mascot: two popped polo collars, one six, and a strong opinion on trust boundaries. The original two-polo illustration is his canonical public logo; the vector expressions are optional supporting artwork. His independently developed [fuzzing engine](https://github.com/mcc0nnell/rizzer) is **not** required to display him.
+Rizzer is our official mascot: two popped polo collars, one six, and a strong opinion on trust boundaries. The original [two-polo illustration](assets/6lowstick-two-polos.webp) is his canonical design. The README uses a cleaned transparent derivative of that same artwork, reproducible with [Rizzer’s art script](https://github.com/mcc0nnell/rizzer/blob/main/scripts/prepare_original_logo.py); vector expressions are optional supporting art. His independently developed [fuzzing engine](https://github.com/mcc0nnell/rizzer) is **not** required to display him.
 
 ```bash
 npm run tui -- --mascot --plain                # one screen-reader-friendly line
