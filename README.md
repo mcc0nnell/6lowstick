@@ -33,3 +33,15 @@ cannot issue live warnings or activate devices.
 
 Run `npm run evidence:multiradio` to see five JSON research traces. See
 [the failover design and limitations](docs/multiradio-fabric.md).
+
+## Receive-only software-defined radio research
+
+6lowStick now has an **SDR observation path**, separate from the synthetic
+OpenThread alert-delivery lab. With locally installed `rtl_fm` and
+`multimon-ng`, it can turn NOAA Weather Radio SAME decoder text into
+bounded JSON Lines research records. There is also a no-hardware replay
+path with tests. The observer **never authenticates an on-air broadcaster,
+issues an active alert, or actuates a mesh endpoint**.
+
+See [SDR ingress and replay](docs/sdr-ingress.md) for the receiver pipeline,
+supported frequencies, safety boundary, and limitations.

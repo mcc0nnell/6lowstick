@@ -41,3 +41,17 @@ keys, guarantee anti-replay following key compromise, validate true physical
 actuation, handle radio regulation or LoRaWAN receive windows, or observe the
 Thread Spinel interface. The simulation transport contract refuses non-simulation
 drivers and live-mode calls. See [dual-radio research](multiradio-fabric.md).
+
+## Added receive-only SDR ingress boundary (2026-10-20)
+
+The SDR observation program reads stdout from an external third-party EAS
+decoder. It treats all lines as untrusted, filters oversized/malformed
+inputs, outputs bounded JSON objects and has a short in-memory suppression
+window. The radio pipeline and the decoder are independently installed;
+neither is attested or controlled by this repository.
+
+A successful decode **does not** prove the transmitter was NOAA, that the
+radio wasn't jammed/spoofed, that coverage was complete, or that independent
+copies of the SAME header agreed. No alert authentication, Thread/Matter
+dispatch, external notification, or physical response is available on this
+path. See [SDR ingress](sdr-ingress.md).

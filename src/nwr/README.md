@@ -27,3 +27,16 @@ open work. Run `node --test test/*.test.mjs experiments/thread-alert/*.test.mjs`
 three already-decoded synthetic headers, requiring two identical copies. This
 is a laboratory approximation, not SAME audio framing, bit-level error
 correction, or a specification-complete repeated-header algorithm.
+
+## SDR observation boundary
+
+A separate read-only adapter at `sdr-observer.mjs` parses external
+`multimon-ng` EAS decoder lines and emits observation-only JSON. Run it
+with `node scripts/observe-nwr.mjs --frequency-hz 162550000` using a
+synthetic decoder transcript, or see [the SDR ingress instructions](../../docs/sdr-ingress.md)
+for an optional local RTL-SDR pipeline.
+
+This does **not** connect live over-the-air output to `evaluateSame`,
+which remains explicitly limited to synthetic research drills. Decoder
+output is not authenticated authority, and observations cannot drive
+the Thread/Matter adapters.
