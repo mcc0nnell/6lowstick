@@ -1,0 +1,100 @@
+{
+  "schema": "tronix.thread-alert-lab.v1",
+  "transport": "ILLUSTRATIVE sample, NOT a measured run",
+  "payload": "Illustrative synthetic EA2 / ACK1 lab data",
+  "baseline": {
+    "id": "drill001",
+    "requested": [
+      "strobe",
+      "display",
+      "haptic"
+    ],
+    "acknowledged": [
+      "strobe",
+      "display",
+      "haptic"
+    ],
+    "missing": [],
+    "ack_latency_ms": {},
+    "send_errors": []
+  },
+  "rejected": {
+    "id": "forged002",
+    "requested": [
+      "strobe"
+    ],
+    "acknowledged": [],
+    "missing": [
+      "strobe"
+    ],
+    "send_errors": []
+  },
+  "replay": {
+    "id": "drill001",
+    "requested": [
+      "strobe"
+    ],
+    "acknowledged": [
+      "strobe"
+    ],
+    "missing": [],
+    "send_errors": []
+  },
+  "sameGateway": {
+    "policyRejected": {
+      "accepted": false,
+      "reason": "out_of_area"
+    },
+    "policyAlert": {
+      "id": "0123456789abcdef01234567",
+      "event": "TOR",
+      "areaCodes": [
+        "024510"
+      ]
+    },
+    "delivery": {
+      "id": "0123456789abcdef01234567",
+      "requested": [
+        "strobe",
+        "display",
+        "haptic"
+      ],
+      "acknowledged": [
+        "strobe",
+        "display",
+        "haptic"
+      ],
+      "missing": [],
+      "send_errors": []
+    }
+  },
+  "degraded": {
+    "id": "drill002",
+    "requested": [
+      "strobe",
+      "display",
+      "haptic"
+    ],
+    "acknowledged": [
+      "strobe",
+      "display"
+    ],
+    "missing": [
+      "haptic"
+    ],
+    "send_errors": []
+  },
+  "events": [
+    {
+      "node": "strobe",
+      "event": "rejected_auth"
+    },
+    {
+      "node": "strobe",
+      "event": "duplicate_suppressed",
+      "alert_id": "drill001"
+    }
+  ],
+  "errors": [],
+  "warning": "ILLUSTRATIVE fixture. No actual experiment run or proof of human delivery."
+}
