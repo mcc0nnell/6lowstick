@@ -39,6 +39,8 @@ const errorEvents = [];
 const nodes = [];
 const trace = createTelemetryRecorder();
 let activeSend = null;
+let activePhase = null;
+let lastDelivery = null;
 const recordWhileActive = (kind, receiver, at, alertId = null) => {
   if (activeSend && activeSend.targets.has(receiver) &&
       (at === undefined || at >= activeSend.start) &&
@@ -158,6 +160,8 @@ async function join(node, dataset) {
 }
 async function sendAlert(sender, targets, alertId, overrideWire = null, phase = 'baseline') {
   const t0 = performance.now();
+  activePhase = phase;
+  lastDelivery = null;
   trace.record(phase, 'phase_start', null, t0);
   activeSend = {phase, id: alertId, targets: new Set(targets.map(n => n.name)), start: t0, seen: new Set()};
   const failures = [];
@@ -180,9 +184,12 @@ async function sendAlert(sender, targets, alertId, overrideWire = null, phase = 
   for (const name of targets.filter(x => !acked.includes(x)).map(x => x.name))
     trace.record(phase, 'missing', name);
   activeSend = null;
-  return {id: alertId, requested: targets.map(x => x.name), acknowledged: acked.map(x => x.name),
+  const delivery = {id: alertId, requested: targets.map(x => x.name), acknowledged: acked.map(x => x.name),
           missing: targets.filter(x => !acked.includes(x)).map(x => x.name),
           ack_latency_ms: latency, send_errors: failures};
+  lastDelivery = {phase, acknowledged: delivery.acknowledged, missing: delivery.missing,
+                  send_error_count: failures.length};
+  return delivery;
 }
 
 let finalEvidence;
@@ -297,6 +304,13 @@ try {
   };
   console.log(JSON.stringify(finalEvidence, null, 2));
 } catch (e) {
+  // Structured *failure* telemetry is deliberately receipt-only: no HMAC keys or wire bytes.
+  console.error('THREAD_ALERT_LAB_DIAGNOSTIC: ' + JSON.stringify({
+    schema: '6lowstick.lab-failure.v1', phase: activePhase,
+    acknowledged: lastDelivery?.phase === activePhase ? lastDelivery.acknowledged : null,
+    missing: lastDelivery?.phase === activePhase ? lastDelivery.missing : null,
+    send_error_count: lastDelivery?.phase === activePhase ? lastDelivery.send_error_count : null
+  }));
   console.error('THREAD_ALERT_LAB_FAILED: ' + e.stack);
   process.exitCode = 1;
 } finally {
