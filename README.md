@@ -17,6 +17,7 @@ npm ci
 npm run tui -- --demo
 npm run tui -- --input evidence/mesh-run.json
 npm run tui -- --demo --snapshot --plain
+npm run tui -- --demo --report   # complete accessible text export
 ```
 
 The demo is labeled illustrative, not a measured experiment. Recorded replay is a reconstruction from final lab JSON, not packet-by-packet live telemetry. Lines show logical intended recipients, **not radio topology**; application ACKs do not prove human receipt. See [TUI guide](docs/mesh-control-tui.md). Camel 4.22 is a potential future read-only integration and not a runtime requirement.
