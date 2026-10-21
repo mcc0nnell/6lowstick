@@ -14,7 +14,7 @@ npm run tui -- --input evidence/mesh-run.json
 npm run tui -- --demo --snapshot --plain
 ```
 
-Keyboard: left/right or h/l to step; Home/End to seek; space to play/pause; r rewind; up/down or j/k choose strobe/display/haptic; 1 topology, 2 timeline, 3 evidence and limitations; ? help; q quits. Set NO_COLOR=1 or --plain to disable ANSI colors; --reduced-motion disables animated playback.
+Keyboard: left/right or h/l to step; Home/End to seek; space to play/pause; r rewind; up/down or j/k choose strobe/display/haptic; 1 topology, 2 timeline, 3 evidence and limitations, 4 or t text-reader view; ? help; q quits. Set NO_COLOR=1 or --plain to disable ANSI colors; --reduced-motion disables animated playback.
 
 The demo is **illustrative**, not captured evidence. The experimental lab produces a final JSON document with harness phases and application ACK results. It does **not** contain timestamped packets or real-world neighbor topology. The TUI reconstructs the *phase sequence* from that document: observations within a phase are presented in receiver order, **not measured arrival order**. The gateway-to-receiver lines are **logical intended application recipients**, not RF adjacency, propagation, routing hops, or physical positions.
 
@@ -25,3 +25,5 @@ The present TUI is independent of Apache Camel and ECharts. A future Camel 4.22 
 Next: add monotonic event timestamps to the harness; instrument observed Thread router/neighbor relationships; compare recorded runs; build a separate physical-radio experiment with rigorous limitations.
 
 **Not a life-safety product. Never use this for real emergency warning dispatch.**
+
+The **4 / t text-reader** view presents the current event and each receiver's state as labeled text without requiring interpretation of the topology art. The `--plain` option disables ANSI colors; snapshots can be generated without a TTY for automation. The text reader describes recorded evidence only, not live observed nodes.
