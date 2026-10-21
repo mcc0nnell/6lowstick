@@ -12,6 +12,8 @@ OT_CLI_PATH=/absolute/path/to/ot-cli-ftd bash scripts/run-evidence.sh
 npm run tui -- --input evidence/mesh-run.json
 # Noninteractive snapshot for logs, pipes, or assistive tooling:
 npm run tui -- --demo --snapshot --plain
+# Complete sequential text report for screen readers / CI attachments:
+npm run tui -- --demo --report
 ```
 
 Keyboard: left/right or h/l to step; Home/End to seek; space to play/pause; r rewind; up/down or j/k choose strobe/display/haptic; 1 topology, 2 timeline, 3 evidence and limitations, 4 or t text-reader view; ? help; q quits. Set NO_COLOR=1 or --plain to disable ANSI colors; --reduced-motion disables animated playback.
@@ -27,3 +29,5 @@ Next: add monotonic event timestamps to the harness; instrument observed Thread 
 **Not a life-safety product. Never use this for real emergency warning dispatch.**
 
 The **4 / t text-reader** view presents the current event and each receiver's state as labeled text without requiring interpretation of the topology art. The `--plain` option disables ANSI colors; snapshots can be generated without a TTY for automation. The text reader describes recorded evidence only, not live observed nodes.
+
+`--report` prints the complete ordered phase sequence with each observation, its interpretation and recorded application ACK latency. Unlike the interactive view, it does not truncate to terminal height or emit ANSI control sequences. This output is accessible text, not reconstructed packet timings.
