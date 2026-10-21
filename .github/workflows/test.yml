@@ -14,4 +14,13 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npm test
+      - name: Validate source release metadata
+        run: npm run release:check
+      - name: Verify deterministic source archive (never publishes or tags)
+        run: |
+          npm run release:source
+          before="$(sha256sum dist/6lowstick-v0.1.0-rc.1.tar.gz | cut -d' ' -f1)"
+          npm run release:source
+          after="$(sha256sum dist/6lowstick-v0.1.0-rc.1.tar.gz | cut -d' ' -f1)"
+          test "$before" = "$after"
       - run: git diff --check

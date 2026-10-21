@@ -23,6 +23,8 @@
 > [!IMPORTANT]
 > **6lowStick is a research instrument, not an emergency warning system.** The notification fabric, Thread/LoRa failover, receivers, and observatory scenarios are **software-only simulations**. No operational alert is originated; no physical radio delivery or human receipt has been established.
 
+**Release track:** preparing **`v0.1.0-rc.1`**, an **untagged, source-only experimental research candidate**. No GitHub Release or npm package is published. See the [release candidate checklist](docs/release-candidate.md), [changelog](CHANGELOG.md), and [security policy](SECURITY.md).
+
 # A research platform for the last meter of accessible alerting
 
 A warning can be transmitted without being **received**. It can be received without being **perceived**. And it can be perceived without being **understood**.
