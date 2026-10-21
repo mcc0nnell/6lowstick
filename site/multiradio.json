@@ -1,0 +1,179 @@
+{
+  "schema": "6lowstick.multiradio-research.v0",
+  "links": [
+    "simulated Thread",
+    "simulated peer-to-peer LoRa"
+  ],
+  "physicalRadio": false,
+  "spinel": false,
+  "loraWAN": false,
+  "humanDelivery": false,
+  "scenarioCount": 5,
+  "scenarios": [
+    {
+      "scenario": "thread_unavailable_lora_receipt",
+      "receipt": {
+        "schema": "6lowstick.synthetic-fabric.v0",
+        "simulation": true,
+        "drill": true,
+        "id": "drill100",
+        "receiver": "haptic",
+        "status": "app_acknowledged",
+        "confirmedRoute": "lora-p2p",
+        "attempts": [
+          {
+            "step": 1,
+            "route": "thread",
+            "outcome": "no_authenticated_receipt"
+          },
+          {
+            "step": 2,
+            "route": "lora-p2p",
+            "outcome": "authenticated_app_receipt"
+          }
+        ],
+        "humanAcknowledged": false,
+        "physicalRadioVerified": false
+      },
+      "receiverEvents": [
+        {
+          "route": "lora-p2p",
+          "id": "drill100",
+          "outcome": "synthetic_activation"
+        }
+      ]
+    },
+    {
+      "scenario": "lost_thread_ack_lora_duplicate",
+      "receipt": {
+        "schema": "6lowstick.synthetic-fabric.v0",
+        "simulation": true,
+        "drill": true,
+        "id": "drill101",
+        "receiver": "haptic",
+        "status": "app_acknowledged",
+        "confirmedRoute": "lora-p2p",
+        "attempts": [
+          {
+            "step": 1,
+            "route": "thread",
+            "outcome": "no_authenticated_receipt"
+          },
+          {
+            "step": 2,
+            "route": "lora-p2p",
+            "outcome": "authenticated_app_receipt"
+          }
+        ],
+        "humanAcknowledged": false,
+        "physicalRadioVerified": false
+      },
+      "receiverEvents": [
+        {
+          "route": "thread",
+          "id": "drill101",
+          "outcome": "synthetic_activation"
+        },
+        {
+          "route": "lora-p2p",
+          "id": "drill101",
+          "outcome": "duplicate_suppressed"
+        }
+      ]
+    },
+    {
+      "scenario": "invalid_thread_receipt_lora_receipt",
+      "receipt": {
+        "schema": "6lowstick.synthetic-fabric.v0",
+        "simulation": true,
+        "drill": true,
+        "id": "drill102",
+        "receiver": "haptic",
+        "status": "app_acknowledged",
+        "confirmedRoute": "lora-p2p",
+        "attempts": [
+          {
+            "step": 1,
+            "route": "thread",
+            "outcome": "invalid_app_receipt"
+          },
+          {
+            "step": 2,
+            "route": "lora-p2p",
+            "outcome": "authenticated_app_receipt"
+          }
+        ],
+        "humanAcknowledged": false,
+        "physicalRadioVerified": false
+      },
+      "receiverEvents": [
+        {
+          "route": "thread",
+          "id": "drill102",
+          "outcome": "synthetic_activation"
+        },
+        {
+          "route": "lora-p2p",
+          "id": "drill102",
+          "outcome": "duplicate_suppressed"
+        }
+      ]
+    },
+    {
+      "scenario": "both_links_unavailable",
+      "receipt": {
+        "schema": "6lowstick.synthetic-fabric.v0",
+        "simulation": true,
+        "drill": true,
+        "id": "drill103",
+        "receiver": "haptic",
+        "status": "unconfirmed",
+        "confirmedRoute": null,
+        "attempts": [
+          {
+            "step": 1,
+            "route": "thread",
+            "outcome": "no_authenticated_receipt"
+          },
+          {
+            "step": 2,
+            "route": "lora-p2p",
+            "outcome": "no_authenticated_receipt"
+          }
+        ],
+        "humanAcknowledged": false,
+        "physicalRadioVerified": false
+      },
+      "receiverEvents": []
+    },
+    {
+      "scenario": "thread_healthy",
+      "receipt": {
+        "schema": "6lowstick.synthetic-fabric.v0",
+        "simulation": true,
+        "drill": true,
+        "id": "drill104",
+        "receiver": "haptic",
+        "status": "app_acknowledged",
+        "confirmedRoute": "thread",
+        "attempts": [
+          {
+            "step": 1,
+            "route": "thread",
+            "outcome": "authenticated_app_receipt"
+          }
+        ],
+        "humanAcknowledged": false,
+        "physicalRadioVerified": false
+      },
+      "receiverEvents": [
+        {
+          "route": "thread",
+          "id": "drill104",
+          "outcome": "synthetic_activation"
+        }
+      ]
+    }
+  ],
+  "limitation": "Scripted paths and simulated receiver only; application receipts do not prove RF or human delivery."
+}
