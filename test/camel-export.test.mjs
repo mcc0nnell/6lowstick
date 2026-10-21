@@ -73,6 +73,7 @@ test('Camel DSL is explicitly file-only, noop, and log-only', () => {
   assert.match(yaml, /autoCreate:\s*false/);
   assert.match(yaml, /uri:\s*["']?file:/);
   assert.match(yaml, /uri:\s*["']?log:/);
+  assert.match(yaml, /convertBodyTo:\s*\n\s*type:\s*String/);
   assert.equal((yaml.match(/^\s+uri:/gm) || []).length, 2);
   assert.doesNotMatch(yaml, /http:|https:|udp:|mqtt:|kafka:|exec:|shell:/);
 });
