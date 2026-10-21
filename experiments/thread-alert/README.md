@@ -13,13 +13,17 @@ synthetic evacuation gateway  (OpenThread leader, UDP 61617)
                       <-- UDP ACK1|drill001|<receiver> from each live receiver
 ```
 
+## Current evidence status (2026-10-21)
+
+A 10-trial serial run of the reliability collector completed all 10 trials as expected (zero unexpected healthy-phase ACK gaps). The earlier intermittent haptic ACK observation (2026-10-20) did not recur in that sample but remains an unresolved reliability question. See [thread-lab-next.md](../../docs/thread-lab-next.md) for the exact command sequence and expected evidence shape. Local evidence files are gitignored and are not public machine-verifiable proof. Application receipts are not human notification.
+
 ## Run
 
 From the Tronix repository checkout, with Node 22 and the POSIX simulation
 `ot-cli-ftd` executable already built:
 
 ```sh
-OT_CLI_PATH=/absolute/path/to/ot-cli-ftd \
+OT_CLI_PATH=/absolute/path/to/ot-cli-ftd \\
   node experiments/thread-alert/lab.mjs
 ```
 
@@ -70,6 +74,8 @@ Use a bounded, application-authenticated alert envelope, durable replay
 tracking, signed source-policy verification, retries under congestion and
 partitions, and a small separate real-hardware test. Treat the proof of
 receipt as a measured observation, not a delivery guarantee.
+
+See [thread-lab-next.md](../../docs/thread-lab-next.md) for the concrete reliability-trial sequence, expected evidence shape, and an optional R2 receipt sketch.
 
 ## EA2 authentication prototype (integrated into simulated mesh)
 
