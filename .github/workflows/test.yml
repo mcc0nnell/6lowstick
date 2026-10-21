@@ -12,5 +12,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test test/*.test.mjs experiments/thread-alert/*.test.mjs
+      - run: npm ci
+      - run: npm test
       - run: git diff --check

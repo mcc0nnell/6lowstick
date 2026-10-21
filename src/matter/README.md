@@ -24,7 +24,7 @@ command, device-state, and visible-light outcomes independently.
 
 ## matter.js 0.18 integration seam
 
-`controller.mjs` provides the actual OnOff command mapping against a pre-existing
+`controller.mjs` provides an OnOff command mapping against a pre-existing
 commissioned peer using the `@matter/main` 0.18 API. Pass the `OnOffClient`
 behavior from `@matter/main/behaviors/on-off` and a peer obtained from your
 commissioned controller. It invokes `peer.start()`, resolves the requested
@@ -35,3 +35,7 @@ Reference: https://github.com/matter-js/matter.js/blob/main/examples/control-ono
 
 No automated commissioning or credentials are stored by 6lowStick. Do not
 commission devices on someone else's fabric without authorization.
+
+The dependency is pinned to `@matter/main@0.18.0` in `package-lock.json`.
+Import of `OnOffClient` was smoke-tested against that installed package.
+Commissioning and a live virtual-bulb protocol exchange remain unverified.

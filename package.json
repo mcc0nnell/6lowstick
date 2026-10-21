@@ -1,0 +1,30 @@
+{
+  "name": "6lowstick",
+  "version": "1.0.0",
+  "description": "**Light the mesh. Make alerts accessible.**",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs experiments/thread-alert/*.test.mjs",
+    "check": "npm test && git diff --check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mcc0nnell/6lowstick.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/mcc0nnell/6lowstick/issues"
+  },
+  "homepage": "https://github.com/mcc0nnell/6lowstick#readme",
+  "dependencies": {
+    "@matter/main": "0.18.0"
+  },
+  "private": true,
+  "type": "module"
+}
