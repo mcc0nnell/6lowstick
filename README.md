@@ -62,40 +62,11 @@ To reproduce the separately built OpenThread POSIX laboratory, point `OT_CLI_PAT
 
 ## The system
 
-```mermaid
-flowchart LR
-    subgraph O["OBSERVE — untrusted or offline"]
-      direction TB
-      NWR["NOAA SAME<br/>receive-only SDR"] --> REC["Bounded observations"]
-      SPI["Offline Spinel frames"] --> CRC["CRC-checked metadata"]
-    end
+![Mobile-friendly 6lowStick architecture diagram. Three separate trust boundaries: receive-only NOAA SAME and offline Spinel observations that cannot dispatch alerts; a software-only synthetic policy gate, HMAC notification and simulated Thread or direct-LoRa receiver paths with application receipts; and a read-only JSON evidence inspection path feeding the terminal UI, ECharts observatory and Camel exporter.](assets/architecture.svg)
 
-    subgraph S["SIMULATE — no physical RF"]
-      direction TB
-      FIX["Synthetic alert fixtures"] --> GATE["Offline policy gate"]
-      GATE --> SIGN["Local HMAC NOTIFY"]
-      SIGN --> TH["Thread path"]
-      SIGN -. "fallback" .-> LO["Direct LoRa path"]
-      TH --> RX["Synthetic text / light / haptic"]
-      LO --> RX
-      RX --> ACK["Signed application receipts<br/>and replay journal"]
-    end
+[Open the full-size architecture diagram](assets/architecture.svg)
 
-    subgraph E["INSPECT — read-only"]
-      direction TB
-      JSON["JSON research evidence"] --> TUI["Mesh Control TUI"]
-      JSON --> WEB["ECharts observatory"]
-      JSON --> CAM["Camel evidence export"]
-    end
-    ACK --> JSON
-
-    classDef observe fill:#ffe8ca,stroke:#bf7c2d,color:#523108
-    classDef model fill:#d9edff,stroke:#407baa,color:#123a56
-    classDef inspect fill:#ddf5eb,stroke:#2d8b6d,color:#104e40
-    class NWR,REC,SPI,CRC observe
-    class FIX,GATE,SIGN,TH,LO,RX,ACK model
-    class JSON,TUI,WEB,CAM inspect
-```
+**Accessible architecture summary:** **Observe** records untrusted receive-only NOAA SAME and offline Spinel metadata; there is no connection to alert dispatch. **Simulate** independently creates test fixtures, passes them through an offline policy gate, signs local application notifications, and models Thread or direct-LoRa paths to synthetic text, light and haptic receivers. Authenticated receiver application receipts feed a replay journal and JSON evidence. **Inspect** reads that evidence through the text-oriented TUI, ECharts observatory, and Camel exporter, without authority to send alerts.
 
 **Read the boundaries, not just the arrows.** The observation and simulation lanes are intentionally disconnected: a received SAME line does **not** authorize a synthetic alert. The Spinel CRC checks frame integrity, **not** authenticity or message meaning. The fallback arrows are scripted application routes, not measured radio links. Signed ACKs attest to simulated application processing, **not** device actuation, visual perception, or human acknowledgment.
 
