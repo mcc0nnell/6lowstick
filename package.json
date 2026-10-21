@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "node --test test/*.test.mjs experiments/thread-alert/*.test.mjs",
-    "check": "npm test && git diff --check"
+    "check": "npm test && git diff --check",
+    "tui": "node src/tui/cli.mjs"
   },
   "repository": {
     "type": "git",
