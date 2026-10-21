@@ -10,7 +10,8 @@
   "scripts": {
     "test": "node --test test/*.test.mjs experiments/thread-alert/*.test.mjs",
     "check": "npm test && git diff --check",
-    "tui": "node src/tui/cli.mjs"
+    "tui": "node src/tui/cli.mjs",
+    "camel:export": "node src/camel/export.mjs"
   },
   "repository": {
     "type": "git",
