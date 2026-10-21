@@ -1,0 +1,4 @@
+node_modules/
+.openthread-sim-build/
+__pycache__/
+evidence/
