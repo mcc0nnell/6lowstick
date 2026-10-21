@@ -15,6 +15,9 @@
         readLock: none
         delay: 1000
       steps:
+        - convertBodyTo:
+            type: String
+            charset: UTF-8
         - to:
             uri: "log:org.sixlowstick.observation"
             parameters:
