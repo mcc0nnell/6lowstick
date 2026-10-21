@@ -42,10 +42,12 @@ still need engineering.
 
 ## Radio semantics
 
-`thread` and `lora-p2p` are *scripted interfaces* in this increment. Thread
-would use OpenThread's existing UDP application path; Spinel belongs underneath
-OpenThread as the host-RCP control/data protocol, **not** as a generic
-multi-radio messaging API. The separate LoRa path models direct peer-to-peer
+The standalone `experiments/multiradio/drill.mjs` uses scripted `thread` and
+`lora-p2p` interfaces. The separate OpenThread POSIX exercise below runs the
+Thread adapter through OpenThread's simulated-radio UDP application path;
+`lora-p2p` remains scripted in both. Neither exercises physical RF. Spinel
+belongs underneath OpenThread as the host-RCP control/data protocol, **not**
+as a generic multi-radio messaging API. The separate LoRa path models direct peer-to-peer
 links, **not LoRaWAN**. ChirpStack, LoRaWAN Class A downlink windows, gateway
 and network-server dependencies, air-time/duty-cycle/region restrictions, and
 radio interference are not simulated here. Do not treat a simulated LoRa
@@ -65,11 +67,13 @@ not transparent Thread↔LoRa bridge functionality.
 4. Both links unavailable → delivery remains unconfirmed.
 5. Healthy Thread receipt → LoRa unused.
 
-## Next real-world gate
+## Next hardware and reliability gates
 
-Run the same test with the existing *actual OpenThread POSIX simulated radio*
-harness as one adapter, preserving its known intermittent haptic ACK evidence.
-Then verify a locally authorized point-to-point LoRa pair with measured
+The OpenThread POSIX simulated-radio adapter is exercised below, but the
+existing intermittent haptic ACK issue is not resolved. Repeated runs need
+source and binary provenance, bounded trial counts, and failure-inclusive
+evidence; a single successful run is not a reliability estimate. The next
+hardware gate is a locally authorized point-to-point LoRa pair with measured
 payload budget, latency, airtime and signed return receipts. Record separate
 claims for link send, application receipt, physical actuation and human
 notification. Before any field use, review interference, local RF law,
@@ -129,7 +133,7 @@ OT_CLI_PATH=/absolute/path/to/openthread/build/simulation/examples/apps/cli/ot-c
 Inspect `multiradio.healthy`, `multiradio.lostThreadReceipt`,
 `multiradio.stoppedThreadNode`, and `multiradio.receiverEvents`. The
 OpenThread version/build is not pinned by this repo; local evidence must
-identify the binary source and commit. The existing simulated mesh lab has
+identify the binary source commit, build configuration and binary SHA-256. The existing simulated mesh lab has
 previously shown intermittent ACK losses, so a single successful experiment
 cannot establish reliability. Do not relax the existing baseline assertions
 or infer a service-level delivery guarantee.
