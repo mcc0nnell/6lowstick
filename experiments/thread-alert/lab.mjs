@@ -12,6 +12,7 @@ import {randomBytes, randomInt} from 'node:crypto';
 import {signAlert, verifyAlert} from './auth.mjs';
 import {ReplayJournal} from './replay.mjs';
 import {evaluateSame} from '../../src/nwr/gateway.mjs';
+import {reconcileSameHeaders} from '../../src/nwr/repetition.mjs';
 
 const cli = process.env.OT_CLI_PATH;
 const base = Number(process.env.THREAD_ALERT_BASE_ID ?? 10);
@@ -241,7 +242,9 @@ try {
     now: new Date('2026-10-21T18:45:00Z')};
   const policyRejected = evaluateSame(same, {...gatewayPolicy, areas: ['036001']});
   assert.equal(policyRejected.accepted, false, 'out-of-area SAME must be rejected');
-  const policyAlert = evaluateSame(same, gatewayPolicy);
+  const repeated = reconcileSameHeaders([same, same]);
+  assert.equal(repeated.accepted, true, 'synthetic SAME repetition gate must agree');
+  const policyAlert = evaluateSame(repeated.header, gatewayPolicy);
   assert.equal(policyAlert.accepted, true, 'synthetic SAME must pass policy');
   const sameDelivery = await sendAlert(gateway, targets, policyAlert.id, policyAlert.wire);
   assert.deepEqual(sameDelivery.missing, [], 'all nodes must ACK the SAME-derived alert');
