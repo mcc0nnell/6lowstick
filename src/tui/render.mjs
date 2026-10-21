@@ -5,7 +5,7 @@ import {RECEIVERS, phaseLabel, replayState} from './evidence.mjs';
 const ANSI = /\x1b\[[\d;]*m/g;
 const palette = {bright:97, dim:90, cyan:96, good:92, warn:93, bad:91};
 export const unstyle = s => String(s).replace(ANSI, '');
-const safe = s => String(s ?? '').replace(/[\\x00-\\x1f\\x7f-\\x9f\\u202a-\\u202e\\u2066-\\u2069]/g, ' ').slice(0, 4096);
+const safe = s => String(s ?? '').replace(/[\x00-\x1f\x7f-\x9f\u202a-\u202e\u2066-\u2069]/g, ' ').slice(0, 4096);
 const color = (s, tone, plain) => plain ? String(s) : '\x1b[' + (palette[tone] || 97) + 'm' + s + '\x1b[0m';
 const clip = (s, width) => {
   const text = unstyle(s);
