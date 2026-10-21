@@ -13,7 +13,8 @@
     "tui": "node src/tui/cli.mjs",
     "camel:export": "node src/camel/export.mjs",
     "evidence:multiradio": "node experiments/multiradio/drill.mjs",
-    "evidence:reliability": "node scripts/reliability-trials.mjs"
+    "evidence:reliability": "node scripts/reliability-trials.mjs",
+    "fuzz:spinel": "node scripts/fuzz-spinel-rizzer.mjs"
   },
   "repository": {
     "type": "git",
