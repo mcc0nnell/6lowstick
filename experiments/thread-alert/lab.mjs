@@ -13,6 +13,10 @@ import {signAlert, verifyAlert} from './auth.mjs';
 import {ReplayJournal} from './replay.mjs';
 import {evaluateSame} from '../../src/nwr/gateway.mjs';
 import {reconcileSameHeaders} from '../../src/nwr/repetition.mjs';
+import {createSyntheticFabric} from '../../src/fabric/delivery.mjs';
+import {createSyntheticReceiver, createScriptedLink} from '../../src/fabric/simulation.mjs';
+import {createPosixThreadAdapter, dispatchFabricUdp, isFabricUdpPayload} from
+  '../multiradio/posix-adapter.mjs';
 import {createTelemetryRecorder} from '../../src/telemetry/monotonic.mjs';
 
 const cli = process.env.OT_CLI_PATH;
@@ -92,9 +96,11 @@ class OtNode {
       if (process.env.THREAD_ALERT_DEBUG === '1' && (/bytes from/.test(line) || /^Error \d+:/.test(line))) {
         console.error(this.name + ' CLI: ' + line.slice(0, 180));
       }
-      const packet = /^\d+ bytes from \S+ \d+ ((?:EA2\|[A-Za-z0-9_-]+\|[A-Za-z0-9_-]+\|[a-f0-9]{32}|ACK1\|[A-Za-z0-9_-]+\|[A-Za-z0-9_-]+))$/.exec(line);
-      if (packet) {
-        const item = {node: this.name, body: packet[1], time: performance.now()};
+      const packet = /^\d+ bytes from \S+ \d+ (.+)$/.exec(line);
+      const payload = packet?.[1];
+      if (payload && (/^(?:EA2\|[A-Za-z0-9_-]+\|[A-Za-z0-9_-]+\|[a-f0-9]{32}|ACK1\|[A-Za-z0-9_-]+\|[A-Za-z0-9_-]+)$/.test(payload) ||
+          isFabricUdpPayload(payload))) {
+        const item = {node: this.name, body: payload, time: performance.now()};
         this.received.push(item);
         if (this.name === 'gateway' && activeSend) {
           const ack = /^ACK1\|([A-Za-z0-9_-]+)\|(strobe|display|haptic)$/.exec(item.body);
@@ -287,17 +293,74 @@ try {
   assert.deepEqual(sameDelivery.missing, [], 'all nodes must ACK the SAME-derived alert');
   assert.ok(targets.every(n => n.activations.includes(policyAlert.id)),
             'all nodes must activate for authenticated SAME-derived synthetic alert');
+
+  // Cross-radio application failover on the *actual* OpenThread POSIX
+  // simulated radio network. Only LoRa remains a scripted transport.
+  const fabricHaptic = createSyntheticReceiver({
+    name: 'haptic', key: alertKey, journal: haptic.replayJournal
+  });
+  const suppressedReceipts = new Set();
+  const previousHapticHandler = haptic.onPacket;
+  haptic.onPacket = async item => {
+    if (await dispatchFabricUdp({
+      body: item.body, node: haptic, gatewayAddress: gateway.address,
+      ackPort: PORT_ACK, receiver: fabricHaptic, suppressReceiptFor: suppressedReceipts
+    })) return;
+    await previousHapticHandler(item);
+  };
+  const threadAdapter = createPosixThreadAdapter({
+    gateway, target: haptic, alertPort: PORT_ALERT, waitMs: 1800
+  });
+  const makeFabric = () => createSyntheticFabric({
+    key: alertKey, adapters: {
+      thread: threadAdapter,
+      'lora-p2p': createScriptedLink({route: 'lora-p2p', receiver: fabricHaptic})
+    }
+  });
+  const multiHealthy = await makeFabric().deliver({
+    id: 'radio001', receiver: 'haptic', drill: true
+  });
+  assert.equal(multiHealthy.confirmedRoute, 'thread',
+    'real OpenThread POSIX UDP must carry the signed challenge and receipt');
+  assert.equal(fabricHaptic.events.filter(x => x.id === 'radio001' &&
+    x.outcome === 'synthetic_activation').length, 1);
+  suppressedReceipts.add('radio002');
+  const multiLostAck = await makeFabric().deliver({
+    id: 'radio002', receiver: 'haptic', drill: true
+  });
+  assert.equal(multiLostAck.confirmedRoute, 'lora-p2p',
+    'lost real-simulated Thread app receipt must trigger scripted LoRa fallback');
+  assert.deepEqual(fabricHaptic.events.filter(x => x.id === 'radio002').map(x => x.outcome),
+    ['synthetic_activation', 'duplicate_suppressed'],
+    'LoRa fallback must not reactivate an alert already seen on Thread');
   haptic.stop();
   trace.record('degraded', 'receiver_offline', 'haptic');
   await sleep(300);
   const degraded = await sendAlert(gateway, targets, 'drill002', null, 'degraded');
   assert.deepEqual(degraded.missing, ['haptic'], 'lost node must not be marked delivered');
   assert.equal(degraded.acknowledged.length, 2, 'remaining nodes must ACK');
+  const multiOffline = await makeFabric().deliver({
+    id: 'radio003', receiver: 'haptic', drill: true
+  });
+  assert.equal(multiOffline.confirmedRoute, 'lora-p2p',
+    'simulated LoRa fallback must work after the POSIX haptic process exits');
+  assert.equal(fabricHaptic.events.filter(x => x.id === 'radio003' &&
+    x.outcome === 'synthetic_activation').length, 1);
+  const multiradio = {
+    schema: '6lowstick.posix-multiradio.v0',
+    thread: 'OpenThread POSIX simulator UDP (actual ot-cli-ftd processes, no physical RF)',
+    lora: 'scripted peer-to-peer LoRa model (no modem or air interface)',
+    spinel: false, physicalRadio: false, humanDelivery: false,
+    healthy: multiHealthy, lostThreadReceipt: multiLostAck,
+    stoppedThreadNode: multiOffline,
+    receiverEvents: fabricHaptic.events,
+    warning: 'Authenticated application receipts do not prove light, vibration, or human delivery'
+  };
   finalEvidence = {
     schema: 'tronix.thread-alert-lab.v1',
     transport: 'OpenThread ot-cli-ftd UDP POSIX simulation (no physical radio)',
     payload: 'synthetic HMAC-authenticated EA2 alert and ACK1 receipt; not CAP',
-    baseline, rejected, replay, sameGateway: {policyRejected, policyAlert: {id: policyAlert.id, event: policyAlert.event, areaCodes: policyAlert.areaCodes}, delivery: sameDelivery}, degraded, activations: Object.fromEntries(targets.map(n => [n.name, n.activations])),
+    baseline, rejected, replay, sameGateway: {policyRejected, policyAlert: {id: policyAlert.id, event: policyAlert.event, areaCodes: policyAlert.areaCodes}, delivery: sameDelivery}, degraded, multiradio, activations: Object.fromEntries(targets.map(n => [n.name, n.activations])),
     events, errors: errorEvents,
     timing: trace.snapshot(),
     warning: 'ACK means simulator application receipt, not human acknowledgement or certified alerting'

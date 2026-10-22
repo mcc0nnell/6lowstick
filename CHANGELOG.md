@@ -28,7 +28,8 @@ certified accessible emergency notification capabilities.
 ### Included
 - Synthetic OpenThread POSIX alert research with local application HMAC
   and replay controls; externally built `ot-cli-ftd` is optional
-- Scripted Thread/direct-LoRa application delivery model with
+- Scripted Thread/direct-LoRa application model plus OpenThread POSIX
+  simulated-UDP receipt/failover exercise (LoRa still scripted), with
   authenticated per-attempt receipts and explicit unconfirmed outcomes
 - Receive-only NOAA/SAME decoder-line research and passive offline
   Spinel HDLC-lite/FCS integrity recorder

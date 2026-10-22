@@ -87,13 +87,15 @@ npm run evidence:review -- --posix /path/to/mesh-run.json
 | Instrument | Demonstrated in software | Not demonstrated |
 | --- | --- | --- |
 | **Thread alert lab** | OpenThread POSIX simulated traffic, local HMAC, replay journal, synthetic modalities | RF delivery or reliably reaching a person |
-| **Multi-radio fabric** | Scripted Thread/direct-LoRa fallback, application receipts, duplicate suppression | LoRa hardware, LoRaWAN, actual failover |
+| **Multi-radio fabric** | Scripted Thread/direct-LoRa cases plus an opt-in OpenThread POSIX simulated-radio UDP receipt/failover exercise with authenticated application ACKs and duplicate suppression | Physical Thread/LoRa RF, LoRaWAN, reliable delivery or human receipt |
 | **NOAA/SAME observer** | Receive-only decoder-line parsing and mock/replay input | Origin authentication or field measurement |
 | **Spinel Flight Recorder** | Offline HDLC-lite parsing, CRC/FCS, command metadata, reference vectors | Live RCP instrumentation or authenticated origin |
 | **Matter adapter** | Pinned SDK seam and mock endpoints | Commissioned hardware or measured output |
 | **Mesh Control / Field Station** | Read-only evidence exploration, text reports and modeled event playback | On-air topology, RF packet timing or human outcomes |
 | **Camel exporter** | Sanitized evidence export | Operational alert routing |
 | **Offline trace reviewer** | Grounded interpretations and rejection of unsupported typed claims over scripted fixtures | AI model validation, field measurements, or human outcomes |
+
+**Optional POSIX multi-radio experiment:** A separately built OpenThread `ot-cli-ftd` exercises F1 challenges and authenticated R2 application receipts over simulated-radio UDP, including withheld receipts and a stopped receiver. LoRa fallback remains **scripted software-only**, and this optional external simulator is **not built or pinned in CI**. See [the multi-radio protocol and reproduction notes](docs/multiradio-fabric.md). A successful run is not evidence of physical RF delivery or notification reliability.
 
 ### An unresolved result worth keeping
 

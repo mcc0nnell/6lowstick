@@ -102,7 +102,8 @@ separately published research traces.
 A reproducible open-source software laboratory for studying the gap
 between *sending* a synthetic notification, *receiving* it at an
 application, and actually *perceiving* it. Includes OpenThread POSIX
-simulated tests, scripted direct-LoRa fallback, mock modalities, a
+simulated UDP receipt/failover exercises with **scripted** direct-LoRa
+fallback, mock modalities, a
 read-only observatory/TUI, passive NOAA and Spinel parsers, native
 fuzzing adapters, and explicit integrity and trust-boundary evidence.
 
