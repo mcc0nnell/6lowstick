@@ -159,7 +159,13 @@ For hardware acquisition and experiment stop conditions see the
 simulation limits see [reliability trials](reliability-trials.md).
 Passing a software gate does not imply permission or readiness for the next.
 
-The first deterministic [offline trace reviewer](trace-review.md) is now implemented for the five committed scripted Field Station scenarios. It emits source references and unknown physical/human outcomes and rejects unsupported typed claims. It has **no AI model**, and it does not yet evaluate a stopped physical or POSIX node as a committed fixture.
+The first deterministic [offline trace reviewer](trace-review.md) now covers
+the five committed scripted Field Station scenarios and, **optionally**,
+caller-supplied complete POSIX simulated-radio reports from PR #8. It emits
+exact source references and unknown physical/human outcomes and rejects
+unsupported typed claims. It has **no AI model**, does not replace
+independent trial provenance, and never promotes the optional POSIX cases
+to a committed Field Station fixture or a physical-hardware result.
 
 ### First narrowly scoped implementation experiment
 
