@@ -9,6 +9,7 @@
     "camel:export": "node src/camel/export.mjs",
     "evidence:multiradio": "node experiments/multiradio/drill.mjs",
     "evidence:reliability": "node scripts/reliability-trials.mjs",
+    "evidence:review": "node scripts/review-traces.mjs",
     "fuzz:spinel": "node scripts/fuzz-spinel-rizzer.mjs",
     "release:check": "node scripts/release-check.mjs",
     "release:source": "bash scripts/package-release.sh",
