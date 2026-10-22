@@ -33,18 +33,18 @@ Our working separation is:
 
 ### Intended architecture
 
-\`\`\`mermaid
+```mermaid
 flowchart TB
-    A["AI diagnostics and recommendations\n(advisory; no direct dispatch)"]
-    P["Local authorization and deterministic policy\n(proposed; independent of AI)"]
-    G["Trusted, bounded application gateway\n(proposed)"]
-    T["OpenThread IPv6 mesh\n(low-power local transport)"]
+    A["AI diagnostics and recommendations (advisory; no direct dispatch)"]
+    P["Local authorization and deterministic policy (proposed; independent of AI)"]
+    G["Trusted, bounded application gateway (proposed)"]
+    T["OpenThread IPv6 mesh (low-power local transport)"]
     D["Test receivers and sensors"]
-    L["Separate direct-LoRa path\n(future hardware research)"]
-    E["Attempt and receipt evidence\n(6lowStick synthetic experiments)"]
-    H["Independent actuator observation\n(future controlled lab)"]
-    U["Human detection and comprehension\n(future consent-based study)"]
-    O["Receive-only NOAA / offline Spinel observation\n(untrusted; no dispatch authority)"]
+    L["Separate direct-LoRa path (future hardware research)"]
+    E["Attempt and receipt evidence (6lowStick synthetic experiments)"]
+    H["Independent actuator observation (future controlled lab)"]
+    U["Human detection and comprehension (future consent-based study)"]
+    O["Receive-only NOAA / offline Spinel observation (untrusted; no dispatch authority)"]
     A -->|"propose / explain"| P
     P -->|"authorized bounded action"| G
     G --> T
@@ -57,7 +57,7 @@ flowchart TB
     H -.->|"does not prove"| U
     O -->|"observation only"| E
     E -->|"read-only evidence"| A
-\`\`\`
+```
 
 **Text equivalent:** An AI assistant reads experimental evidence and proposes
 diagnoses or actions. A separate deterministic authorization boundary must
@@ -103,7 +103,7 @@ See [multi-radio fabric](multiradio-fabric.md) and
    approved synthetic trials.
 3. **Evidence interpretation:** compare traces against explicit invariants:
    single activation per alert ID, new attempt challenge on fallback,
-   authenticated receiver application ACK, and accurate \`unconfirmed\` states.
+   authenticated receiver application ACK, and accurate `unconfirmed` states.
 4. **Operator explanation:** present text-first incident timelines and
    accessibility-aware summaries with links back to raw records. Never make
    the visual topology illustration the sole source of information.
@@ -164,7 +164,7 @@ Passing a software gate does not imply permission or readiness for the next.
 Build an **offline, read-only trace evaluator** with a fixed set of
 synthetic cases: healthy application ACK, missing receipt, invalid receipt,
 cross-transport duplicate, and receiver stopped. Require a structured
-output with: \`scenario_id\`, grounded trace references, observed
+output with: `scenario_id`, grounded trace references, observed
 application state, explicitly unknown physical/human outcomes, hypotheses,
 and proposed next *test* (not an action). Compare it to deterministic
 expectations; record hallucinated receipts and mistaken claims of actuation
