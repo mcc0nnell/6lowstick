@@ -2,10 +2,11 @@
   <img src="assets/rizzer-transparent.webp" alt="Rizzer: a bright pink and lime-green six made from two polo shirts, with both collars popped." width="230" />
 
   <h1>6lowStick</h1>
-  <p><strong>What happens after you send the warning?</strong></p>
-  <p>Open-source research into low-power networks, accessible notifications, and the evidence that separates delivery from perception.</p>
+  <p><strong>The proverbial glow stick for the physical world.</strong></p>
+  <p>Signal a presence, a change, a need, or a warning. Explore low-power physical notifications—and the evidence that a signal actually reached something or someone.</p>
   <p>
     <a href="https://mcc0nnell.github.io/6lowstick/"><strong>Explore the Field Station ↗</strong></a>
+    &nbsp;·&nbsp; <a href="#why-6lowstick">The idea</a>
     &nbsp;·&nbsp; <a href="#try-the-lab">Try the lab</a>
     &nbsp;·&nbsp; <a href="#what-we-can-show">Evidence and limits</a>
     &nbsp;·&nbsp; <a href="#openthread-and-ai">OpenThread + AI</a>
@@ -21,27 +22,31 @@
 
 ## Why 6lowStick
 
-A warning can leave the sender and never reach a receiver. It can reach an application without turning on a light or vibrating a device. A device can activate without anyone noticing it.
+**Crack a glow stick. Wave it. Someone understands that you're signaling something.** No app or dashboard needed to recognize that something is happening.
 
-**Those are different failures, and they need different evidence.**
+That's the ambition behind 6lowStick: an open, low-power way to **make a signal physical**. A presence, a request, a sensor condition, a coordination cue, or an emergency could become a light, vibration, text notification, or relayed signal. The meaning comes from its authorized source and context, not from a single hard-coded emergency use case.
 
-6lowStick investigates the boundaries between transmission, application acknowledgment, device response, and human understanding. Accessibility isn't a final presentation layer here: it is part of the question the experiment is trying to answer.
+A digital signal can leave the sender and never reach a receiver. It can reach an application without turning on a light or vibrating a device. A device can activate without anyone noticing it.
 
-The project does **not** claim to solve emergency communications. It gives us a controlled place to reproduce failures and learn what a physical, user-tested system would have to prove.
+**Sending, receiving, activating, noticing, and understanding are different events.** 6lowStick investigates the evidence between them. Accessibility belongs at the center: a signal must be perceivable in a form that works for the recipient.
+
+Emergency alerting is one demanding application, **not the definition of the project**. Today 6lowStick is a controlled, alert-shaped *simulation laboratory*; it does not yet implement arbitrary-purpose signaling, on-air delivery, or validated physical notifications.
 
 ## OpenThread and AI
 
-**OpenThread moves observations. AI helps interpret them. Deterministic policy authorizes actions. Evidence tells us what actually happened.**
+**The signal is the point. OpenThread is one way to carry it. AI is one way to interpret it.**
 
-The longer-term research question is how an AI system could reason about the physical world **without being trusted to control it**. OpenThread supplies local, low-power IPv6 connectivity; an edge analysis service *could* correlate sensor observations and explain uncertain mesh behavior. A separate, deterministic policy gateway would have to authorize any proposed physical action. 6lowStick's role is to make the boundary visible: a sent packet, an authenticated application receipt, measured actuator output, and a person's comprehension are **four different outcomes**.
+OpenThread could provide local, low-power IPv6 connectivity between signaling endpoints. An edge service could interpret observations and recommend how to respond; deterministic policy—not a language model—would authorize any future physical action. 6lowStick would preserve the evidence trail: what was requested, where delivery was attempted, which application acknowledged it, and what still requires physical or human verification.
 
-The first practical AI experiment is **offline and read-only**: give an evaluator synthetic 6lowStick traces, require it to cite evidence for every conclusion, and test whether it flags missing receipts, invalid acknowledgments, and duplicate suppression without inventing physical or human success. That evaluator **has not been implemented**. It would have no radio, dispatch, or actuator authority.
+The first proposed AI experiment is **offline and read-only**: evaluate synthetic traces, cite the observations behind each conclusion, and detect missing receipts or duplicates without inventing physical success. That evaluator **has not been implemented** and would have no dispatch or actuator authority.
 
-A future direct-LoRa fallback would be a **separate application transport**, not a longer-range OpenThread mesh. Today the Thread work uses POSIX simulated radio and LoRa remains scripted; neither demonstrates physical RF failover or life-safety performance.
+Future direct-LoRa relaying would be a **separate application transport**, not a longer-range OpenThread mesh. Today the Thread work uses POSIX simulated radio and LoRa remains scripted; neither demonstrates physical RF failover or life-safety performance.
 
 [Read the full OpenThread + AI research architecture →](docs/ai-physical-systems.md) for the proposed trust boundaries, evidence ladder, and research gates.
 
 ## How it works
+
+The current instruments explore a narrow, synthetic notification protocol. The general-purpose glow-stick vision above is **not** implemented by these lanes.
 
 | Research lane | What it does | What it does **not** establish |
 | --- | --- | --- |
