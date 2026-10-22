@@ -100,9 +100,10 @@ peer-to-peer application route, not a LoRaWAN or physical modem. Neither
 a simulated receiver activation nor a positive application receipt
 verifies electrical/optical/haptic output, person detection, or
 comprehension. Do not merge these records with field-reliability
-denominators. The optional mode can be exercised against PR #8 before
-that PR merges, but is not itself proof that PR #8 is integrated into
-`main`.
+denominators. PR #8 has merged its POSIX simulated-UDP lab path to
+`main`. This mode still only interprets a separately generated, complete
+local report; neither a merge nor a PASS is proof of physical RF or human
+receipt.
 
 ## Negative evaluations
 
