@@ -8,6 +8,7 @@
     <a href="https://mcc0nnell.github.io/6lowstick/"><strong>Explore the Field Station ↗</strong></a>
     &nbsp;·&nbsp; <a href="#try-the-lab">Try the lab</a>
     &nbsp;·&nbsp; <a href="#what-we-can-show">Evidence and limits</a>
+    &nbsp;·&nbsp; <a href="#openthread-and-ai">OpenThread + AI</a>
     &nbsp;·&nbsp; <a href="docs/README.md">Research guide</a>
   </p>
   <p><code>APACHE-2.0</code> &nbsp; <code>NODE 22+</code> &nbsp; <code>EXPERIMENTAL</code> &nbsp; <code>SIMULATION FIRST</code></p>
@@ -27,6 +28,18 @@ A warning can leave the sender and never reach a receiver. It can reach an appli
 6lowStick investigates the boundaries between transmission, application acknowledgment, device response, and human understanding. Accessibility isn't a final presentation layer here: it is part of the question the experiment is trying to answer.
 
 The project does **not** claim to solve emergency communications. It gives us a controlled place to reproduce failures and learn what a physical, user-tested system would have to prove.
+
+## OpenThread and AI
+
+**OpenThread moves observations. AI helps interpret them. Deterministic policy authorizes actions. Evidence tells us what actually happened.**
+
+The longer-term research question is how an AI system could reason about the physical world **without being trusted to control it**. OpenThread supplies local, low-power IPv6 connectivity; an edge analysis service *could* correlate sensor observations and explain uncertain mesh behavior. A separate, deterministic policy gateway would have to authorize any proposed physical action. 6lowStick's role is to make the boundary visible: a sent packet, an authenticated application receipt, measured actuator output, and a person's comprehension are **four different outcomes**.
+
+The first practical AI experiment is **offline and read-only**: give an evaluator synthetic 6lowStick traces, require it to cite evidence for every conclusion, and test whether it flags missing receipts, invalid acknowledgments, and duplicate suppression without inventing physical or human success. That evaluator **has not been implemented**. It would have no radio, dispatch, or actuator authority.
+
+A future direct-LoRa fallback would be a **separate application transport**, not a longer-range OpenThread mesh. Today the Thread work uses POSIX simulated radio and LoRa remains scripted; neither demonstrates physical RF failover or life-safety performance.
+
+[Read the full OpenThread + AI research architecture →](docs/ai-physical-systems.md) for the proposed trust boundaries, evidence ladder, and research gates.
 
 ## How it works
 
