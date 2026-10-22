@@ -56,6 +56,8 @@ npm run tui -- --demo --report    # Accessible, noninteractive text
 npm run tui -- --demo             # Keyboard-operated Mesh Control
 npm run evidence:multiradio       # Deterministic synthetic scenarios
 npm run evidence:review           # Offline trace judgments and exact evidence pointers
+# Optional: review externally generated PR #8 POSIX *simulation* evidence
+npm run evidence:review -- --posix /path/to/mesh-run.json
 ```
 
 `--demo` uses illustrative data. For a static, no-color terminal snapshot use `npm run tui -- --demo --snapshot --plain`. Interactive display has reduced-motion support. To replay separately generated POSIX simulator evidence use `npm run tui -- --input evidence/mesh-run.json` after creating that local file.

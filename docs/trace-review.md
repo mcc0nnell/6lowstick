@@ -58,6 +58,52 @@ not signatures, endorsements or RF measurements. The output includes
 hypotheses and next tests as **proposals**, not established causes or
 authorization to perform a physical experiment.
 
+## Optional OpenThread POSIX simulated-radio report (PR #8)
+
+For a *separately generated*, complete, locally retained
+`experiments/thread-alert/lab.mjs` result from PR #8, use:
+
+```sh
+npm run evidence:review -- --posix /path/to/mesh-run.json
+npm run evidence:review -- --posix /path/to/mesh-run.json --template > /tmp/posix-claims.json
+npm run evidence:review -- --posix /path/to/mesh-run.json --check /tmp/posix-claims.json
+```
+
+This optional mode expects the **specific** `tronix.thread-alert-lab.v1`
+output with the `6lowstick.posix-multiradio.v0` section. It does not
+execute the lab, launch OpenThread, commission devices, or generate a radio
+transmission. The mode refuses incomplete/error-bearing results,
+unexpected transport descriptions, physical-RF or human-delivery flags,
+inconsistent application receipts, mismatched receiver-journal IDs,
+or a failed original lab baseline/security invariant.
+
+The three source cases remain separate:
+
+- `healthy`: OpenThread POSIX simulated UDP reports one authenticated
+  application receipt.
+- `lostThreadReceipt`: a deliberately withheld *application* receipt
+  leads to a **scripted** LoRa fallback and suppression of a second
+  synthetic application activation.
+- `stoppedThreadNode`: stopping the OpenThread simulated receiver process
+  leads to an unconfirmed Thread attempt and **scripted** LoRa fallback.
+
+Source pointers map to actual report JSON paths, including the original
+`multiradio.receiverEvents[n]` indices. Grouping entries by scenario does
+**not** invent an interleaved timeline or on-air timestamps. The CLI
+SHA-256 identifies the *input bytes* for comparison, **not the authenticity
+of the lab execution, simulator build, or radio measurements**. Verify the
+simulator source commit, binary hash, environment and complete trial log
+separately. Existing intermittent ACK failures remain unresolved.
+
+All POSIX evidence is still **simulation**. The LoRa leg is a scripted
+peer-to-peer application route, not a LoRaWAN or physical modem. Neither
+a simulated receiver activation nor a positive application receipt
+verifies electrical/optical/haptic output, person detection, or
+comprehension. Do not merge these records with field-reliability
+denominators. The optional mode can be exercised against PR #8 before
+that PR merges, but is not itself proof that PR #8 is integrated into
+`main`.
+
 ## Negative evaluations
 
 `test/trace-review.test.mjs` rejects invented authenticated receipts,
@@ -75,8 +121,8 @@ integrate an AI engine. A future model may propose a *typed* interpretation
 of an exported trace; deterministic comparison can reject unsupported
 claims while leaving diagnosis clearly labeled as a hypothesis.
 
-The current fixture is entirely scripted, even though a separate
-OpenThread POSIX simulated-radio experiment is under review in PR #8.
-Do not ingest physical bench records or present PR #8's stopped-receiver
-experiment as a committed Field Station scenario. New source types need
-their own provenance, trust model and explicit acceptance rules.
+The **default committed Field Station fixture** is entirely scripted.
+The optional POSIX mode consumes a separate caller-supplied report and
+keeps those cases and source references distinct; it does not change the
+Field Station dataset. Do not ingest physical bench records. New source
+types require their own provenance, trust model and acceptance rules.
