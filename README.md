@@ -95,7 +95,7 @@ npm run evidence:review -- --posix /path/to/mesh-run.json
 | **Matter adapter** | Pinned SDK seam and mock endpoints | Commissioned hardware or measured output |
 | **Mesh Control / Field Station** | Read-only evidence exploration, text reports and modeled event playback | On-air topology, RF packet timing or human outcomes |
 | **Camel exporter / observer** | Sanitized evidence export and an optional, locally verified Camel 4.22.1 file-only logging route | Operational alert routing or production runtime |
-| **Offline trace reviewer** | Grounded interpretations and rejection of unsupported typed claims over scripted fixtures | AI model validation, field measurements, or human outcomes |
+| **Offline trace reviewer** | Evidence-grounded typed claim checks over scripted fixtures and optional locally generated POSIX simulation reports | AI model validation, field measurements, or human outcomes |
 
 **Optional POSIX multi-radio experiment:** A separately built OpenThread `ot-cli-ftd` exercises F1 challenges and authenticated R2 application receipts over simulated-radio UDP, including withheld receipts and a stopped receiver. LoRa fallback remains **scripted software-only**, and this optional external simulator is **not built or pinned in CI**. See [the multi-radio protocol and reproduction notes](docs/multiradio-fabric.md). A successful run is not evidence of physical RF delivery or notification reliability.
 

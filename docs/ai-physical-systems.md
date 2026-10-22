@@ -148,7 +148,7 @@ receiver's physical response.
 
 | Phase | Proposed deliverable | Pass condition | Current state |
 | --- | --- | --- | --- |
-| 0. Simulation evidence | Reproducible OpenThread POSIX and scripted route experiments | Retain failed and incomplete runs; compare source/binary versions | Existing labs; unresolved intermittent ACK history; PR #8 separately explores POSIX-to-scripted fallback |
+| 0. Simulation evidence | Reproducible OpenThread POSIX and scripted route experiments | Retain failed and incomplete runs; compare source/binary versions | Existing scripted lab plus PR #8 merged POSIX-to-scripted fallback; intermittent ACK history unresolved |
 | 1. Read-only AI evaluator | Consume exported *synthetic* trace data and produce cited diagnostics | No dispatch endpoint or write privilege; flag false claims about receipt/actuation against labeled fixtures | Deterministic reference and typed claim checker implemented; AI model integration not implemented |
 | 2. Proposed-action boundary | Typed advisory requests reviewed against deterministic policy | Reject unapproved targets, stale input, injection attempts, and missing evidence | Not implemented |
 | 3. Controlled hardware lab | Authorized 802.15.4 and separately reviewed direct-LoRa bench; instrumented output | Measured packet/receipt/output records with uncertainty and failure denominators | Not implemented |
