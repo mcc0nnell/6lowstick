@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a1011">
+  <meta name="description" content="6lowStick Field Station: explore synthetic low-power mesh delivery, application receipts and failure evidence. Research only; never an emergency warning service.">
+  <title>6lowStick / Field Station</title>
+  <link rel="stylesheet" href="./station.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to research station</a>
+  <div class="site-shell">
+    <header class="site-nav">
+      <a class="brand" href="#station" aria-label="6lowStick Field Station home"><span class="brand-mark" aria-hidden="true">6</span><span>lowStick</span><span class="brand-sub">/ field station</span></a>
+      <nav aria-label="Research areas">
+        <a href="#why">Why it matters</a>
+        <a href="#experiments">Experiments</a>
+        <a href="#evidence">Evidence</a>
+        <a href="#method">Methods</a>
+      </nav>
+      <a class="github-link" href="https://github.com/mcc0nnell/6lowstick">GitHub ↗</a>
+    </header>
+    <main id="main">
+      <section id="station" class="intro" aria-labelledby="intro-title">
+        <div class="intro-copy">
+          <div class="eyebrow"><span class="status-pip"></span> Research instrument <span class="eyebrow-sep">/</span> experimental v0.1</div>
+          <h1 id="intro-title">The last meter<br>of <em>communication.</em></h1>
+          <p class="lede">A warning can reach an application and still never reach a person. This research station makes that gap visible through repeatable software experiments.</p>
+          <div class="intro-actions"><a class="action-primary" href="#experiments">Explore synthetic experiments <span aria-hidden="true">↗</span></a><a class="action-quiet" href="https://github.com/mcc0nnell/6lowstick/blob/main/docs/release-candidate.md">Research baseline →</a></div>
+          <p class="safety-inline"><span aria-hidden="true">◇</span> Software-only evidence. No physical radio or human receipt verified. Not for emergency dispatch.</p>
+        </div>
+        <aside class="mascot-wrap" aria-label="Rizzer, 6lowStick's two-polo-shirt mascot">
+          <div class="mascot-halo"><img src="./assets/rizzer-transparent.webp" width="255" height="255" alt="Rizzer, the conjoined two-polo mascot with contrasting collars."></div>
+          <div class="mascot-legend"><b>RIZZER / LAB MASCOT</b><span>Two collars. Zero trust.</span></div>
+        </aside>
+      </section>
+      <section class="measurements" aria-labelledby="measure-title">
+        <div class="section-upper"><h2 id="measure-title">Station readout</h2><span class="micro">SOURCE / DETERMINISTIC RESEARCH FIXTURE</span></div>
+        <div class="metric-grid">
+          <div class="metric"><span class="metric-label">Scenarios</span><strong id="scenarioMetric">—</strong><span class="metric-foot">Recorded synthetic drills</span></div>
+          <div class="metric"><span class="metric-label">Scripted transports</span><strong id="routeMetric">—</strong><span class="metric-foot">Thread / direct LoRa modeled</span></div>
+          <div class="metric"><span class="metric-label">Observed radio links</span><strong>00</strong><span class="metric-foot">No physical RF bench data</span></div>
+          <div class="metric"><span class="metric-label">Human confirmation</span><strong class="metric-word">NONE</strong><span class="metric-foot">No user perception study</span></div>
+        </div>
+      </section>
+      <section id="why" class="research-section story-section" aria-labelledby="why-title">
+        <div class="section-intro">
+          <div>
+            <span class="eyebrow">00 / THE QUESTION</span>
+            <h2 id="why-title">A receipt is not a warning.</h2>
+            <p>Networks can report success while a person remains unaware. 6lowStick separates three questions that are too often treated as one.</p>
+          </div>
+        </div>
+        <div class="story-grid">
+          <div class="story-card">
+            <span class="micro">01 / ATTEMPT</span>
+            <h3>Did the message get through?</h3>
+            <p>A send operation does not establish receipt. The lab records attempted paths and what the simulated receiver acknowledges.</p>
+          </div>
+          <div class="story-card">
+            <span class="micro">02 / APPLICATION</span>
+            <h3>Did software process it?</h3>
+            <p>An authenticated application receipt can confirm simulated processing. It cannot establish that a physical indicator fired.</p>
+          </div>
+          <div class="story-card">
+            <span class="micro">03 / PERSON</span>
+            <h3>Did anyone perceive it?</h3>
+            <p>That requires independent actuation measurements and human testing. Neither has been performed in this project.</p>
+          </div>
+        </div>
+        <p class="research-rule"><strong>Our rule:</strong> don't promote a successful software receipt into a claim about radios, devices, or people. <a href="https://github.com/mcc0nnell/6lowstick/blob/main/docs/README.md">Read the research guide ↗</a></p>
+      </section>
+      <section id="experiments" class="research-section" aria-labelledby="lab-title">
+        <div class="section-intro"><div><span class="eyebrow">01 / EXPERIMENTS</span><h2 id="lab-title">Failure laboratory</h2><p>Choose one of five scripted failures or recoveries, then inspect each attempt and receiver-journal entry. Every route is modeled, never measured on air.</p></div><span class="scope-chip">SIMULATION · READ ONLY</span></div>
+        <div class="workspace">
+          <div class="workspace-main">
+            <div class="module-heading"><div><span class="micro">SCENARIO SELECTOR</span><label class="sr-only" for="scenario">Synthetic scenario</label><select id="scenario" aria-label="Synthetic scenario"></select></div><span id="liveStatus" class="live-status" aria-live="polite">Loading synthetic evidence…</span></div>
+            <div class="panel topology-panel">
+              <div class="panel-bar"><div><span class="micro">FABRIC / LOGICAL PATHS</span><h3>Delivery topology</h3></div><span class="panel-aside">NOT PHYSICAL NETWORK TOPOLOGY</span></div>
+              <div id="network" class="network-chart" role="img" aria-label="Illustrative synthetic gateway, Thread, direct LoRa and haptic receiver routes. The trace table is a text equivalent."></div>
+              <div class="legend" aria-label="Graph legend"><span><i class="legend-line positive"></i> Authenticated app receipt</span><span><i class="legend-line uncertain"></i> Unconfirmed attempt</span><span>All paths simulated</span></div>
+            </div>
+            <div class="panel trace-panel">
+              <div class="panel-bar"><div><span class="micro">RECEIPT FLOW</span><h3>Record entries</h3></div><span id="stepCount" class="trace-position">ENTRY —</span></div>
+              <div id="timeline" class="timeline" role="img" aria-label="Display order: scripted attempts followed by receiver journal entries, not measured event timing. Equivalent text appears in the evidence table."></div>
+              <div class="playback-row">
+                <button id="prev" type="button">← Previous</button>
+                <button id="play" class="play-button" type="button">Play sequence</button>
+                <button id="next" type="button">Next →</button>
+                <label class="motion-toggle"><input type="checkbox" id="motion"> Reduced motion</label>
+              </div>
+            </div>
+          </div>
+          <aside class="workspace-aside" aria-labelledby="inspector-title">
+            <div class="panel inspector-panel">
+              <span class="micro">02 / EVIDENCE INSPECTOR</span>
+              <h3 id="inspector-title">What does this trace show?</h3>
+              <div class="event-card"><span class="micro" id="eventType">AWAITING EVIDENCE</span><h4 id="eventTitle">Loading…</h4><p id="eventDescription">Loading the bundled research fixture.</p></div>
+              <div class="sensor-heading"><span class="micro">SYNTHETIC RECEIVER</span><span class="receiver-qualifier">HAPTIC ONLY</span></div>
+              <div class="receiver-stack">
+                <div id="visual" class="receiver-cell"><span aria-hidden="true">▧</span><b>Light</b><small>Not exercised</small></div>
+                <div id="text" class="receiver-cell"><span aria-hidden="true">▤</span><b>Text</b><small>Not exercised</small></div>
+                <div id="haptic" class="receiver-cell"><span aria-hidden="true">≋</span><b>Haptic</b><small>Not yet recorded</small><span class="sr-only"> Simulated haptic receiver state</span></div>
+              </div>
+              <p class="caution"><b>Receipt ≠ perception.</b> An authenticated application ACK does not verify a light, vibration, user observation or comprehension.</p>
+              <details class="raw-details"><summary>Inspect selected event JSON</summary><pre id="raw" class="raw" tabindex="0"></pre></details>
+            </div>
+            <div class="evidence-key"><span class="micro">READ THE STATUS CORRECTLY</span><p><b>Confirmed:</b> application receipt validated in a synthetic harness.</p><p><b>Unconfirmed:</b> no valid application receipt; it does not prove failure to actuate.</p><p><b>Untested:</b> on-air delivery and human outcomes.</p></div>
+          </aside>
+        </div>
+      </section>
+      <section id="evidence" class="research-section evidence-section" aria-labelledby="evidence-title">
+        <div class="section-intro"><div><span class="eyebrow">03 / EVIDENCE</span><h2 id="evidence-title">Inspect the record</h2><p>The graph is a reading aid, not the evidence. Inspect the attempt table, synthetic receiver journal and source JSON directly.</p></div><a class="text-link" href="./multiradio.json">Raw research fixture ↗</a></div>
+        <div class="evidence-grid">
+          <div class="panel table-panel"><div class="panel-bar"><h3>Attempt and receiver journal</h3><span class="micro">DISPLAY ORDER / ATTEMPTS THEN JOURNAL</span></div><div class="table-scroll"><table><caption>Synthetic entries grouped by attempts then receiver journal; current entry indicated by Selected column</caption><thead><tr><th>Entry</th><th>Route</th><th>Application outcome</th><th>Selected</th></tr></thead><tbody id="rows"><tr><td colspan="4">Waiting for evidence…</td></tr></tbody></table></div></div>
+          <div class="panel report-panel"><div class="panel-bar"><h3>Accessible evidence report</h3><span class="micro">PLAIN TEXT / NO GRAPH REQUIRED</span></div><pre id="textReport" tabindex="0" class="raw report">Loading trace…</pre><details><summary>Interpretation notes</summary><p>Receiver events represent local synthetic journal entries. The trial is not a commissioned radio experiment or a human-factors study.</p></details></div>
+        </div>
+      </section>
+      <section id="method" class="research-section method-section" aria-labelledby="method-title">
+        <div class="section-intro"><div><span class="eyebrow">04 / METHODOLOGY</span><h2 id="method-title">Follow the evidence.</h2><p>Reproduce the simulation, inspect its trust boundaries, and see what the physical lab still needs to measure.</p></div></div>
+        <p class="method-entry">New to the project? Begin with the <a href="https://github.com/mcc0nnell/6lowstick/blob/main/docs/README.md">research guide</a>: start here, reproduce an experiment, read the evidence, or plan the next bench test.</p>
+        <div class="method-grid">
+          <a class="method-card" href="https://github.com/mcc0nnell/6lowstick/blob/main/docs/multiradio-fabric.md"><span class="micro">01 / DELIVERY</span><h3>Multi-radio fabric <span aria-hidden="true">↗</span></h3><p>Scripted attempts, local receipts and duplicate suppression.</p></a>
+          <a class="method-card" href="https://github.com/mcc0nnell/6lowstick/blob/main/docs/spinel-flight-recorder.md"><span class="micro">02 / INSTRUMENTATION</span><h3>Spinel recorder <span aria-hidden="true">↗</span></h3><p>Offline frame inspection, bounded parsing and trace semantics.</p></a>
+          <a class="method-card" href="https://github.com/mcc0nnell/6lowstick/blob/main/docs/physical-radio-test-protocol.md"><span class="micro">03 / NEXT PHASE</span><h3>Physical test protocol <span aria-hidden="true">↗</span></h3><p>What an authorized radio bench must actually measure.</p></a>
+          <a class="method-card" href="https://github.com/mcc0nnell/6lowstick/blob/main/docs/threat-model.md"><span class="micro">04 / LIMITATIONS</span><h3>Threat model <span aria-hidden="true">↗</span></h3><p>Trust boundaries, failure evidence and missing assurances.</p></a>
+        </div>
+      </section>
+    </main>
+    <footer><span><strong>6lowStick</strong> / research field station</span><span>Apache-2.0 · Synthetic evidence only · Never for emergency dispatch</span><a href="https://github.com/mcc0nnell/6lowstick">Source ↗</a></footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+  <script type="module" src="./observatory.js"></script>
+</body>
+</html>

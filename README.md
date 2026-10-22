@@ -1,63 +1,136 @@
-# 6lowStick
+<div align="center">
+  <img src="assets/rizzer-transparent.webp" alt="Rizzer: a bright pink and lime-green six made from two polo shirts, with both collars popped." width="230" />
 
-**Light the mesh. Make alerts accessible.**
+  <h1>6lowStick</h1>
+  <p><strong>The proverbial glow stick for the physical world.</strong></p>
+  <p>Signal a presence, a change, a need, or a warning. Explore low-power physical notifications—and the evidence that a signal actually reached something or someone.</p>
+  <p>
+    <a href="https://mcc0nnell.github.io/6lowstick/"><strong>Explore the Field Station ↗</strong></a>
+    &nbsp;·&nbsp; <a href="#why-6lowstick">The idea</a>
+    &nbsp;·&nbsp; <a href="#try-the-lab">Try the lab</a>
+    &nbsp;·&nbsp; <a href="#what-we-can-show">Evidence and limits</a>
+    &nbsp;·&nbsp; <a href="#openthread-and-ai">OpenThread + AI</a>
+    &nbsp;·&nbsp; <a href="docs/README.md">Research guide</a>
+  </p>
+  <p><code>APACHE-2.0</code> &nbsp; <code>NODE 22+</code> &nbsp; <code>EXPERIMENTAL</code> &nbsp; <code>SIMULATION FIRST</code></p>
+</div>
 
-Experimental, open-source research into authenticated, accessible alerting over low-power IPv6 mesh networks, beginning with OpenThread's simulated radio environment.
+> [!IMPORTANT]
+> **Research software, not an emergency warning system.** The alert fabric, Thread/direct-LoRa fallback, and receiver scenarios are software-only. There is no demonstrated on-air delivery, physical actuation, or human receipt. Do not use this code to originate operational warnings.
 
-The first lab exercises three receiver modalities—visual strobe, text display, and haptic vibration—using synthetic messages and application acknowledgments. It tests forged-alert rejection, replay suppression, and missing receiver detection.
+**Release state:** `v0.1.0-rc.1` is a **prepared, untagged source-only release candidate**, not an npm package or a published GitHub Release. See the [release checklist](docs/release-candidate.md), [changelog](CHANGELOG.md), and [security policy](SECURITY.md).
 
-See [the Thread alert experiment](experiments/thread-alert/README.md) for setup, verification, and limitations.
+## Why 6lowStick
 
-## Mesh Control — terminal-native evidence replay
+**Crack a glow stick. Wave it. Someone understands that you're signaling something.** No app or dashboard needed to recognize that something is happening.
 
-6lowStick now has a keyboard-driven, **read-only** terminal UI (Node 22+). Inspect a logical receiver map, scrub experimental phases, review authentication rejections, replay suppression, missing ACKs, and inspect the provenance of each observation.
+That's the ambition behind 6lowStick: an open, low-power way to **make a signal physical**. A presence, a request, a sensor condition, a coordination cue, or an emergency could become a light, vibration, text notification, or relayed signal. The meaning comes from its authorized source and context, not from a single hard-coded emergency use case.
 
-```sh
+A digital signal can leave the sender and never reach a receiver. It can reach an application without turning on a light or vibrating a device. A device can activate without anyone noticing it.
+
+**Transmission, application receipt, physical activation, human detection, and human understanding are distinct events.** 6lowStick investigates the evidence between them. Accessibility belongs at the center: a signal must be perceivable in a form that works for the recipient.
+
+Emergency alerting is one demanding application, **not the definition of the project**. Today 6lowStick is a controlled, alert-shaped *simulation laboratory*; it does not yet implement arbitrary-purpose signaling, on-air delivery, or validated physical notifications.
+
+## OpenThread and AI
+
+**The signal is the point. OpenThread is one way to carry it. AI is one way to interpret it.**
+
+OpenThread could provide local, low-power IPv6 connectivity between signaling endpoints. An edge service could interpret observations and recommend how to respond; deterministic policy—not a language model—would authorize any future physical action. 6lowStick would preserve the evidence trail: what was requested, where delivery was attempted, which application acknowledged it, and what still requires physical or human verification.
+
+A deterministic, **offline and read-only** trace reviewer now checks typed claims against committed synthetic fixtures and cites their evidence. It is **not an AI model**, does not evaluate arbitrary prose, and has no dispatch or actuator authority. Integrating an AI evaluator remains proposed.
+
+Future direct-LoRa relaying would be a **separate application transport**, not a longer-range OpenThread mesh. Today the Thread work uses POSIX simulated radio and LoRa remains scripted; neither demonstrates physical RF failover or life-safety performance.
+
+[Read the full OpenThread + AI research architecture →](docs/ai-physical-systems.md) for the proposed trust boundaries, evidence ladder, and research gates.
+
+## How it works
+
+The current instruments explore a narrow, synthetic notification protocol. The general-purpose glow-stick vision above is **not** implemented by these lanes.
+
+| Research lane | What it does | What it does **not** establish |
+| --- | --- | --- |
+| **Observe** | Parses receive-only NOAA/SAME decoder lines and offline Spinel frames. | Authenticity of an external warning, or permission to dispatch one. |
+| **Simulate** | Runs local authenticated application-message and replay tests over OpenThread POSIX and scripted Thread/direct-LoRa routes. | Actual 802.15.4 or LoRa RF delivery. |
+| **Inspect** | Exposes attempts, application receipts, duplicate suppression, and synthetic receiver-journal entries in JSON, a text-friendly terminal, and the Field Station. | Physical actuation, human perception, or understanding. |
+
+The observation and simulation lanes are deliberately separate. NOAA data cannot trigger the synthetic sender, and an application receipt cannot become a claim that a human was reached.
+
+## Try the lab
+
+**[Open the Field Station →](https://mcc0nnell.github.io/6lowstick/)**
+
+Five deterministic scenarios let you inspect an unavailable Thread route, a scripted direct-LoRa fallback, invalid or missing receipts, and duplicate suppression. The diagram is an illustration of **model decisions**, not captured RF topology. The text table and raw JSON remain usable without a chart.
+
+For a quick local run, clone the repository with **Node.js 22+**:
+
+```bash
+git clone https://github.com/mcc0nnell/6lowstick.git
+cd 6lowstick
 npm ci
-npm run tui -- --demo
-npm run tui -- --input evidence/mesh-run.json
-npm run tui -- --demo --snapshot --plain
-npm run tui -- --demo --report   # complete accessible text export
+npm test
+
+npm run tui -- --demo --report    # Accessible, noninteractive text
+npm run tui -- --demo             # Keyboard-operated Mesh Control
+npm run evidence:multiradio       # Deterministic synthetic scenarios
+npm run evidence:review           # Offline trace judgments and exact evidence pointers
+# Optional: review externally generated PR #8 POSIX *simulation* evidence
+npm run evidence:review -- --posix /path/to/mesh-run.json
 ```
 
-For Camel route/activity inspection, use `npm run camel:export -- --demo` and run `camel run integrations/camel/mesh-observe.camel.yaml` with Camel CLI **4.22.1**. Its route is read-only and logs only sanitized JSON observation copies.
+`--demo` uses illustrative data. For a static, no-color terminal snapshot use `npm run tui -- --demo --snapshot --plain`. Interactive display has reduced-motion support. To replay separately generated POSIX simulator evidence use `npm run tui -- --input evidence/mesh-run.json` after creating that local file.
 
-The demo is labeled illustrative, not a measured experiment. Recorded replay is a reconstruction from final lab JSON, not packet-by-packet live telemetry. Lines show logical intended recipients, **not radio topology**; application ACKs do not prove human receipt. See [TUI guide](docs/mesh-control-tui.md). The **optional Camel 4.22.1 observer** now reads allowlisted *copies* of lab evidence; it has no alert-sending path and is not required to run the TUI. See [the verified Camel observer guide](integrations/camel/README.md).
+**Optional Camel 4.22.1 observer:** `npm run camel:export -- --demo` writes sanitized evidence copies, and `camel run integrations/camel/mesh-observe.camel.yaml` consumes them through a file-only log route. It does not send signals or authorize physical actions. See [the development-only Camel observer guide](integrations/camel/README.md); Camel is not required for the TUI or lab.
 
-**Not a life-safety product.** No physical actuators, real emergency authority, CAP/IPAWS integration, production key management, or human delivery guarantee is provided. Do not use for actual emergency warnings.
+**OpenThread is a separate toolchain.** Building or supplying a compatible `ot-cli-ftd` and setting `OT_CLI_PATH` enables the opt-in POSIX lab via `bash scripts/run-evidence.sh`; the repository does not pin or build that binary. See [reproduction notes](experiments/thread-alert/README.md) and [measured Node-harness event limitations](docs/monotonic-evidence.md).
 
-WindAnvil and TalkPipe are development/testing tools, not required runtime components of 6lowStick.
+## What we can show
 
-## Reproduce synthetic research evidence
+| Instrument | Demonstrated in software | Not demonstrated |
+| --- | --- | --- |
+| **Thread alert lab** | OpenThread POSIX simulated traffic, local HMAC, replay journal, synthetic modalities | RF delivery or reliably reaching a person |
+| **Multi-radio fabric** | Scripted Thread/direct-LoRa cases plus an opt-in OpenThread POSIX simulated-radio UDP receipt/failover exercise with authenticated application ACKs and duplicate suppression | Physical Thread/LoRa RF, LoRaWAN, reliable delivery or human receipt |
+| **NOAA/SAME observer** | Receive-only decoder-line parsing and mock/replay input | Origin authentication or field measurement |
+| **Spinel Flight Recorder** | Offline HDLC-lite parsing, CRC/FCS, command metadata, reference vectors | Live RCP instrumentation or authenticated origin |
+| **Matter adapter** | Pinned SDK seam and mock endpoints | Commissioned hardware or measured output |
+| **Mesh Control / Field Station** | Read-only evidence exploration, text reports and modeled event playback | On-air topology, RF packet timing or human outcomes |
+| **Camel exporter / observer** | Sanitized evidence export and an optional, locally verified Camel 4.22.1 file-only logging route | Operational alert routing or production runtime |
+| **Offline trace reviewer** | Grounded interpretations and rejection of unsupported typed claims over scripted fixtures | AI model validation, field measurements, or human outcomes |
 
-On a Linux host with a separately built OpenThread POSIX `ot-cli-ftd` binary,
-run `OT_CLI_PATH=/absolute/path/to/ot-cli-ftd bash scripts/run-evidence.sh`.
-The script runs unit tests and the simulated Thread mesh experiment, then
-writes local TAP, JSON event logs and a summary to the ignored `evidence/`
-directory. It does not prove RF, real Matter device, NOAA receiver or human
-notification performance. The build of the OpenThread CLI is not yet pinned
-or reproduced by this repository.
+**Optional POSIX multi-radio experiment:** A separately built OpenThread `ot-cli-ftd` exercises F1 challenges and authenticated R2 application receipts over simulated-radio UDP, including withheld receipts and a stopped receiver. LoRa fallback remains **scripted software-only**, and this optional external simulator is **not built or pinned in CI**. See [the multi-radio protocol and reproduction notes](docs/multiradio-fabric.md). A successful run is not evidence of physical RF delivery or notification reliability.
 
-## Synthetic Thread/LoRa dual-radio failover
+### An unresolved result worth keeping
 
-A software-only experiment models one HMAC-authenticated notification delivered
-over **scripted Thread and direct peer-to-peer LoRa transports**. It signs
-per-attempt application receipts and tests route loss, missing or forged
-acknowledgments, and duplicate suppression across both links. It **does not**
-operate LoRa hardware, Spinel, ChirpStack/LoRaWAN or a real Thread link, and
-cannot issue live warnings or activate devices.
+One earlier four-node POSIX simulation intermittently failed to record a haptic application acknowledgment. Later serial simulated trials did not establish physical reliability. An absent ACK is **unconfirmed delivery**, not evidence that no receiver activated. The question remains open; see [the reliability record](docs/threat-model.md#observed-reliability-caveat-2026-10-20) and [trial protocol](docs/reliability-trials.md).
 
-Run `npm run evidence:multiradio` to see five JSON research traces. See
-[the failover design and limitations](docs/multiradio-fabric.md).
+The next meaningful gates are an authorized physical radio bench, independent observation of light/text/haptic actuation, and consent-based studies of whether people notice and understand the notification. More green simulated tests cannot substitute for those measurements.
 
-## Receive-only software-defined radio research
+## Architecture and trust boundaries
 
-6lowStick now has an **SDR observation path**, separate from the synthetic
-OpenThread alert-delivery lab. With locally installed `rtl_fm` and
-`multimon-ng`, it can turn NOAA Weather Radio SAME decoder text into
-bounded JSON Lines research records. There is also a no-hardware replay
-path with tests. The observer **never authenticates an on-air broadcaster,
-issues an active alert, or actuates a mesh endpoint**.
+![Architecture of 6lowStick: isolated receive-only observations, deterministic synthetic Thread/direct-LoRa experiments, and read-only evidence inspection. No observation authorizes alert dispatch and no simulated receipt verifies human perception.](assets/architecture.svg)
 
-See [SDR ingress and replay](docs/sdr-ingress.md) for the receiver pipeline,
-supported frequencies, safety boundary, and limitations.
+[View the full diagram](assets/architecture.svg)
+
+**For readers who don't use the diagram:** receive-only NOAA/SAME and offline Spinel inspection feed an observation lane without dispatch authority. A separate synthetic policy and local HMAC sender models Thread/direct-LoRa routes to receivers; attempts, application ACKs and a replay journal become JSON research evidence. The terminal UI, ECharts Observatory and Camel exporter only **inspect** that evidence. A Spinel CRC validates frame integrity, not provenance. A local ACK confirms modeled application processing, not actuation or perception.
+
+## Research guide
+
+The [research guide](docs/README.md) is organized by what you want to do, not by how many subsystems exist:
+
+- **Follow the experiment:** [Multi-radio fabric](docs/multiradio-fabric.md) and [OpenThread POSIX lab](experiments/thread-alert/README.md).
+- **Audit the evidence:** [Reliability trials](docs/reliability-trials.md), [Spinel recorder](docs/spinel-flight-recorder.md) and [monotonic event capture](docs/monotonic-evidence.md).
+- **Audit an interpretation:** [Offline trace review](docs/trace-review.md) checks exact fixture-grounded claims; no model or dispatch authority.
+- **Plan the next phase:** [Physical-radio test protocol](docs/physical-radio-test-protocol.md) and [threat model](docs/threat-model.md).
+- **Use the interfaces:** [Field Station design and evidence boundaries](docs/field-station.md) and [Mesh Control TUI](docs/mesh-control-tui.md).
+
+## Meet Rizzer
+
+**Two collars. Zero trust.** Rizzer is the irreverent 6lowStick mascot and the name of a [separate Apache-2.0 native coverage-guided fuzzer](https://github.com/mcc0nnell/rizzer). The original [two-polo artwork](assets/6lowstick-two-polos.webp) remains the source for the cleaned README illustration; [Rizzer's character notes](https://github.com/mcc0nnell/rizzer/blob/main/docs/character.md) and [art script](https://github.com/mcc0nnell/rizzer/blob/main/scripts/prepare_original_logo.py) live in the independent repository.
+
+6lowStick has an **opt-in offline Spinel fuzzing adapter** with retained input replay against its JavaScript recorder, not live radio fuzzing or a confirmed OpenThread vulnerability. Follow the [bounded fuzzing guide](docs/rizzer-spinel-fuzzing.md) to reproduce it. Rizzer's native coverage is not JavaScript coverage.
+
+The mascot also appears in the **read-only** TUI: `npm run tui -- --mascot --plain` for a screen-reader-friendly line, or `--mascot --reduced-motion` for the static view. No fuzzer runs when the mascot is displayed.
+
+---
+
+**Safety and licensing:** Never connect the prototype to public alert origination, operational emergency dispatch, or uncommissioned actuators. NOAA/SAME reception is not authenticated by a local gateway HMAC. [Apache-2.0](LICENSE). WindAnvil and TalkPipe can support development verification but are not runtime dependencies.

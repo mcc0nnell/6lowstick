@@ -1,0 +1,265 @@
+{
+  "schema": "6lowstick.spinel-reference-vectors.v1",
+  "provenance": "Independent offline Python bitwise FCS; synthetic fixtures; Spinel spec",
+  "vectors": [
+    {
+      "name": "small_command",
+      "capture_hex": "7e810241b97e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": true,
+          "headerValid": true,
+          "header": 129,
+          "commandDecoded": true,
+          "commandId": 2,
+          "truncated": false,
+          "bytes": 4,
+          "sha256": "8890a8898b7eca8fe3bf86e0bb7049e75de617a5fba45b9c8e8241e6db613b14"
+        }
+      ]
+    },
+    {
+      "name": "all_hdlc_reserved_values",
+      "capture_hex": "7e81027d5e7d5d7d317d337dd818237e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": true,
+          "headerValid": true,
+          "header": 129,
+          "commandDecoded": true,
+          "commandId": 2,
+          "truncated": false,
+          "bytes": 9,
+          "sha256": "c509c6dc35d272552afc72c928744fe3b00d3f47a493ca60a9a730ec06c6948e"
+        }
+      ]
+    },
+    {
+      "name": "two_byte_command_300",
+      "capture_hex": "7e82ac02d55a7e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": true,
+          "headerValid": true,
+          "header": 130,
+          "commandDecoded": true,
+          "commandId": 300,
+          "truncated": false,
+          "bytes": 5,
+          "sha256": "5b2c7372b8eec6c13fb85d4b7801b87e462f8ed72315ca10b4edf54db6642e80"
+        }
+      ]
+    },
+    {
+      "name": "max_three_byte_command",
+      "capture_hex": "7ebfffff7f7dd89d7e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": true,
+          "headerValid": true,
+          "header": 191,
+          "commandDecoded": true,
+          "commandId": 2097151,
+          "truncated": false,
+          "bytes": 6,
+          "sha256": "94168a5f2f211a0edce614b5c8055009359120665ef67a022a72fcd316a6b5cf"
+        }
+      ]
+    },
+    {
+      "name": "invalid_spinel_header",
+      "capture_hex": "7e01028d357e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": true,
+          "headerValid": false,
+          "header": 1,
+          "commandDecoded": false,
+          "commandId": null,
+          "truncated": false,
+          "bytes": 4,
+          "sha256": "1ce34fbddca05b86f2af3863a0859b345f8904a12b74167ee789c547c4253b8e"
+        }
+      ]
+    },
+    {
+      "name": "incomplete_packed_command",
+      "capture_hex": "7e81805b1e7e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": true,
+          "headerValid": true,
+          "header": 129,
+          "commandDecoded": false,
+          "commandId": null,
+          "truncated": false,
+          "bytes": 4,
+          "sha256": "cb8b33fdb7dc6b35235988144c59b3cc601bb5d56e2c03487fece70c5662c994"
+        }
+      ]
+    },
+    {
+      "name": "noncanonical_two_byte_command",
+      "capture_hex": "7e818000301c7e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": true,
+          "headerValid": true,
+          "header": 129,
+          "commandDecoded": false,
+          "commandId": null,
+          "truncated": false,
+          "bytes": 5,
+          "sha256": "5d2244417c62480b259ff71c3d5864e1102752efb84def19e7a50eb0dd29c0d3"
+        }
+      ]
+    },
+    {
+      "name": "four_byte_command_not_spinel",
+      "capture_hex": "7e8180808001a1f27e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": true,
+          "headerValid": true,
+          "header": 129,
+          "commandDecoded": false,
+          "commandId": null,
+          "truncated": false,
+          "bytes": 7,
+          "sha256": "27d65f72313e42a4d24bd0f5edd1f150b5e2fed53c7df80e92aa14889e25dfac"
+        }
+      ]
+    },
+    {
+      "name": "failed_crc",
+      "capture_hex": "7e810341b97e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": false,
+          "headerValid": false,
+          "header": null,
+          "commandDecoded": false,
+          "commandId": null,
+          "truncated": false
+        }
+      ]
+    },
+    {
+      "name": "too_short_for_fcs",
+      "capture_hex": "7e817e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": false,
+          "headerValid": false,
+          "header": null,
+          "commandDecoded": false,
+          "commandId": null,
+          "truncated": false
+        }
+      ]
+    },
+    {
+      "name": "dangling_escape",
+      "capture_hex": "7e817d7e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": false,
+          "headerValid": false,
+          "header": null,
+          "commandDecoded": false,
+          "commandId": null,
+          "truncated": true
+        }
+      ]
+    },
+    {
+      "name": "oversized_bounded_frame",
+      "capture_hex": "7e010203047e",
+      "max_frame_bytes": 3,
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": false,
+          "headerValid": false,
+          "header": null,
+          "commandDecoded": false,
+          "commandId": null,
+          "truncated": true
+        }
+      ]
+    },
+    {
+      "name": "flags_and_two_frames",
+      "capture_hex": "7e7e7e810241b97e7e82ac02d55a7e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": true,
+          "headerValid": true,
+          "header": 129,
+          "commandDecoded": true,
+          "commandId": 2,
+          "truncated": false,
+          "bytes": 4,
+          "sha256": "8890a8898b7eca8fe3bf86e0bb7049e75de617a5fba45b9c8e8241e6db613b14"
+        },
+        {
+          "index": 1,
+          "crcVerified": true,
+          "headerValid": true,
+          "header": 130,
+          "commandDecoded": true,
+          "commandId": 300,
+          "truncated": false,
+          "bytes": 5,
+          "sha256": "5b2c7372b8eec6c13fb85d4b7801b87e462f8ed72315ca10b4edf54db6642e80"
+        }
+      ]
+    },
+    {
+      "name": "unclosed_trailing_data",
+      "capture_hex": "7e810241b97e8102",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": true,
+          "headerValid": true,
+          "header": 129,
+          "commandDecoded": true,
+          "commandId": 2,
+          "truncated": false,
+          "bytes": 4,
+          "sha256": "8890a8898b7eca8fe3bf86e0bb7049e75de617a5fba45b9c8e8241e6db613b14"
+        }
+      ]
+    },
+    {
+      "name": "pre_flag_noise",
+      "capture_hex": "81027e810241b97e",
+      "expected": [
+        {
+          "index": 0,
+          "crcVerified": true,
+          "headerValid": true,
+          "header": 129,
+          "commandDecoded": true,
+          "commandId": 2,
+          "truncated": false,
+          "bytes": 4,
+          "sha256": "8890a8898b7eca8fe3bf86e0bb7049e75de617a5fba45b9c8e8241e6db613b14"
+        }
+      ]
+    }
+  ]
+}

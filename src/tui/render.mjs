@@ -1,6 +1,7 @@
 // Copyright 2026 Robert McConnell
 // SPDX-License-Identifier: Apache-2.0
 import {RECEIVERS, phaseLabel, replayState} from './evidence.mjs';
+import {isMeasuredTimeline} from './timed.mjs';
 
 const ANSI = /\x1b\[[\d;]*m/g;
 const palette = {bright:97, dim:90, cyan:96, good:92, warn:93, bad:91};
@@ -20,8 +21,8 @@ const panel = (name, lines, width, plain) => {
     color('└' + edge + '┘', 'cyan', plain)
   ];
 };
-const tone = s => ({ack:'good', missing:'warn', reject:'bad', error:'bad', duplicate:'cyan', pending:'cyan'}[s] || 'dim');
-const marker = s => ({ack:'✓', missing:'!', reject:'×', error:'×', duplicate:'↺', pending:'·', unknown:'?'}[s] || '○');
+const tone = s => ({ack:'good', activated:'cyan', received:'cyan', missing:'warn', offline:'bad', reject:'bad', error:'bad', duplicate:'cyan', pending:'cyan'}[s] || 'dim');
+const marker = s => ({ack:'✓', received:'+', activated:'●', offline:'×', missing:'!', reject:'×', error:'×', duplicate:'↺', pending:'·', attempt:'·', unknown:'?'}[s] || '○');
 const topology = (state, selected, plain) => [
   color('                        ◉  GATEWAY', 'cyan', plain),
   '                       /    |     \\',
@@ -44,12 +45,16 @@ const inspector = (state, selected) => {
   ];
 };
 const observationRows = (steps, cursor) => steps.slice(Math.max(0, cursor - 6), cursor + 1).map(s =>
-  String(s.index + 1).padStart(2, '0') + '  ' + marker(s.kind) + ' ' + safe(s.title));
+  String(s.index + 1).padStart(2, '0') + '  ' +
+  (Number.isFinite(s.time_ms) ? '+' + s.time_ms.toFixed(1) + 'ms  ' : '') +
+  marker(s.kind) + ' ' + safe(s.title));
 
 export function renderScreen({data, steps, cursor, selected = 'strobe', view = 'topology',
                               width = 90, height = 34, plain = false, help = false, playing = false}) {
   const w = Math.max(48, Math.min(112, width - 1 || 89));
   const state = replayState(steps, cursor);
+  const measured = isMeasuredTimeline(steps);
+  const elapsed = state.current && measured ? '  +'+state.current.time_ms.toFixed(1)+'ms HARNESS' : '  PHASE RECONSTRUCTION';
   const progress = steps.length ? Math.round(100 * (state.cursor + 1) / steps.length) : 0;
   const barWidth = Math.max(0, Math.min(22, w - 37));
   const done = Math.round(barWidth * progress / 100);
@@ -59,19 +64,19 @@ export function renderScreen({data, steps, cursor, selected = 'strobe', view = '
     color(clip('SIMULATED EVIDENCE  •  READ ONLY  •  NOT A LIFE-SAFETY SYSTEM', w), 'warn', plain),
     '',
     color('[' + '█'.repeat(done) + '░'.repeat(barWidth - done) + ']', 'cyan', plain) +
-       '  ' + (state.cursor + 1) + '/' + steps.length + '  ' + progress + '%  ' + (playing ? '▶ PLAY' : 'Ⅱ PAUSE'),
+       '  ' + (state.cursor + 1) + '/' + steps.length + '  ' + progress + '%  ' + (playing ? '▶ PLAY' : 'Ⅱ PAUSE') + elapsed,
     ''
   ];
   if (help) {
     out.push(...panel('KEYBOARD HELP', [
       '←/→ or h/l  previous/next observation',
       'Home/End    beginning/end; r rewinds',
-      'Space       play/pause reconstructed phase sequence',
+      'Space       play/pause: observed harness gaps (if available)',
       '↑/↓ or j/k  select receiver',
       '1 / 2 / 3 / 4   topology / timeline / provenance / text',
       '? help      q quit',
       '',
-      'Playback is an illustration of ordered lab phases, NOT RF timing.'
+      'Recorded time is host harness time, NOT RF or physical delivery.'
     ], w, plain));
   } else if (view === 'text') {
     out.push(...panel('TEXT READER / SAME RECORDED EVIDENCE', [
@@ -80,6 +85,7 @@ export function renderScreen({data, steps, cursor, selected = 'strobe', view = '
       'Step: ' + (state.cursor + 1) + ' of ' + steps.length,
       'Observation: ' + safe(state.current?.title || 'before first observation'),
       'Details: ' + safe(state.current?.detail || 'No event selected'),
+      'Harness elapsed: ' + (measured && state.current ? state.current.time_ms.toFixed(3) + ' ms' : 'not recorded'),
       '',
       ...RECEIVERS.map(name => name.toUpperCase() + ': ' + state.status[name].state.toUpperCase() +
         ' / ' + safe(state.status[name].detail)),
@@ -89,10 +95,11 @@ export function renderScreen({data, steps, cursor, selected = 'strobe', view = '
   } else if (view === 'timeline') {
     const max = Math.max(4, Math.min(16, height - 13));
     const start = Math.max(0, Math.min(state.cursor - Math.floor(max / 2), steps.length - max));
-    out.push(...panel('OBSERVATION TIMELINE / ORDERED LAB PHASES',
+    out.push(...panel(measured ? 'TIMELINE / MEASURED HARNESS EVENT ORDER' : 'OBSERVATION TIMELINE / RECONSTRUCTED PHASES',
       steps.slice(start, start + max).map(s =>
         (s.index === state.cursor ? '▶ ' : '  ') + String(s.index + 1).padStart(2, '0') + '  ' +
-        phaseLabel(s.phase).padEnd(19) + ' ' + s.title), w, plain));
+        phaseLabel(s.phase).padEnd(19) + ' ' +
+        (measured ? '+' + s.time_ms.toFixed(1).padStart(9) + 'ms ' : '') + safe(s.title)), w, plain));
   } else if (view === 'evidence') {
     out.push(...panel('PROVENANCE / LIMITATIONS', [
       'Schema: ' + safe(data.schema),
@@ -102,7 +109,8 @@ export function renderScreen({data, steps, cursor, selected = 'strobe', view = '
       'Observation: ' + safe(state.current?.title || 'before first recorded event'),
       'Diagnostics: ' + (data.errors || []).length + ' entries',
       '',
-      'Final JSON gives ordered phases, NOT timestamped packet events.',
+      measured ? 'Harness monotonic event times observed; NOT RF packet timestamps.' :
+        'Legacy evidence reconstructed by phase; no event timestamps.',
       'Application ACK means simulated receipt, not physical/human delivery.',
       'Gateway HMAC does not authenticate NOAA. RF paths unmeasured.',
       'Warning: ' + safe(data.warning || 'Experimental research only')
@@ -125,7 +133,9 @@ export function renderReport({data, steps}) {
     'Transport: ' + safe(data.transport || 'not recorded'),
     'Schema: ' + safe(data.schema),
     'Application ACK is not physical activation or human acknowledgment.',
-    'Event order is reconstructed by test phase and receiver order, NOT packet arrival time.',
+    isMeasuredTimeline(steps) ?
+      'Events ordered by observed Node harness monotonic time, NOT RF packet arrival time.' :
+      'Event order is reconstructed by test phase and receiver order, NOT packet arrival time.',
     ''
   ];
   let phase = null;
@@ -136,6 +146,8 @@ export function renderReport({data, steps}) {
     }
     rows.push(String(event.index + 1).padStart(3, '0') + '. ' + safe(event.title));
     rows.push('     ' + safe(event.detail));
+    if (Number.isFinite(event.time_ms))
+      rows.push('     Harness monotonic elapsed: ' + event.time_ms.toFixed(3) + ' ms');
     if (event.kind === 'ack' && Number.isFinite(event.latency) && event.latency >= 0)
       rows.push('     Harness send-to-application-ACK latency: ' + event.latency + ' ms');
   }

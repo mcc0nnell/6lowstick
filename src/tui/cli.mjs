@@ -6,19 +6,30 @@ import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildTimeline, parseEvidence, RECEIVERS} from './evidence.mjs';
+import {playbackDelayMs} from './timed.mjs';
 import {renderScreen, renderReport} from './render.mjs';
+import {renderRizzer, playRizzerCameo} from './rizzer.mjs';
 
 const args = process.argv.slice(2);
 const usage = '6lowStick Mesh Control (experimental, read-only)\n' +
-  'Usage: npm run tui -- [--demo | --input evidence/mesh-run.json] [--snapshot | --report] [--plain] [--reduced-motion]\n' +
-  'Keys: arrows/h/l step; j/k select receiver; space play; 1/2/3/4 views; ? help; q quit\n';
+  'Usage: npm run tui -- [--demo | --input evidence/mesh-run.json | --mascot] [--snapshot | --report | --animate] [--plain] [--reduced-motion]\n' +
+  'Keys: arrows/h/l step; j/k select receiver; space play; 1/2/3/4 views; m mascot; ? help; q quit\n';
 if (args.includes('--help') || args.includes('-h')) { console.log(usage); process.exit(0); }
-const known = new Set(['--demo', '--input', '--snapshot', '--report', '--plain', '--reduced-motion']);
+const known = new Set(['--demo', '--input', '--snapshot', '--report', '--plain', '--reduced-motion', '--mascot', '--animate']);
 if (args.some((a,i) => !known.has(a) && !(i > 0 && args[i-1] === '--input')) ||
     args.filter(a => a === '--input').length > 1 ||
     (args.includes('--demo') && args.includes('--input')) ||
-    (args.includes('--input') && !args[args.indexOf('--input') + 1])) {
+    (args.includes('--input') && !args[args.indexOf('--input') + 1]) ||
+    (args.includes('--animate') && !args.includes('--mascot')) ||
+    (args.includes('--mascot') && ['--demo','--input','--snapshot','--report'].some(x => args.includes(x)))) {
   console.error(usage); process.exit(2);
+}
+if (args.includes('--mascot')) {
+  const plain = args.includes('--plain') || !process.stdout.isTTY;
+  const reducedMotion = args.includes('--reduced-motion') || process.env.REDUCE_MOTION === '1';
+  await playRizzerCameo({plain, reducedMotion, animate: args.includes('--animate'),
+    color: process.env.NO_COLOR === undefined});
+  process.exit(0);
 }
 const demo = args.includes('--demo');
 const path = demo ? fileURLToPath(new URL('../../fixtures/tui/illustrative-drill.json', import.meta.url)) :
@@ -42,9 +53,13 @@ if (!steps.length) { console.error('No observations'); process.exit(1); }
 const snapshot = args.includes('--snapshot') || !process.stdin.isTTY || !process.stdout.isTTY;
 const plain = args.includes('--plain') || process.env.NO_COLOR !== undefined || snapshot;
 const reduced = args.includes('--reduced-motion') || process.env.REDUCE_MOTION === '1';
-let cursor = snapshot ? steps.length - 1 : -1, selection = 0, view = 'topology', help = false, playing = false;
+let cursor = snapshot ? steps.length - 1 : -1, selection = 0, view = 'topology', help = false, playing = false, mascot = false;
 let timer;
 function render() {
+  if (mascot) {
+    process.stdout.write('\x1b[H\x1b[2J' + renderRizzer({plain, color: !plain}));
+    return;
+  }
   const frame = renderScreen({data, steps, cursor, selected: RECEIVERS[selection], view, help, playing,
     plain, width: process.stdout.columns || 90, height: process.stdout.rows || 34});
   process.stdout.write(snapshot ? frame : '\x1b[H\x1b[2J' + frame);
@@ -56,7 +71,7 @@ if (snapshot) {
   process.stdin.setRawMode(true);
   process.stdin.setEncoding('utf8');
   process.stdin.resume();
-  function pause() { playing = false; if (timer) clearInterval(timer); timer = undefined; }
+  function pause() { playing = false; if (timer) clearTimeout(timer); timer = undefined; }
   function cleanup() {
     pause(); process.stdin.setRawMode(false); process.stdin.pause();
     process.stdout.write('\x1b[?25h\x1b[?1049l');
@@ -67,15 +82,22 @@ if (snapshot) {
     if (reduced) { seek(steps.length - 1); return; }
     if (cursor >= steps.length - 1) cursor = -1;
     playing = true;
-    timer = setInterval(() => {
-      cursor++;
-      if (cursor >= steps.length - 1) pause();
-      render();
-    }, 850);
+    function scheduleNext() {
+      const delay = playbackDelayMs(steps, cursor);
+      timer = setTimeout(() => {
+        cursor++;
+        if (cursor >= steps.length - 1) pause();
+        render();
+        if (playing) scheduleNext();
+      }, delay);
+    }
+    scheduleNext();
     render();
   }
   process.stdin.on('data', key => {
     if (key === 'q' || key === '\x03') { cleanup(); process.exit(0); }
+    if (key === 'm') { pause(); mascot = !mascot; render(); return; }
+    if (mascot) return;
     if (key === '\x1b[D' || key === 'h') return seek(cursor - 1);
     if (key === '\x1b[C' || key === 'l') return seek(cursor + 1);
     if (key === '\x1b[H' || key === '\x1b[1~') return seek(-1);

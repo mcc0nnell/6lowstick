@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="640" viewBox="0 0 1600 640" role="img" aria-labelledby="t d">
+<title id="t">6lowStick — Light the mesh. Make alerts accessible.</title>
+<desc id="d">An illustrated software-only research laboratory: a simulated gateway branches into Thread and direct LoRa routes that converge on accessible text, light and haptic receivers. The drawing is conceptual, not measured radio topology.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071b29"/><stop offset=".52" stop-color="#081522"/><stop offset="1" stop-color="#11182e"/></linearGradient>
+  <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#70f1cc"/><stop offset="1" stop-color="#80caff"/></linearGradient>
+  <radialGradient id="glow"><stop stop-color="#2fdcb9" stop-opacity=".27"/><stop offset="1" stop-color="#2fdcb9" stop-opacity="0"/></radialGradient>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#5f8fa7" stroke-opacity=".075"/></pattern>
+  <filter id="soft"><feGaussianBlur stdDeviation="19"/></filter>
+  <filter id="nodeglow"><feGaussianBlur stdDeviation="7"/></filter>
+</defs>
+<rect width="1600" height="640" rx="27" fill="url(#bg)"/>
+<rect width="1600" height="640" rx="27" fill="url(#grid)"/>
+<ellipse cx="1270" cy="245" rx="395" ry="290" fill="url(#glow)"/>
+<ellipse cx="310" cy="660" rx="480" ry="180" fill="#1a6878" opacity=".15" filter="url(#soft)"/>
+<path d="M0 527H1600" stroke="#47768c" stroke-opacity=".27"/>
+<path d="M905 60V496" stroke="#5c8fa2" stroke-opacity=".18"/>
+<!-- Brand and masthead -->
+<g transform="translate(74 61)">
+  <path d="M0 20L19 9L38 20V42L19 53L0 42Z" stroke="#7cf0ca" stroke-width="2.5" fill="#0d3940"/>
+  <circle cx="10" cy="31" r="3.5" fill="#7cf0ca"/><circle cx="28" cy="22" r="3.5" fill="#91cbff"/><circle cx="28" cy="40" r="3.5" fill="#7cf0ca"/>
+  <path d="M10 31L28 22M10 31L28 40M28 22V40" stroke="#7cf0ca" stroke-width="1.5" opacity=".9"/>
+  <text x="57" y="26" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="700" letter-spacing="4" fill="#d3eff0">6LOWSTICK</text>
+  <text x="57" y="48" font-family="Arial,Helvetica,sans-serif" font-size="14" letter-spacing="3" fill="#80a9bb">ACCESSIBLE MESH RESEARCH</text>
+</g>
+<rect x="70" y="157" width="296" height="37" rx="18.5" fill="#153a43" stroke="#387d80"/>
+<circle cx="92" cy="175.5" r="4.5" fill="#7cf0ca"/>
+<text x="111" y="181" fill="#9de4ce" font-family="Arial,Helvetica,sans-serif" font-size="16" letter-spacing="1.7" font-weight="700">SOFTWARE-ONLY LAB</text>
+<text x="70" y="287" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="78" letter-spacing="-3" fill="#f0f8fb">Light the mesh.</text>
+<text x="70" y="369" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="69" letter-spacing="-3" fill="url(#accent)">Make alerts accessible.</text>
+<text x="74" y="427" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#adc7d4">Observe signals. Model delivery. Inspect the evidence.</text>
+<text x="74" y="466" font-family="Arial,Helvetica,sans-serif" font-size="19" fill="#7fa1b4">OpenThread · direct LoRa fallback · signed receipts · replay</text>
+<!-- Conceptual evidence network -->
+<g font-family="Arial,Helvetica,sans-serif">
+  <rect x="957" y="88" width="572" height="407" rx="22" fill="#0c2432" stroke="#2b5067" stroke-width="2"/>
+  <text x="981" y="120" fill="#8eb6c7" font-size="15" letter-spacing="2.1" font-weight="700">LOGICAL DELIVERY MODEL</text>
+  <text x="1444" y="120" fill="#85b4c2" font-size="14" text-anchor="end">NOT RF TOPOLOGY</text>
+  <!-- Connections -->
+  <path d="M1060 284C1118 284 1125 201 1201 201" fill="none" stroke="#6ce9c5" stroke-width="4" stroke-linecap="round"/>
+  <path d="M1060 284C1118 284 1125 373 1201 373" fill="none" stroke="#d8b778" stroke-width="4" stroke-dasharray="10 11" stroke-linecap="round"/>
+  <path d="M1284 201C1335 201 1336 283 1400 283" fill="none" stroke="#6ce9c5" stroke-width="4" stroke-linecap="round"/>
+  <path d="M1284 373C1335 373 1336 283 1400 283" fill="none" stroke="#d8b778" stroke-width="4" stroke-dasharray="10 11" stroke-linecap="round"/>
+  <path d="M1400 283L1420 283" stroke="#a5e9df" stroke-width="4"/>
+  <!-- Gate -->
+  <circle cx="1036" cy="284" r="45" fill="#194953" stroke="#8af4d5" stroke-width="3"/>
+  <circle cx="1036" cy="284" r="12" fill="#87efd1"/>
+  <circle cx="1036" cy="284" r="26" stroke="#73c9b7" stroke-dasharray="3 8" stroke-width="2" fill="none"/>
+  <text x="1036" y="345" font-size="17" fill="#dbeef2" text-anchor="middle">Gateway</text>
+  <text x="1036" y="366" font-size="13" fill="#89acb7" text-anchor="middle">synthetic</text>
+  <!-- Radios -->
+  <circle cx="1242" cy="201" r="44" fill="#163f4b" stroke="#6ce9c5" stroke-width="3"/>
+  <path d="M1226 202q16 -18 32 0M1233 209q9 -9 18 0" fill="none" stroke="#b5ffe8" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="1242" cy="217" r="3" fill="#b5ffe8"/>
+  <text x="1242" y="149" font-size="18" font-weight="700" fill="#dcf8f0" text-anchor="middle">THREAD</text>
+  <circle cx="1242" cy="373" r="44" fill="#433d31" stroke="#e1bd75" stroke-width="3"/>
+  <path d="M1230 387V355M1220 365Q1230 346 1240 365M1248 365Q1260 348 1271 365" fill="none" stroke="#ffe6a9" stroke-width="3" stroke-linecap="round"/>
+  <text x="1242" y="439" font-size="18" font-weight="700" fill="#eed6aa" text-anchor="middle">DIRECT LORA</text>
+  <text x="1242" y="461" font-size="13" fill="#bda77e" text-anchor="middle">fallback model</text>
+  <!-- Receiver -->
+  <rect x="1414" y="236" width="93" height="95" rx="15" fill="#143c48" stroke="#87cffa" stroke-width="3"/>
+  <rect x="1435" y="254" width="52" height="23" rx="5" fill="#88bdf0" opacity=".25"/>
+  <path d="M1444 264h33M1444 271h22" stroke="#b1e3fa" stroke-width="3"/>
+  <path d="M1434 297q-8 7 0 14M1441 293q-12 13 0 24M1487 297q8 7 0 14M1480 293q12 13 0 24" fill="none" stroke="#8af2d1" stroke-width="2.5"/>
+  <text x="1460" y="352" fill="#dbeef2" font-size="17" text-anchor="middle">Receiver</text>
+  <text x="1460" y="373" fill="#8eb1c1" font-size="13" text-anchor="middle">text · light · haptic</text>
+  <!-- Receipt -->
+  <rect x="1055" y="417" width="169" height="42" rx="9" fill="#183a40" stroke="#4f908d"/>
+  <path d="M1075 439l7 7 14 -17" fill="none" stroke="#7df3cd" stroke-width="3"/>
+  <text x="1105" y="445" fill="#c6e6df" font-size="16">signed receipts</text>
+</g>
+<!-- Bottom metrics strip -->
+<g font-family="Arial,Helvetica,sans-serif">
+  <text x="74" y="571" font-size="16" font-weight="700" letter-spacing="2.5" fill="#8aafbf">01  OBSERVE</text>
+  <text x="74" y="599" font-size="19" fill="#daebef">SAME / Spinel</text>
+  <path d="M335 548v60" stroke="#467286" opacity=".5"/>
+  <text x="369" y="571" font-size="16" font-weight="700" letter-spacing="2.5" fill="#8aafbf">02  SIMULATE</text>
+  <text x="369" y="599" font-size="19" fill="#daebef">Thread / LoRa</text>
+  <path d="M665 548v60" stroke="#467286" opacity=".5"/>
+  <text x="697" y="571" font-size="16" font-weight="700" letter-spacing="2.5" fill="#8aafbf">03  VERIFY</text>
+  <text x="697" y="599" font-size="19" fill="#daebef">Receipts / Replay</text>
+  <path d="M995 548v60" stroke="#467286" opacity=".5"/>
+  <text x="1028" y="571" font-size="16" font-weight="700" letter-spacing="2.5" fill="#8aafbf">04  EXPLORE</text>
+  <text x="1028" y="599" font-size="19" fill="#daebef">TUI / Observatory</text>
+</g>
+</svg>
