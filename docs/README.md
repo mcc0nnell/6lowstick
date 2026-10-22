@@ -13,6 +13,7 @@ experiment distinguishes recorded facts from what requires hardware or people.
 | Your question | Begin with | You'll find |
 | --- | --- | --- |
 | What can 6lowStick demonstrate today? | [README](../README.md#what-we-can-show) | An instrument-by-instrument software/physical evidence boundary |
+| Where could AI fit without gaining physical authority? | [OpenThread + AI research direction](ai-physical-systems.md) | Advisory architecture, trust boundaries, evidence levels and research gates |
 | How does scripted failover behave? | [Multi-radio fabric](multiradio-fabric.md) | Attempts, application ACKs, fallback and duplicate suppression |
 | How do I reproduce a simulated run? | [OpenThread POSIX lab](../experiments/thread-alert/README.md) | Environment setup, commands and limitations |
 | Where does a result come from? | [Reliability trials](reliability-trials.md) and [monotonic events](monotonic-evidence.md) | Fixture generation, run provenance, timestamps and exceptions |
