@@ -2,11 +2,12 @@
   <img src="assets/rizzer-transparent.webp" alt="Rizzer: a bright pink and lime-green six made from two polo shirts, with both collars popped." width="230" />
 
   <h1>6lowStick</h1>
-  <p><strong>The proverbial glow stick for the physical world.</strong></p>
-  <p>Signal a presence, a change, a need, or a warning. Explore low-power physical notifications—and the evidence that a signal actually reached something or someone.</p>
+  <p><strong>Find your people. Signal what matters.</strong></p>
+  <p>6lowLoop makes finding and reaching friends a core ambition. 6lowStick explores low-power presence, signaling, physical notifications, and the evidence of delivery.</p>
   <p>
     <a href="https://mcc0nnell.github.io/6lowstick/"><strong>Explore the Field Station ↗</strong></a>
     &nbsp;·&nbsp; <a href="#why-6lowstick">The idea</a>
+    &nbsp;·&nbsp; <a href="#6lowloop-find-your-people">6lowLoop</a>
     &nbsp;·&nbsp; <a href="#try-the-lab">Try the lab</a>
     &nbsp;·&nbsp; <a href="#what-we-can-show">Evidence and limits</a>
     &nbsp;·&nbsp; <a href="#openthread-and-ai">OpenThread + AI</a>
@@ -31,6 +32,14 @@ A digital signal can leave the sender and never reach a receiver. It can reach a
 **Transmission, application receipt, physical activation, human detection, and human understanding are distinct events.** 6lowStick investigates the evidence between them. Accessibility belongs at the center: a signal must be perceivable in a form that works for the recipient.
 
 Emergency alerting is one demanding application, **not the definition of the project**. Today 6lowStick is a controlled, alert-shaped *simulation laboratory*; it does not yet implement arbitrary-purpose signaling, on-air delivery, or validated physical notifications.
+
+## 6lowLoop: find your people
+
+**Sam wanted to find his friends. So do we.** Friend-finding is a **core 6lowStick capability**, not an optional experiment. With mutual consent, people should eventually be able to find reachable friends, ping them, coordinate a rendezvous, and signal a need, even when cellular infrastructure fails.
+
+**Matrix is the planned account, verified-device, encrypted messaging and group layer.** 6lowLoop adds local, short-lived friend presence and signaling over separately validated transports. Matrix federation requires a homeserver; an isolated radio mesh is not automatically a Matrix deployment.
+
+The first executable slice implements opt-in, in-memory presence and ping/ACK framing between **pre-paired Matrix-ID-labeled friends**: `npm run loop:demo`. It does **not** connect to Matrix, discover people over a radio, obtain location or prove human receipt. See the [6lowLoop architecture and gates](docs/6lowloop.md).
 
 ## OpenThread and AI
 
@@ -70,6 +79,7 @@ cd 6lowstick
 npm ci
 npm test
 
+npm run loop:demo                 # 6lowLoop opt-in, process-local friend protocol model
 npm run tui -- --demo --report    # Accessible, noninteractive text
 npm run tui -- --demo             # Keyboard-operated Mesh Control
 npm run evidence:multiradio       # Deterministic synthetic scenarios

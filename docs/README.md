@@ -12,6 +12,7 @@ experiment distinguishes recorded facts from what requires hardware or people.
 
 | Your question | Begin with | You'll find |
 | --- | --- | --- |
+| How will I find and reach my friends? | [6lowLoop](6lowloop.md) | Core Matrix-first vision, opt-in local presence model and integration gates |
 | What can 6lowStick demonstrate today? | [README](../README.md#what-we-can-show) | An instrument-by-instrument software/physical evidence boundary |
 | Where could AI fit without gaining physical authority? | [OpenThread + AI research direction](ai-physical-systems.md) | Advisory architecture, trust boundaries, evidence levels and research gates |
 | How can we reject unsupported AI trace claims? | [Offline trace review](trace-review.md) | Deterministic reference interpretations and a typed, fail-closed claim check |

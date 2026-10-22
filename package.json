@@ -6,6 +6,7 @@
     "test": "node --test test/*.test.mjs experiments/thread-alert/*.test.mjs",
     "check": "npm test && git diff --check",
     "tui": "node src/tui/cli.mjs",
+    "loop:demo": "node scripts/loop-demo.mjs",
     "camel:export": "node src/camel/export.mjs",
     "evidence:multiradio": "node experiments/multiradio/drill.mjs",
     "evidence:reliability": "node scripts/reliability-trials.mjs",
