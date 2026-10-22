@@ -55,6 +55,7 @@ npm test
 npm run tui -- --demo --report    # Accessible, noninteractive text
 npm run tui -- --demo             # Keyboard-operated Mesh Control
 npm run evidence:multiradio       # Deterministic synthetic scenarios
+npm run evidence:review           # Offline trace judgments and exact evidence pointers
 ```
 
 `--demo` uses illustrative data. For a static, no-color terminal snapshot use `npm run tui -- --demo --snapshot --plain`. Interactive display has reduced-motion support. To replay separately generated POSIX simulator evidence use `npm run tui -- --input evidence/mesh-run.json` after creating that local file.
@@ -72,6 +73,7 @@ npm run evidence:multiradio       # Deterministic synthetic scenarios
 | **Matter adapter** | Pinned SDK seam and mock endpoints | Commissioned hardware or measured output |
 | **Mesh Control / Field Station** | Read-only evidence exploration, text reports and modeled event playback | On-air topology, RF packet timing or human outcomes |
 | **Camel exporter** | Sanitized evidence export | Operational alert routing |
+| **Offline trace reviewer** | Grounded interpretations and rejection of unsupported typed claims over scripted fixtures | AI model validation, field measurements, or human outcomes |
 
 ### An unresolved result worth keeping
 
@@ -93,6 +95,7 @@ The [research guide](docs/README.md) is organized by what you want to do, not by
 
 - **Follow the experiment:** [Multi-radio fabric](docs/multiradio-fabric.md) and [OpenThread POSIX lab](experiments/thread-alert/README.md).
 - **Audit the evidence:** [Reliability trials](docs/reliability-trials.md), [Spinel recorder](docs/spinel-flight-recorder.md) and [monotonic event capture](docs/monotonic-evidence.md).
+- **Audit an interpretation:** [Offline trace review](docs/trace-review.md) checks exact fixture-grounded claims; no model or dispatch authority.
 - **Plan the next phase:** [Physical-radio test protocol](docs/physical-radio-test-protocol.md) and [threat model](docs/threat-model.md).
 - **Use the interfaces:** [Field Station design and evidence boundaries](docs/field-station.md) and [Mesh Control TUI](docs/mesh-control-tui.md).
 
