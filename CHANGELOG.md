@@ -14,6 +14,11 @@ certified accessible emergency notification capabilities.
 - Redesign Mesh Observatory as the Field Station: dedicated experiments, evidence and methods navigation, responsive design tokens, independent text/JSON inspection, and documented synthetic-only state indicators.
 - Add a read-only deterministic `site:check` for fixture/view consistency and SHA-256 input provenance, executable under WindAnvil Blade/TalkPipe without granting browser execution authority.
 
+### First Light preparation (no hardware)
+- Add simulation-only, scoped `6lowstick.signal-intent.v0` validation and local admission; no device or network action path.
+- Document funding gates, independent physical-output measurement, and a $300k planning case; no grant submitted or equipment purchased.
+- Preserve the exact Blade-admitted composition prompt and untagged source release approval boundary.
+
 ### Planned
 - Instrumented, explicitly authorized 802.15.4 hardware tests and
   passive Spinel capture through an existing RCP host-driver boundary

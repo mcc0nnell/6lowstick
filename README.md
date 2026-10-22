@@ -113,6 +113,10 @@ The next meaningful gates are an authorized physical radio bench, independent ob
 
 **For readers who don't use the diagram:** receive-only NOAA/SAME and offline Spinel inspection feed an observation lane without dispatch authority. A separate synthetic policy and local HMAC sender models Thread/direct-LoRa routes to receivers; attempts, application ACKs and a replay journal become JSON research evidence. The terminal UI, ECharts Observatory and Camel exporter only **inspect** that evidence. A Spinel CRC validates frame integrity, not provenance. A local ACK confirms modeled application processing, not actuation or perception.
 
+## First Light — next funded milestone
+
+The next milestone is **an independently measured physical signal**, not another simulated application ACK. **The hardware bench is unfunded and has not started.** The local-only [`signal-intent.v0` contract](src/signals/intent.mjs) and [First Light research plan](docs/first-light/README.md) prepare the evidence boundary, but do not connect to a transmitter or actuator. The [12-month funding case](docs/first-light/funding-case.md) outlines a $300,000 planning ask, not a committed award or equipment quote.
+
 ## Research guide
 
 The [research guide](docs/README.md) is organized by what you want to do, not by how many subsystems exist:
