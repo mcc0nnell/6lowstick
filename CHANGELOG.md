@@ -6,6 +6,11 @@ certified accessible emergency notification capabilities.
 
 ## [Unreleased]
 
+### First Light planning (software-only)
+- Add fail-closed offline typed signal-intent planner with short-lived, local-fixture-only friend presence and check-in, eight negative/positive tests, and a deterministic demo. No dispatch, secure pairing or radio operation.
+- Document the physical First Light milestones, required instrumentation, unfunded equipment list, consent/privacy gates, and illustrative $275,000 annual funding proposal.
+- Include a composition brief and a read-only WindAnvil Blade/TalkPipe source audit. This is an inventory, not physical assurance.
+
 ### Documentation
 - Rewrite the README and Field Station explanation around the delivery-versus-perception research question, with a guided documentation index and a clear reader path from claims to reproducible evidence and limitations.
 - Add editorial navigation tests for section order, safety language and local documentation links.

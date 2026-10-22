@@ -134,3 +134,7 @@ The mascot also appears in the **read-only** TUI: `npm run tui -- --mascot --pla
 ---
 
 **Safety and licensing:** Never connect the prototype to public alert origination, operational emergency dispatch, or uncommissioned actuators. NOAA/SAME reception is not authenticated by a local gateway HMAC. [Apache-2.0](LICENSE). WindAnvil and TalkPipe can support development verification but are not runtime dependencies.
+
+## First Light: what's next
+
+6lowStick's next step is general-purpose, consent-aware *physical signaling*, including friend finding as a core use case. The [offline signal intent model](docs/signal-intent-v0.md) expresses short-lived check-ins and opted-in presence without network or actuator authority. Run `npm run signal:demo` for a software-only plan. See the [First Light roadmap](docs/first-light-roadmap.md), [unfunded equipment needs](docs/funding/first-light-equipment-needs.md), and [12-month research funding draft](docs/funding/first-light-laboratory.md). No hardware has been bought or tested for this milestone.

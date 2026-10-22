@@ -13,6 +13,7 @@ experiment distinguishes recorded facts from what requires hardware or people.
 | Your question | Begin with | You'll find |
 | --- | --- | --- |
 | What can 6lowStick demonstrate today? | [README](../README.md#what-we-can-show) | An instrument-by-instrument software/physical evidence boundary |
+| How does the future general-purpose, opt-in friend/presence signal work? | [Signal intent v0](signal-intent-v0.md), [First Light roadmap](first-light-roadmap.md) | Offline fixture-only admission, physical measurement gates, funding dependency |
 | Where could AI fit without gaining physical authority? | [OpenThread + AI research direction](ai-physical-systems.md) | Advisory architecture, trust boundaries, evidence levels and research gates |
 | How can we reject unsupported AI trace claims? | [Offline trace review](trace-review.md) | Deterministic reference interpretations and a typed, fail-closed claim check |
 | How does scripted failover behave? | [Multi-radio fabric](multiradio-fabric.md) | Attempts, application ACKs, fallback and duplicate suppression |
