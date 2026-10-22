@@ -149,7 +149,7 @@ receiver's physical response.
 | Phase | Proposed deliverable | Pass condition | Current state |
 | --- | --- | --- | --- |
 | 0. Simulation evidence | Reproducible OpenThread POSIX and scripted route experiments | Retain failed and incomplete runs; compare source/binary versions | Existing labs; unresolved intermittent ACK history; PR #8 separately explores POSIX-to-scripted fallback |
-| 1. Read-only AI evaluator | Consume exported *synthetic* trace data and produce cited diagnostics | No dispatch endpoint or write privilege; flag false claims about receipt/actuation against labeled fixtures | Not implemented |
+| 1. Read-only AI evaluator | Consume exported *synthetic* trace data and produce cited diagnostics | No dispatch endpoint or write privilege; flag false claims about receipt/actuation against labeled fixtures | Deterministic reference and typed claim checker implemented; AI model integration not implemented |
 | 2. Proposed-action boundary | Typed advisory requests reviewed against deterministic policy | Reject unapproved targets, stale input, injection attempts, and missing evidence | Not implemented |
 | 3. Controlled hardware lab | Authorized 802.15.4 and separately reviewed direct-LoRa bench; instrumented output | Measured packet/receipt/output records with uncertainty and failure denominators | Not implemented |
 | 4. Human-centered validation | Opt-in accessible text, light, and haptic research | Separate detection and comprehension measurements; consent and privacy review | Not implemented |
@@ -158,6 +158,8 @@ For hardware acquisition and experiment stop conditions see the
 [physical-radio protocol](physical-radio-test-protocol.md); for repeated
 simulation limits see [reliability trials](reliability-trials.md).
 Passing a software gate does not imply permission or readiness for the next.
+
+The first deterministic [offline trace reviewer](trace-review.md) is now implemented for the five committed scripted Field Station scenarios. It emits source references and unknown physical/human outcomes and rejects unsupported typed claims. It has **no AI model**, and it does not yet evaluate a stopped physical or POSIX node as a committed fixture.
 
 ### First narrowly scoped implementation experiment
 
