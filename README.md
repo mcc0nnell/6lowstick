@@ -80,6 +80,8 @@ npm run evidence:review -- --posix /path/to/mesh-run.json
 
 `--demo` uses illustrative data. For a static, no-color terminal snapshot use `npm run tui -- --demo --snapshot --plain`. Interactive display has reduced-motion support. To replay separately generated POSIX simulator evidence use `npm run tui -- --input evidence/mesh-run.json` after creating that local file.
 
+**Optional Camel 4.22.1 observer:** `npm run camel:export -- --demo` writes sanitized evidence copies, and `camel run integrations/camel/mesh-observe.camel.yaml` consumes them through a file-only log route. It does not send signals or authorize physical actions. See [the development-only Camel observer guide](integrations/camel/README.md); Camel is not required for the TUI or lab.
+
 **OpenThread is a separate toolchain.** Building or supplying a compatible `ot-cli-ftd` and setting `OT_CLI_PATH` enables the opt-in POSIX lab via `bash scripts/run-evidence.sh`; the repository does not pin or build that binary. See [reproduction notes](experiments/thread-alert/README.md) and [measured Node-harness event limitations](docs/monotonic-evidence.md).
 
 ## What we can show
@@ -92,7 +94,7 @@ npm run evidence:review -- --posix /path/to/mesh-run.json
 | **Spinel Flight Recorder** | Offline HDLC-lite parsing, CRC/FCS, command metadata, reference vectors | Live RCP instrumentation or authenticated origin |
 | **Matter adapter** | Pinned SDK seam and mock endpoints | Commissioned hardware or measured output |
 | **Mesh Control / Field Station** | Read-only evidence exploration, text reports and modeled event playback | On-air topology, RF packet timing or human outcomes |
-| **Camel exporter** | Sanitized evidence export | Operational alert routing |
+| **Camel exporter / observer** | Sanitized evidence export and an optional, locally verified Camel 4.22.1 file-only logging route | Operational alert routing or production runtime |
 | **Offline trace reviewer** | Grounded interpretations and rejection of unsupported typed claims over scripted fixtures | AI model validation, field measurements, or human outcomes |
 
 **Optional POSIX multi-radio experiment:** A separately built OpenThread `ot-cli-ftd` exercises F1 challenges and authenticated R2 application receipts over simulated-radio UDP, including withheld receipts and a stopped receiver. LoRa fallback remains **scripted software-only**, and this optional external simulator is **not built or pinned in CI**. See [the multi-radio protocol and reproduction notes](docs/multiradio-fabric.md). A successful run is not evidence of physical RF delivery or notification reliability.
