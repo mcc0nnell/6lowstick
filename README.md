@@ -28,7 +28,7 @@ That's the ambition behind 6lowStick: an open, low-power way to **make a signal 
 
 A digital signal can leave the sender and never reach a receiver. It can reach an application without turning on a light or vibrating a device. A device can activate without anyone noticing it.
 
-**Sending, receiving, activating, noticing, and understanding are different events.** 6lowStick investigates the evidence between them. Accessibility belongs at the center: a signal must be perceivable in a form that works for the recipient.
+**Transmission, application receipt, physical activation, human detection, and human understanding are distinct events.** 6lowStick investigates the evidence between them. Accessibility belongs at the center: a signal must be perceivable in a form that works for the recipient.
 
 Emergency alerting is one demanding application, **not the definition of the project**. Today 6lowStick is a controlled, alert-shaped *simulation laboratory*; it does not yet implement arbitrary-purpose signaling, on-air delivery, or validated physical notifications.
 
@@ -38,7 +38,7 @@ Emergency alerting is one demanding application, **not the definition of the pro
 
 OpenThread could provide local, low-power IPv6 connectivity between signaling endpoints. An edge service could interpret observations and recommend how to respond; deterministic policy—not a language model—would authorize any future physical action. 6lowStick would preserve the evidence trail: what was requested, where delivery was attempted, which application acknowledged it, and what still requires physical or human verification.
 
-The first proposed AI experiment is **offline and read-only**: evaluate synthetic traces, cite the observations behind each conclusion, and detect missing receipts or duplicates without inventing physical success. That evaluator **has not been implemented** and would have no dispatch or actuator authority.
+A deterministic, **offline and read-only** trace reviewer now checks typed claims against committed synthetic fixtures and cites their evidence. It is **not an AI model**, does not evaluate arbitrary prose, and has no dispatch or actuator authority. Integrating an AI evaluator remains proposed.
 
 Future direct-LoRa relaying would be a **separate application transport**, not a longer-range OpenThread mesh. Today the Thread work uses POSIX simulated radio and LoRa remains scripted; neither demonstrates physical RF failover or life-safety performance.
 
