@@ -8,6 +8,7 @@
     <a href="https://mcc0nnell.github.io/6lowstick/"><strong>Explore the Field Station ↗</strong></a>
     &nbsp;·&nbsp; <a href="#why-6lowstick">The idea</a>
     &nbsp;·&nbsp; <a href="#6lowloop-find-your-people">6lowLoop</a>
+    &nbsp;·&nbsp; <a href="#6lowbang-captions-and-acoustic-context">6lowBang</a>
     &nbsp;·&nbsp; <a href="#6lowflare-signal-what-matters">6lowFlare</a>
     &nbsp;·&nbsp; <a href="#6lowspark-power--signal">6lowSpark</a>
     &nbsp;·&nbsp; <a href="#try-the-lab">Try the lab</a>
@@ -42,6 +43,12 @@ Emergency alerting is one demanding application, **not the definition of the pro
 **Matrix is the planned account, verified-device, encrypted messaging and group layer.** 6lowLoop adds local, short-lived friend presence and signaling over separately validated transports. Matrix federation requires a homeserver; an isolated radio mesh is not automatically a Matrix deployment.
 
 The first executable slice implements opt-in, in-memory presence and ping/ACK framing between **pre-paired Matrix-ID-labeled friends**: `npm run loop:demo`. It does **not** connect to Matrix, discover people over a radio, obtain location or prove human receipt. See the [6lowLoop architecture and gates](docs/6lowloop.md).
+
+## 6lowBang: captions and acoustic context
+
+**Information should travel even when cellular service doesn't.** 6lowBang is the proposed opt-in caption distribution layer: finalized stage captions and explicitly source-authored sound descriptions, eventually delivered through independently verified local transports.
+
+The first executable slice is a **process-local Ed25519-signed caption-event model**, with pinned publisher keys, replay and expiry checks, bounded reordering, and explicit missing-caption reporting. Try `npm run bang:demo`; read the [6lowBang architecture, trust and test gates](docs/6lowbang.md). **There is no speech recognition, actual radio transport, LoRa caption feed, receiver device UI, encrypted private conversation or human receipt in this slice.**
 
 ## 6lowFlare: signal what matters
 
