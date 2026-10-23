@@ -77,3 +77,22 @@ jobs:
           grep -F '6lowReactor CELIX simulation: app_acknowledged' build/celix-reactor-output.log
           grep -F 'thread: no_authenticated_receipt' build/celix-reactor-output.log
           grep -F 'lora-p2p: authenticated_app_receipt' build/celix-reactor-output.log
+      - name: Missing LoRa mock service must remain unconfirmed
+        run: |
+          set +e
+          (cd build/celix-reactor/deploy/s6_reactor_no_lora && \
+            timeout 8s stdbuf -oL ./s6_reactor_no_lora) \
+            > build/celix-no-lora.log 2>&1
+          result=$?
+          set -e
+          cat build/celix-no-lora.log
+          if [ "$result" -ne 0 ] && [ "$result" -ne 124 ]; then
+            exit "$result"
+          fi
+          grep -F '6lowReactor CELIX simulation: unconfirmed' build/celix-no-lora.log
+          grep -F 'thread: no_authenticated_receipt' build/celix-no-lora.log
+          grep -F 'lora-p2p: no_authenticated_receipt' build/celix-no-lora.log
+          if grep -Fq 'authenticated_app_receipt' build/celix-no-lora.log; then
+            echo 'Unexpected authenticated receipt with LoRa service absent' >&2
+            exit 1
+          fi
