@@ -25,3 +25,7 @@ Alternatively, run `node bin/6low.mjs` with the same arguments. The package regi
 `lab loop` and `lab flare` invoke in-memory demonstrations. `evidence review` invokes the existing synthetic trace reviewer. `tui` passes its options to the existing evidence viewer. `test` runs the repository's canonical `npm test` script.
 
 No command in this initial entry point transmits RF, manages radios, dispatches emergency alerts, confirms human receipt, or discovers real people. Do not interpret simulated receipts as verified hardware or human outcomes.
+
+## Recorded OpenThread CLI observations
+
+`6low mesh observe state --input state.txt` and `6low mesh observe rloc16 --input rloc16.txt` parse bounded, recorded OpenThread CLI text. These commands never attach to or spawn `ot-cli-ftd`, and do not infer the provenance of a recording. Output is JSON with `source: recorded_ot_cli_text` and explicit `physicalRadioVerified: false` / `humanReceiptVerified: false`. Only the `state` and `rloc16` read-only output grammars are supported; malformed, multiple, and oversized results fail closed. This is not a live query adapter.

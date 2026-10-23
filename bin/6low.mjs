@@ -21,6 +21,7 @@ Usage: 6low <command> [arguments]
   lab flare            Run in-memory 6lowFlare demonstration
   evidence review [opts] Review synthetic evidence
   mesh inspect --input FILE  Inspect recorded POSIX mesh evidence (offline)
+  mesh observe state|rloc16 --input FILE  Parse recorded OpenThread CLI output
   tui [options]        Read-only evidence viewer
   test                 Run repository tests
 
@@ -49,7 +50,7 @@ if (args[0] === 'tui') {
   key = args.slice(0, 2).join(' ');
   extra = args.slice(2);
 }
-if (key !== 'tui' && key !== 'test' && key !== 'mesh inspect' && !Object.hasOwn(commands, key)) {
+if (key !== 'tui' && key !== 'test' && key !== 'mesh inspect' && key !== 'mesh observe' && !Object.hasOwn(commands, key)) {
   console.error('Unknown command. Run 6low help.');
   process.exit(2);
 }
@@ -57,11 +58,16 @@ if (key === 'mesh inspect' && (extra.length !== 2 || extra[0] !== '--input' || !
   console.error('Usage: 6low mesh inspect --input FILE');
   process.exit(2);
 }
-if (key !== 'tui' && key !== 'evidence review' && key !== 'mesh inspect' && extra.length) {
+if (key === 'mesh observe' && (extra.length !== 3 || !['state','rloc16'].includes(extra[0]) || extra[1] !== '--input' || !extra[2] || extra[2].startsWith('--'))) {
+  console.error('Usage: 6low mesh observe state|rloc16 --input FILE');
+  process.exit(2);
+}
+if (key !== 'tui' && key !== 'evidence review' && key !== 'mesh inspect' && key !== 'mesh observe' && extra.length) {
   console.error('Unexpected arguments. Run 6low help.');
   process.exit(2);
 }
-const script = key === 'mesh inspect' ? ['scripts/review-traces.mjs', '--posix', extra[1]] :
+const script = key === 'mesh observe' ? ['scripts/ot-observe.mjs', ...extra] :
+  key === 'mesh inspect' ? ['scripts/review-traces.mjs', '--posix', extra[1]] :
   key === 'tui' ? ['src/tui/cli.mjs', ...extra] :
   key === 'evidence review' ? [...commands[key], ...extra] : commands[key];
 const result = key === 'test'
