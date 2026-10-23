@@ -6,6 +6,10 @@ certified accessible emergency notification capabilities.
 
 ## [Unreleased]
 
+### 6lowSpark product concept (documentation only)
+- Introduce **6lowSpark** as a proposed magnetic battery pack and LoRa-capable messaging/relay accessory within 6lowStick. Add conceptual architecture, proposed interfaces, safety boundaries, and an evidence-driven bench plan; **no hardware, firmware, wireless charging, or physical RF validation**.
+- Keep iPhone access via Bluetooth LE as the intended first integration path, with Thread accessory compatibility as an open research gate—not a supported feature.
+
 ### Funding plan revision
 - Expand the 12-month specialist allocation from $20k to $50k for part-time accessibility coordination, project logistics, and grant tracking; revise the illustrative request to $330k without cutting technical or equipment lines. No award, hire, procurement or submission.
 
