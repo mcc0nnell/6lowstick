@@ -45,9 +45,14 @@ cmake --build /tmp/6lowreactor-celix
 /tmp/6lowreactor-celix/deploy/s6_reactor_demo/s6_reactor_demo
 ```
 
-The Celix-specific build and runtime **have not yet been executed on a
-Celix-equipped host**. There is no Celix SDK in the default Node CI job.
-The optional bundles are research scaffolding pending that integration gate.
+The dedicated [native CI workflow](../../.github/workflows/reactor-native.yml) now
+builds a SHA-512-verified Apache Celix 2.4.0 source release, compiles these
+bundles on Ubuntu 22.04, and boots the mock container from its deployment
+directory. The smoke gate asserts that Thread returns no application receipt
+and modeled LoRa provides an authenticated R2 receipt. The container is
+terminated after the bounded observation window. The main Node test workflow
+still requires no Celix SDK. **Bundle stop/start, service withdrawal, real
+radios, and production request concurrency remain unverified.**
 
 The plugin contract deliberately lacks hardware access. Before any migration:
 confirm actual Celix build and stop/start behavior; run a JS-vs-C differential
