@@ -30,4 +30,6 @@ if(S6_WITH_CELIX)
   add_celix_bundle(s6_router SOURCES src/router_bundle.c)
   target_link_libraries(s6_router PRIVATE s6_reactor)
   add_celix_container(s6_reactor_demo C BUNDLES s6_radio_thread s6_radio_lora s6_router)
+  # Negative control: absent LoRa service may never be interpreted as a receipt.
+  add_celix_container(s6_reactor_no_lora C BUNDLES s6_radio_thread s6_router)
 endif()
