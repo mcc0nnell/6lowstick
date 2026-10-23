@@ -63,3 +63,5 @@ Sources: [Nordic DK connectors](https://docs.nordicsemi.com/r/bundle/ug_nrf52840
 The source generator also writes a checked-in local `6lowSpark.kicad_sym`, `sym-lib-table` and matching `6lowSpark_A0_Interposer.kicad_pro`. The project file is necessary for KiCad 9 to load the project symbol table in CLI mode. The minimal `{}` project is intentional and is not an electrically certified design.
 
 Native ERC and SVG exports run under the isolated KiCad 9 container CI job. Independently verify voltages, carrier pad assignment, and RF power isolation before any physical connection; passive interposer-pin symbols cannot enforce these properties.
+
+The KiCad workflow also exports a native XML netlist and runs `check_netlist.py` to verify all 16 named nets and connector pin memberships against the model. Passing it does not validate power-level compatibility or the unchosen SX1262 carrier.

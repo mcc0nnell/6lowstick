@@ -30,6 +30,16 @@ jobs:
             kicad-cli sch erc --exit-code-violations \
               -o /project/a0-kicad-reports/erc.rpt \
               hardware/6lowspark/a0/6lowSpark_A0_Interposer.kicad_sch
+      - name: Native netlist membership
+        run: |
+          docker run --rm -e HOME=/tmp \
+            -v "$PWD:/project" -w /project \
+            --user "$(id -u):$(id -g)" \
+            kicad/kicad:9.0 \
+            kicad-cli sch export netlist --format kicadxml \
+              -o /project/a0-kicad-reports/A0.xml \
+              hardware/6lowspark/a0/6lowSpark_A0_Interposer.kicad_sch
+          python3 hardware/6lowspark/a0/check_netlist.py a0-kicad-reports/A0.xml
       - name: Preserve KiCad reports
         if: always()
         uses: actions/upload-artifact@v4
