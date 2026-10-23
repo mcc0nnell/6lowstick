@@ -27,3 +27,7 @@ WindAnvil Blade vivisection is an evidence and authorization mechanism, not an u
 ## Exit criteria
 
 A reviewable implementation, deterministic tests, documentation, commit references, and explicit limitations. No live RF or human receipt claims.
+
+## Executable offline composition
+
+Run `6low blade compose --windanvil /absolute/path/to/windanvil` from a clean 6lowStick checkout with a provisioned WindAnvil/Celix/Docker laboratory. This invokes WindAnvil's two authorized Git integrity capabilities against the exact source SHA, verifies their execution contracts, and independently runs the existing offline 6lowLoop and 6lowFlare demos. It reports the OpenThread recorded-output parser as an available component, but does not execute a live OpenThread query or run application code inside a Blade worker. The composition report is a local orchestration result, **not** an authoritative WindAnvil assurance verdict or proof of radio/human delivery. TalkPipe is internal to WindAnvil.

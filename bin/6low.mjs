@@ -23,6 +23,7 @@ Usage: 6low <command> [arguments]
   mesh inspect --input FILE  Inspect recorded POSIX mesh evidence (offline)
   mesh observe state|rloc16 --input FILE  Parse recorded OpenThread CLI output
   tui [options]        Read-only evidence viewer
+  blade compose --windanvil DIR  Compose offline capabilities with Blade assurance
   test                 Run repository tests
 
 No command transmits RF, dispatches alerts, or establishes human receipt.
@@ -50,7 +51,7 @@ if (args[0] === 'tui') {
   key = args.slice(0, 2).join(' ');
   extra = args.slice(2);
 }
-if (key !== 'tui' && key !== 'test' && key !== 'mesh inspect' && key !== 'mesh observe' && !Object.hasOwn(commands, key)) {
+if (key !== 'tui' && key !== 'test' && key !== 'mesh inspect' && key !== 'mesh observe' && key !== 'blade compose' && !Object.hasOwn(commands, key)) {
   console.error('Unknown command. Run 6low help.');
   process.exit(2);
 }
@@ -62,11 +63,16 @@ if (key === 'mesh observe' && (extra.length !== 3 || !['state','rloc16'].include
   console.error('Usage: 6low mesh observe state|rloc16 --input FILE');
   process.exit(2);
 }
-if (key !== 'tui' && key !== 'evidence review' && key !== 'mesh inspect' && key !== 'mesh observe' && extra.length) {
+if (key === 'blade compose' && (extra.length !== 2 || extra[0] !== '--windanvil' || !extra[1])) {
+  console.error('Usage: 6low blade compose --windanvil DIR');
+  process.exit(2);
+}
+if (key !== 'tui' && key !== 'evidence review' && key !== 'mesh inspect' && key !== 'mesh observe' && key !== 'blade compose' && extra.length) {
   console.error('Unexpected arguments. Run 6low help.');
   process.exit(2);
 }
-const script = key === 'mesh observe' ? ['scripts/ot-observe.mjs', ...extra] :
+const script = key === 'blade compose' ? ['scripts/blade-compose.mjs', ...extra] :
+  key === 'mesh observe' ? ['scripts/ot-observe.mjs', ...extra] :
   key === 'mesh inspect' ? ['scripts/review-traces.mjs', '--posix', extra[1]] :
   key === 'tui' ? ['src/tui/cli.mjs', ...extra] :
   key === 'evidence review' ? [...commands[key], ...extra] : commands[key];
