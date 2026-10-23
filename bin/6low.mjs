@@ -11,7 +11,6 @@ const commands = {
   'lab loop': ['scripts/loop-demo.mjs'],
   'lab flare': ['scripts/flare-demo.mjs'],
   'evidence review': ['scripts/review-traces.mjs'],
-  'test': [],
 };
 const help = `6low — 6lowStick local research CLI (experimental)
 Usage: 6low <command> [arguments]
@@ -20,7 +19,7 @@ Usage: 6low <command> [arguments]
   status               Show implementation status (not live hardware state)
   lab loop             Run in-memory 6lowLoop demonstration
   lab flare            Run in-memory 6lowFlare demonstration
-  evidence review      Review synthetic evidence
+  evidence review [opts] Review synthetic evidence
   tui [options]        Read-only evidence viewer
   test                 Run repository tests
 
@@ -49,15 +48,16 @@ if (args[0] === 'tui') {
   key = args.slice(0, 2).join(' ');
   extra = args.slice(2);
 }
-if (key !== 'tui' && !Object.hasOwn(commands, key)) {
+if (key !== 'tui' && key !== 'test' && !Object.hasOwn(commands, key)) {
   console.error('Unknown command. Run 6low help.');
   process.exit(2);
 }
-if (key !== 'tui' && extra.length) {
+if (key !== 'tui' && key !== 'evidence review' && extra.length) {
   console.error('Unexpected arguments. Run 6low help.');
   process.exit(2);
 }
-const script = key === 'tui' ? ['src/tui/cli.mjs', ...extra] : commands[key];
+const script = key === 'tui' ? ['src/tui/cli.mjs', ...extra] :
+  key === 'evidence review' ? [...commands[key], ...extra] : commands[key];
 const result = key === 'test'
   ? spawnSync('npm', ['test'], {cwd: root, stdio: 'inherit'})
   : spawnSync(process.execPath, script, {cwd: root, stdio: 'inherit'});
