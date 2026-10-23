@@ -60,6 +60,10 @@ int main(void) {
     assert(strcmp(wire, "EA2|drill1|NOTIFY|37c8580744dd95834fc8941d210c5cee") == 0);
     wire[4] = 'z';
     assert(!s6_verify_alert(key, sizeof(key), wire));
+    char overlong_alert[102];
+    memset(overlong_alert, 'x', sizeof(overlong_alert) - 1);
+    overlong_alert[sizeof(overlong_alert) - 1] = '\0';
+    assert(!s6_verify_alert(key, sizeof(key), overlong_alert));
     assert(s6_sign_receipt(key, sizeof(key), "drill1", "haptic",
                            "000000000000000000000001", receipt));
     assert(strcmp(receipt, "R2|drill1|haptic|000000000000000000000001|3dfecf3ac6384e4ab2deeaffa374f1d6") == 0);
