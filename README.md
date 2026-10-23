@@ -125,7 +125,7 @@ The next meaningful gates are an authorized physical radio bench, independent ob
 
 ## First Light — next funded milestone
 
-The next milestone is **an independently measured physical signal**, not another simulated application ACK. **The hardware bench is unfunded and has not started.** The local-only [`signal-intent.v0` contract](src/signals/intent.mjs) and [First Light research plan](docs/first-light/README.md) prepare the evidence boundary, but do not connect to a transmitter or actuator. The [12-month funding case](docs/first-light/funding-case.md) outlines a $300,000 planning ask, not a committed award or equipment quote.
+The next milestone is **an independently measured physical signal**, not another simulated application ACK. **The hardware bench is unfunded and has not started.** The local-only [`signal-intent.v0` contract](src/signals/intent.mjs) and [First Light research plan](docs/first-light/README.md) prepare the evidence boundary, but do not connect to a transmitter or actuator. The [12-month funding case](docs/first-light/funding-case.md) outlines a revised $330,000 planning ask, including a $50,000 part-time accessibility, project logistics and grant-tracking role, not a committed award or equipment quote.
 
 ## Research guide
 

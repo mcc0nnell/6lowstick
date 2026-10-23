@@ -6,6 +6,9 @@ certified accessible emergency notification capabilities.
 
 ## [Unreleased]
 
+### Funding plan revision
+- Expand the 12-month specialist allocation from $20k to $50k for part-time accessibility coordination, project logistics, and grant tracking; revise the illustrative request to $330k without cutting technical or equipment lines. No award, hire, procurement or submission.
+
 ### Documentation
 - Rewrite the README and Field Station explanation around the delivery-versus-perception research question, with a guided documentation index and a clear reader path from claims to reproducible evidence and limitations.
 - Add editorial navigation tests for section order, safety language and local documentation links.
@@ -16,7 +19,7 @@ certified accessible emergency notification capabilities.
 
 ### First Light preparation (no hardware)
 - Add simulation-only, scoped `6lowstick.signal-intent.v0` validation and local admission; no device or network action path.
-- Document funding gates, independent physical-output measurement, and a $300k planning case; no grant submitted or equipment purchased.
+- Document funding gates, independent physical-output measurement, and an initially $300k planning case (subsequently revised to $330k); no grant submitted or equipment purchased.
 - Preserve the exact Blade-admitted composition prompt and untagged source release approval boundary.
 
 ### Planned
