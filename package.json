@@ -19,7 +19,8 @@
     "flare:posix": "node experiments/flare/posix-lab.mjs",
     "bang:demo": "node scripts/bang-demo.mjs",
     "bang:native:test": "bash scripts/bang-native.sh",
-    "bang:native:demo": "bash scripts/bang-native.sh --demo"
+    "bang:native:demo": "bash scripts/bang-native.sh --demo",
+    "bang:posix": "bash scripts/bang-posix.sh"
   },
   "repository": {
     "type": "git",
