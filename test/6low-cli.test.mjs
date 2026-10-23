@@ -44,3 +44,16 @@ test('simulation demos run from the CLI', () => {
   assert.equal(flare.status, 0, flare.stderr);
   assert.match(flare.stdout, /No radio/);
 });
+
+test('mesh inspect requires explicit recorded evidence path', () => {
+  const missing = run('mesh', 'inspect');
+  assert.equal(missing.status, 2);
+  assert.match(missing.stderr, /Usage: 6low mesh inspect/);
+  const invalid = run('mesh', 'inspect', '--input', '--send');
+  assert.equal(invalid.status, 2);
+});
+test('mesh inspect refuses missing evidence without claiming live status', () => {
+  const r = run('mesh', 'inspect', '--input', '/definitely-not-a-6low-evidence-file.json');
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr, /trace review refused input/);
+});
