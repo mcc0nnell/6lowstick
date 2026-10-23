@@ -57,3 +57,9 @@
 - [ ] Independent instrumented physical LED/haptic output and authorized radio tests under [Rev A verification plan](../../../docs/hardware/6lowspark-verification.md).
 
 Sources: [Nordic DK connectors](https://docs.nordicsemi.com/r/bundle/ug_nrf52840_dk/page/ug/dk/connector_if.html) · [Nordic/Zephyr Arduino GPIO map](https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts) · [Adafruit #3502 breakout](https://www.adafruit.com/product/3502) · [Adafruit wiring](https://learn.adafruit.com/adafruit-sharp-memory-display-breakout/wiring) · [Waveshare SX1262 carrier behavior](https://www.waveshare.com/wiki/Core1262-868M) · [KiCad schematic format](https://dev-docs.kicad.org/en/file-formats/sexpr-schematic/).
+
+## Native KiCad validation
+
+The source generator also writes a checked-in local `6lowSpark.kicad_sym`, `sym-lib-table` and matching `6lowSpark_A0_Interposer.kicad_pro`. The project file is necessary for KiCad 9 to load the project symbol table in CLI mode. The minimal `{}` project is intentional and is not an electrically certified design.
+
+Native ERC and SVG exports run under the isolated KiCad 9 container CI job. Independently verify voltages, carrier pad assignment, and RF power isolation before any physical connection; passive interposer-pin symbols cannot enforce these properties.

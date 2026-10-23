@@ -62,6 +62,23 @@ for ref,b in blocks.items():
   S.extend(symbol_lib(b['id'],'J',b['value'],'connector',terminals))
 S.extend(symbol_lib('SW_PUSH','SW','SW_PUSH','switch',[]))
 S.extend(symbol_lib('C_PASSIVE','C','C','capacitor',[]))
+# Mirror the embedded passive symbols in a project-local, versioned library.
+# A cached in-schematic symbol alone triggers KiCad library-reference warnings.
+# The project table uses KIPRJMOD and never requires a global library install.
+library='(kicad_symbol_lib\n\t(version 20231120)\n\t(generator \"kicad_symbol_editor\")\n' + (
+    '\n'.join(S[6:]).replace('(symbol \"6lowSpark:', '(symbol \"')
+) + '\n)\n'
+(ROOT/'6lowSpark.kicad_sym').write_text(library)
+# A matching KiCad project file is required for the local sym-lib-table
+# to load in kicad-cli ERC, even when the schematic embeds cached symbols.
+(ROOT/(SHEET+'.kicad_pro')).write_text('{}\n')
+(ROOT/'sym-lib-table').write_text(
+    '(sym_lib_table\n'
+    '  (lib (name \"6lowSpark\")(type \"KiCad\")'
+    '(uri \"${KIPRJMOD}/6lowSpark.kicad_sym\")'
+    '(options \"\")(descr \"A0 passive interposer symbols\") )\n'
+    ')\n'
+)
 S += ['\t)']
 
 # Symbols at absolute locations and net-wire endpoints.

@@ -17,13 +17,13 @@ jobs:
       - name: KiCad 9 native schematic export and ERC
         run: |
           mkdir -p a0-kicad-reports
-          docker run --rm \
+          docker run --rm -e HOME=/tmp \
             -v "$PWD:/project" -w /project \
             --user "$(id -u):$(id -g)" \
             kicad/kicad:9.0 \
             kicad-cli sch export svg -o /project/a0-kicad-reports/ \
               hardware/6lowspark/a0/6lowSpark_A0_Interposer.kicad_sch
-          docker run --rm \
+          docker run --rm -e HOME=/tmp \
             -v "$PWD:/project" -w /project \
             --user "$(id -u):$(id -g)" \
             kicad/kicad:9.0 \

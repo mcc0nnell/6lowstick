@@ -25,6 +25,12 @@ def validate_sexpr(s):
     assert s.lstrip().startswith('(kicad_sch')
 
 validate_sexpr(text)
+lib=(R/'6lowSpark.kicad_sym').read_text()
+table=(R/'sym-lib-table').read_text()
+assert lib.lstrip().startswith('(kicad_symbol_lib')
+assert '6lowSpark.kicad_sym' in table and '${KIPRJMOD}' in table
+assert json.loads((R/'6lowSpark_A0_Interposer.kicad_pro').read_text()) == {}
+assert lib.count('(symbol \"') == 6 + 6, 'six root symbols and six sub-units expected'
 assert '\t(version 20250114)' in text
 assert 'BMS' not in text and 'Qi2' not in text, 'battery circuitry is not A0'
 assert 'SW_PUSH_6mm_H5mm' in text
