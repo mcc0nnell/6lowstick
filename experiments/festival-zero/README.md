@@ -15,6 +15,7 @@ Requires Node.js 22+; no additional dependencies.
 ```sh
 node experiments/festival-zero/cli.mjs
 node experiments/festival-zero/cli.mjs --scenario outage --attendees 500 --minutes 45
+node experiments/festival-zero/cli.mjs --scenario outage --reactor south --attendees 500
 node experiments/festival-zero/cli.mjs --scenario peak --seed 6
 node experiments/festival-zero/cli.mjs --scenario outage --json > /tmp/6low-zero-outage.json
 node --test test/festival-zero.test.mjs
@@ -22,6 +23,27 @@ node --test test/festival-zero.test.mjs
 
 The `--json` output includes per-minute counts for ECharts or other
 downstream inspection. Re-running the same command produces identical JSON.
+
+## Interactive 6lowReactor Observatory
+
+The separate [static Observatory](../../site/zero/index.html) reuses this
+exact simulation model, copied at build time. It visualizes up to 120 sampled
+synthetic attendees per minute, up to 24 sampled modeled route decisions per
+minute, station/relay positions, a metric timeline,
+and a rule-based **advisory only** interpretation. Either modeled Reactor can
+be disabled at the selected minute. The browser recomputes locally, sends no
+packets, and retains no position telemetry or keys.
+
+```sh
+npm run build:festival-site
+npm run festival:check
+npm run festival:smoke # offline mocked-DOM event contract; not visual browser validation
+# Serve the repository site/ directory with an HTTP static server.
+# Open /zero/ under that server.
+```
+
+GitHub Pages builds the canonical model copy before publishing `site/`.
+The map is not GPS or RF coverage. Lines indicate only model attachment.
 
 ## What it models
 
@@ -33,8 +55,10 @@ downstream inspection. Re-running the same command produces identical JSON.
 - An opt-in friend ping-shaped workload, plus a small synthetic crew workload
   scheduled first. These are **not actual 6lowLoop frames or emergency alerts**.
 - Same-station Thread delivery stays local; inter-station delivery requires
-  both relevant Reactors online. `outage` removes the first Reactor halfway
-  through the run, while same-station traffic can still flow.
+  the relevant Reactor forwarding paths to remain online. The CLI `outage`
+  scenario removes the north Reactor halfway through the run. The browser
+  can isolate north or south at its selected minute. Local Thread remains
+  available in either outage.
 - Direct LoRa relay is a separate, budget-limited application-level fallback.
   It is **not** transparent IP routing, LoRaWAN, proven LoRa mesh, or any
   estimate of legal airtime.

@@ -15,6 +15,11 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run site:check
+      - name: Verify festival Observatory build and browser-event smoke
+        run: |
+          npm run build:festival-site
+          npm run festival:check
+          npm run festival:smoke
       - name: Validate source release metadata
         run: npm run release:check
       - name: Verify deterministic source archive (never publishes or tags)
@@ -33,5 +38,8 @@ jobs:
           test ! -e .git
           npm ci
           npm test
+          npm run build:festival-site
+          npm run festival:check
+          npm run festival:smoke
           npm run release:check
       - run: git diff --check

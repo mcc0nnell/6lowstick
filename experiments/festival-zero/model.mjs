@@ -70,10 +70,12 @@ const percent = (n, d) => d ? Math.round(10000 * n / d) / 100 : null;
 
 /** Seeded crowd traffic generator, not 802.15.4 / LoRa physical simulation. */
 export function simulateFestival({attendees = 250, minutes = 45, seed = 6,
-  reactorOutageAtMinute = null} = {}) {
+  reactorOutageAtMinute = null, reactor = 'north', capturePositions = false} = {}) {
   assertInt(attendees, 2, 10000, 'attendees');
   assertInt(minutes, 1, 360, 'minutes');
   assertInt(seed, 1, 0xffffffff, 'seed');
+  if (!['north','south'].includes(reactor)) throw new RangeError('reactor must be north or south');
+  if (typeof capturePositions !== 'boolean') throw new TypeError('capturePositions must be boolean');
   if (reactorOutageAtMinute !== null)
     assertInt(reactorOutageAtMinute, 0, minutes - 1, 'reactorOutageAtMinute');
   const random = rng(seed), people = createPeople(attendees, random);
@@ -84,6 +86,9 @@ export function simulateFestival({attendees = 250, minutes = 45, seed = 6,
   const timeline = Array.from({length:minutes}, (_, minute) => ({minute, ...counters()}));
   const invariants = {maxThreadStationSlots:0, maxLoRaRelaySlots:0,
     localThreadDuringOutage:0, reactorDependentDuringOutage:0};
+  const frames = capturePositions ? [] : null;
+  const flows = capturePositions ? Array.from({length:minutes},()=>[]) : null;
+  const sampleStride = Math.max(1, Math.ceil(attendees / 120));
   for (let tick = 0; tick < ticks; tick++) {
     const minuteNumber = Math.floor(tick * STEP / 60);
     const outage = reactorOutageAtMinute !== null && minuteNumber >= reactorOutageAtMinute;
@@ -104,7 +109,8 @@ export function simulateFestival({attendees = 250, minutes = 45, seed = 6,
       const sa = attached[msg.source], sb = attached[msg.target];
       let route = null, failure = 'coverage';
       if (sa >= 0 && sb >= 0) {
-        const local = sa === sb, gatewayAvailable = !outage || (sa >= 4 && sb >= 4);
+        const local = sa === sb, gatewayAvailable = !outage ||
+          (reactor === 'north' ? (sa >= 4 && sb >= 4) : (sa < 4 && sb < 4));
         if (local || gatewayAvailable) {
           if (threadSlots[sa] < THREAD_BUDGET && threadSlots[sb] < THREAD_BUDGET) {
             threadSlots[sa]++;
@@ -126,22 +132,34 @@ export function simulateFestival({attendees = 250, minutes = 45, seed = 6,
         } else if (failure !== 'capacity' && failure !== 'modeledLoss') failure = 'coverage';
       }
       if (outage && route === 'threadLocal') invariants.localThreadDuringOutage++;
+      // Bounded sample of actual modeled route decisions, not a packet trace.
+      if (flows && (msg.source + tick) % 4 === 0 && flows[minuteNumber].length < 24)
+        flows[minuteNumber].push({from:[Math.round(a.x),Math.round(a.y)],
+          to:[Math.round(b.x),Math.round(b.y)],route:route || 'unconfirmed'});
       result(counts, route, failure);
     }
     invariants.maxThreadStationSlots = Math.max(invariants.maxThreadStationSlots, ...threadSlots);
     invariants.maxLoRaRelaySlots = Math.max(invariants.maxLoRaRelaySlots, ...relaySlots);
+    // Sampling never consumes random draws; the visual replay uses the same traffic run.
+    if (frames && (tick + 1) % (60 / STEP) === 0) {
+      frames.push({minute:minuteNumber, outage,flows:flows[minuteNumber],
+        nodes:people.filter((_, i) => i % sampleStride === 0).map(p => ({
+          id:p.id, x:Math.round(p.x), y:Math.round(p.y), crew:p.crew, station:station(p)
+        }))});
+    }
   }
   return {
     schema:'6lowstick.festival-capacity-model.v0',
     simulation:true, physicalRf:false, real6lowLoop:false, realReceipts:false,
-    parameters:{attendees, minutes, seed, reactorOutageAtMinute,
+    parameters:{attendees, minutes, seed, reactorOutageAtMinute, reactor,
       venueMeters:{width:W,height:H}, stepSeconds:STEP,
-      stationCount:STATIONS.length, stationRadiusMeters:THREAD_RADIUS,
-      relayCount:RELAYS.length, relayRadiusMeters:RELAY_RADIUS,
+      stationCount:STATIONS.length, stations:STATIONS, stationRadiusMeters:THREAD_RADIUS,
+      relayCount:RELAYS.length, relays:RELAYS, relayRadiusMeters:RELAY_RADIUS,
       budgetsPerStep:{threadPerStation:THREAD_BUDGET,loraPerRelay:RELAY_BUDGET},
       syntheticPerAttemptSuccess:{threadLocal:.98,threadGateway:.94,loraRelay:.82}},
     totals:{...totals,modeledDeliveryPercent:percent(totals.modeledDelivered,totals.attempted)},
     categories,segments,timeline,invariants,
+    ...(frames ? {frames} : {}),
     caveat:'Synthetic crowd/capacity model. No path loss, MAC contention, interference, regulated airtime, queueing, signed receipt, physical notification or human detection.'
   };
 }

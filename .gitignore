@@ -6,3 +6,5 @@ evidence/
 
 # Reproducible local source archives and checksums
 dist/
+# Browser runtime copy generated from canonical simulator source
+site/zero/model.mjs

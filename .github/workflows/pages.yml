@@ -23,6 +23,7 @@ jobs:
           node-version: '22'
       - run: npm ci && npm test
       - run: npm run site:check
+      - run: npm run build:festival-site && npm run festival:check && npm run festival:smoke
       - run: node experiments/multiradio/drill.mjs > site/multiradio.json
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

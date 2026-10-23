@@ -49,6 +49,9 @@ test('Invalid parameters and unknown flags are rejected', () => {
   const good = spawnSync(process.execPath,[cli,'--attendees','18','--minutes','2','--json'], {encoding:'utf8'});
   assert.equal(good.status,0,good.stderr);
   assert.equal(JSON.parse(good.stdout).schema,'6lowstick.festival-capacity-model.v0');
+  const south = spawnSync(process.execPath,[cli,'--scenario','outage','--reactor','south','--minutes','4','--json'], {encoding:'utf8'});
+  assert.equal(south.status,0,south.stderr);
+  assert.equal(JSON.parse(south.stdout).parameters.reactor,'south');
   const bad = spawnSync(process.execPath,[cli,'--unknown'], {encoding:'utf8'});
   assert.equal(bad.status,1);
 });
