@@ -14,7 +14,8 @@
     "fuzz:spinel": "node scripts/fuzz-spinel-rizzer.mjs",
     "release:check": "node scripts/release-check.mjs",
     "release:source": "bash scripts/package-release.sh",
-    "site:check": "node scripts/check-field-station.mjs"
+    "site:check": "node scripts/check-field-station.mjs",
+    "flare:demo": "node scripts/flare-demo.mjs"
   },
   "repository": {
     "type": "git",

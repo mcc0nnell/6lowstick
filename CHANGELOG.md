@@ -6,6 +6,8 @@ certified accessible emergency notification capabilities.
 
 ## [Unreleased]
 
+### 6lowFlare (simulation-only)
+- Introduce an opt-in, authenticated, short-lived group signaling and bounded relay model with an explicit relay toggle, replay protection, offline demo and negative tests. No radio transmission, Matrix client, public broadcast or physical/human notification evidence.
 ### 6lowSpark product concept (documentation only)
 - Introduce **6lowSpark** as a proposed magnetic battery pack and LoRa-capable messaging/relay accessory within 6lowStick. Add conceptual architecture, proposed interfaces, safety boundaries, and an evidence-driven bench plan; **no hardware, firmware, wireless charging, or physical RF validation**.
 - Keep iPhone access via Bluetooth LE as the intended first integration path, with Thread accessory compatibility as an open research gate—not a supported feature.
