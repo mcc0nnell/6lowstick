@@ -9,6 +9,7 @@
     "tui": "node src/tui/cli.mjs",
     "loop:demo": "node scripts/loop-demo.mjs",
     "sim:festival": "node experiments/festival-zero/cli.mjs",
+    "reactor:check": "node --test test/reactor-core.test.mjs",
     "build:festival-site": "node scripts/build-festival-zero.mjs",
     "festival:check": "node scripts/check-festival-zero.mjs",
     "festival:smoke": "node scripts/smoke-festival-ui.mjs",
