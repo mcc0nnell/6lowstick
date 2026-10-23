@@ -157,6 +157,7 @@ The next milestone is **an independently measured physical signal**, not another
 The [research guide](docs/README.md) is organized by what you want to do, not by how many subsystems exist:
 
 - **Follow the experiment:** [Multi-radio fabric](docs/multiradio-fabric.md) and [OpenThread POSIX lab](experiments/thread-alert/README.md).
+- **Model a crowd:** [6low ZERO festival capacity simulation](experiments/festival-zero/README.md) (seeded, synthetic spatial assumptions; not actual radio measurements). The [interactive 6lowReactor Observatory](site/zero/index.html) runs the [C11 capacity engine](experiments/festival-zero/engine.c) compiled to WebAssembly locally in a browser, with operator-triggered synthetic Reactor outages. The native C binary supports offline runs on Linux.
 - **Audit the evidence:** [Reliability trials](docs/reliability-trials.md), [Spinel recorder](docs/spinel-flight-recorder.md) and [monotonic event capture](docs/monotonic-evidence.md).
 - **Audit an interpretation:** [Offline trace review](docs/trace-review.md) checks exact fixture-grounded claims; no model or dispatch authority.
 - **Plan the next phase:** [Physical-radio test protocol](docs/physical-radio-test-protocol.md) and [threat model](docs/threat-model.md).

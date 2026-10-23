@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080f16">
+  <meta name="description" content="6low ZERO: a deterministic, interactive festival network capacity experiment. No real RF, AI, or message receipt.">
+  <title>6low ZERO / Reactor Observatory</title>
+  <link rel="stylesheet" href="./zero.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to network simulation</a>
+<div class="site">
+  <header class="topbar">
+    <a class="logo" href="../"><span class="logo-box">6</span> 6lowStick <span class="logo-sub">/ ZERO</span></a>
+    <span class="edition">EXPERIMENTAL / FIELD 001</span>
+    <a href="https://github.com/mcc0nnell/6lowstick/pull/30">SOURCE ↗</a>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="zero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="alive-dot" aria-hidden="true"></span> 6LOWREACTOR / FESTIVAL OPERATIONS MODEL</p>
+        <h1 id="zero-title">NO BARS.<br><em>ALL SIGNAL.</em></h1>
+        <p class="dek">Move the crowd. Kill a Reactor. Watch the assumed network struggle, adapt, and saturate. A replayable model of 6low ZERO—not a live radio console.</p>
+        <div class="hero-tags"><span>01 / THREAD ISLANDS</span><span>02 / LORA FALLBACK</span><span>03 / FRIEND TRAFFIC</span></div>
+      </div>
+      <div class="identity">
+        <img src="../assets/rizzer-transparent.webp" width="210" height="210" alt="Rizzer, the conjoined two-polo-shirts mascot.">
+        <strong>DJ RiZZeR</strong><span>TWO COLLARS. ZERO TRUST.</span>
+      </div>
+    </section>
+    <section class="simulation" aria-labelledby="simulation-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">CONTROL ROOM / SYNTHETIC</p><h2 id="simulation-title">Festival network simulator</h2></div>
+        <div class="sim-stamp">SIMULATION ONLY <span aria-hidden="true">●</span> NO PHYSICAL RF</div>
+      </div>
+      <div class="toolbar">
+        <label for="crowd">CROWD SIZE
+          <select id="crowd">
+            <option value="250">250 / FIELD PILOT</option>
+            <option value="500">500 / FOUNDING PARTY</option>
+            <option value="2000">2,000 / PEAK LOAD</option>
+          </select>
+        </label>
+        <div class="reactor-controls" role="group" aria-label="Reactor fault injection">
+          <span class="toolbar-label">FAULT INJECTION · STARTS AT PLAYHEAD</span>
+          <button id="north" type="button" aria-pressed="false">Disable north Reactor</button>
+          <button id="south" type="button" aria-pressed="false">Disable south Reactor</button>
+          <button id="restore" type="button" class="subtle">Restore both</button>
+        </div>
+      </div>
+      <div class="numbers" aria-label="Model traffic metrics for selected minute">
+        <div class="number"><span>MODELED DELIVERY</span><strong id="delivered">—</strong><small>Selected minute only</small></div>
+        <div class="number"><span>MESSAGE ATTEMPTS</span><strong id="attempted">—</strong><small>Selected minute only</small></div>
+        <div class="number"><span>CAPACITY REJECTIONS</span><strong id="capacity">—</strong><small>Assumed slot budget exceeded</small></div>
+        <div class="number"><span>FALLBACK ROUTES</span><strong id="fallback">—</strong><small>Modeled LoRa relay outcomes</small></div>
+      </div>
+      <div class="workspace">
+        <section class="map-wrap" aria-labelledby="map-title">
+          <div class="panel-header"><div><p class="overline">VENUE / 1,400 × 1,000 M ASSUMED</p><h3 id="map-title">The grounds</h3></div><span class="data-tag">POSITION SAMPLES / NOT GPS</span></div>
+          <div class="map-frame">
+            <canvas id="venue" width="1400" height="1000" aria-hidden="true"></canvas>
+            <div class="map-corner">6LOW ZERO <span>001 / SYNTHETIC</span></div>
+            <div class="map-compass" aria-hidden="true">N ↑</div>
+          </div>
+          <div class="legend" aria-label="Map legend">
+            <span><i class="dot attendee"></i> Sampled attendees</span>
+            <span><i class="dot staff"></i> Sampled crew</span>
+            <span><i class="dot base"></i> Thread station</span>
+            <span><i class="dot relay"></i> LoRa relay</span>
+            <span><i class="dot lost"></i> Reactor isolated</span>
+            <span><i class="sample-line"></i> Sampled model route decision</span>
+          </div>
+          <p class="map-disclaimer">Circles show assumed reach, not measured coverage. Dots are sampled synthetic positions (at most 120), not GPS tracks. Thin links show modeled station attachment; colored arcs show up to 24 sampled model route decisions per minute, not real RF packets.</p>
+          <div class="playback">
+            <button id="back" type="button" aria-label="Previous minute">←</button>
+            <button id="play" type="button">▶ PLAY REPLAY</button>
+            <button id="forward" type="button" aria-label="Next minute">→</button>
+            <label for="minute">MINUTE <output id="minuteLabel" for="minute">01 / 45</output></label>
+            <input id="minute" type="range" min="0" max="44" value="0" step="1" aria-label="Replay minute">
+            <label class="reduce"><input type="checkbox" id="reduced"> Reduced motion</label>
+          </div>
+        </section>
+        <aside class="inspector" aria-label="Network interpretation">
+          <section class="inspector-panel">
+            <p class="overline">REACTOR / STATUS</p>
+            <div class="reactor-line"><span>NORTH</span><strong id="northState">ONLINE</strong></div>
+            <div class="reactor-line"><span>SOUTH</span><strong id="southState">ONLINE</strong></div>
+            <p id="incident" class="incident">Both modeled Reactors available for cross-station traffic.</p>
+            <div class="separator"></div>
+            <p class="overline">ROUTE OUTCOMES / SELECTED MINUTE</p>
+            <div class="route-row"><span>Local Thread</span><strong id="local">—</strong></div>
+            <div class="route-row"><span>Cross-station Thread</span><strong id="cross">—</strong></div>
+            <div class="route-row"><span>LoRa fallback</span><strong id="lora">—</strong></div>
+            <div class="route-row"><span>Unconfirmed in model</span><strong id="missing">—</strong></div>
+          </section>
+          <section class="inspector-panel advisor">
+            <p class="overline">6LOWREACTOR / ADVISORY</p>
+            <h3 id="advisoryTitle">Inspecting assumptions</h3>
+            <p id="advisory">Deterministic rule-based commentary. No AI model or control action runs here.</p>
+            <p class="advisory-foot">ADVISORY ONLY · NO AUTOMATED RADIO CONTROL</p>
+          </section>
+          <section class="inspector-panel trend-panel">
+            <div class="trend-title"><p class="overline">MODELED TRAFFIC / 45 MINUTES</p><span>DELIVERY %</span></div>
+            <svg id="trend" viewBox="0 0 320 120" role="img" aria-label="Minute-by-minute modeled delivery percentage. See the tabular summary below for exact values."></svg>
+            <p class="trend-note">Same random seed; fault settings recompute the whole run. Percentage is not real-world reliability.</p>
+          </section>
+        </aside>
+      </div>
+      <div class="evidence-row">
+        <section class="evidence-panel">
+          <div class="panel-header"><div><p class="overline">REPLAY / TEXT EQUIVALENT</p><h3>Selected minute evidence</h3></div><button id="download" type="button">EXPORT JSON ↓</button></div>
+          <p id="status" role="status" aria-live="polite">Initializing synthetic model…</p>
+          <table aria-label="Model results for selected minute"><tbody id="evidenceRows"></tbody></table>
+        </section>
+        <section class="evidence-panel boundary">
+          <p class="overline">TRUST BOUNDARIES</p>
+          <h3>Not a radio measurement.</h3>
+          <p>Fixed hypothetical reach, packet outcomes, and capacity budgets. No 802.15.4 MAC simulation, LoRa regional airtime limits, physical measurements, real 6lowLoop pairing, signed receipts, emergency delivery, or human verification.</p>
+          <a href="https://github.com/mcc0nnell/6lowstick/blob/main/experiments/festival-zero/README.md">Read the model assumptions ↗</a>
+        </section>
+      </div>
+    </section>
+  </main>
+  <footer><span>6LOW ZERO / THE FIRST GATHERING</span><a href="../">← FIELD STATION</a><span>NO BARS. ALL SIGNAL. · EXPERIMENTAL ONLY</span></footer>
+</div>
+<script type="module" src="./zero.js"></script>
+</body>
+</html>

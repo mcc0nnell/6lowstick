@@ -21,8 +21,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Ensure native C and WebAssembly compilers
+        run: sudo apt-get update && sudo apt-get install -y clang lld build-essential
       - run: npm ci && npm test
       - run: npm run site:check
+      - run: npm run build:festival-site && npm run festival:check && npm run festival:smoke
       - run: node experiments/multiradio/drill.mjs > site/multiradio.json
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
