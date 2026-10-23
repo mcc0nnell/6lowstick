@@ -30,8 +30,11 @@ ctest --test-dir /tmp/6lowreactor-build --output-on-failure
 The native test covers healthy Thread short-circuit, Thread-down fallback,
 lost receipt / duplicate suppression *fixture*, tampered receipt fallback,
 both links down, transport exception, HMAC field binding, invalid input,
-and nonce reuse. It is an independent C test mirroring the synthetic JS
-scenarios, not byte-for-byte differential fuzzing or a Celix runtime test.
+and nonce reuse. The native contract suite mirrors the synthetic JS scenarios.
+An additional Node-driven parity check compares native EA2 and R2 wire bytes,
+authentication acceptance, and tamper rejection across 4 alert IDs and 36
+receipt combinations. These are deterministic test vectors, **not** differential
+fuzzing, radio integration, or an operational security assessment.
 
 ## Optional real Celix bundles
 

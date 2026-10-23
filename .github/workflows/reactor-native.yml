@@ -15,11 +15,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Build native policy without optional Celix SDK
         run: |
           cmake -S native/6lowreactor -B build/reactor -DS6_WITH_CELIX=OFF
           cmake --build build/reactor
           ctest --test-dir build/reactor --output-on-failure
+      - name: Compare native EA2/R2 bytes and rejection behavior with JavaScript
+        run: node native/6lowreactor/test/parity.test.mjs build/reactor/s6_reactor_vectors
 
   celix-integration:
     runs-on: ubuntu-22.04

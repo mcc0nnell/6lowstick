@@ -18,6 +18,9 @@ enable_testing()
 add_executable(s6_reactor_test test/reactor_test.c)
 target_link_libraries(s6_reactor_test PRIVATE s6_reactor)
 add_test(NAME sixlow_reactor_contract COMMAND s6_reactor_test)
+# CLI is used only for differential protocol tests; not part of the runtime.
+add_executable(s6_reactor_vectors test/vector_cli.c)
+target_link_libraries(s6_reactor_vectors PRIVATE s6_reactor)
 
 if(S6_WITH_CELIX)
   find_package(Celix REQUIRED)
