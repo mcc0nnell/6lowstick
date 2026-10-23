@@ -8,7 +8,11 @@ const root=fileURLToPath(new URL('../',import.meta.url));
 const read=x=>readFileSync(resolve(root,x),'utf8');
 const html=read('site/zero/index.html'),script=read('site/zero/zero.js'),css=read('site/zero/zero.css');
 assert.equal(read('site/zero/model.mjs'),read('experiments/festival-zero/model.mjs'),
-  'Published browser model must match tested simulation source exactly');
+  'Published browser adapter must match tested C/WASM adapter exactly');
+assert.deepEqual(readFileSync(resolve(root,'site/zero/model.wasm')),
+  readFileSync(resolve(root,'experiments/festival-zero/model.wasm')),
+  'Published C/WASM binary must match the generated engine binary');
+assert.ok(read('experiments/festival-zero/engine.c').includes('int festival_run('));
 for (const id of ['main','crowd','north','south','restore','minute','venue','trend','play','back',
   'forward','reduced','download','status','evidenceRows','delivered','attempted','capacity',
   'fallback','advisory','advisoryTitle','northState','southState']) {
@@ -25,5 +29,5 @@ assert.match(script,/aria-pressed/);
 assert.doesNotMatch(script,/WebSocket|sendBeacon|localStorage|\bfetch\s*\(/);
 assert.match(css,/:focus-visible/);
 assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
-console.log(JSON.stringify({status:'PASS',site:'site/zero/',sourceModel:'exact copy',
+console.log(JSON.stringify({status:'PASS',site:'site/zero/',engine:'C11 -> WebAssembly',sourceModel:'exact adapter and WASM copies',
   simulationOnly:true,physicalRadio:false,humanReceipt:false}));

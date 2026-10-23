@@ -8,3 +8,5 @@ evidence/
 dist/
 # Browser runtime copy generated from canonical simulator source
 site/zero/model.mjs
+site/zero/model.wasm
+experiments/festival-zero/model.wasm

@@ -3,6 +3,7 @@
   "version": "0.1.0-rc.1",
   "description": "Experimental, simulation-first accessibility and low-power mesh alert research laboratory; not for life safety.",
   "scripts": {
+    "pretest": "node scripts/build-festival-zero.mjs",
     "test": "node --test test/*.test.mjs experiments/thread-alert/*.test.mjs",
     "check": "npm test && git diff --check",
     "tui": "node src/tui/cli.mjs",
