@@ -1,0 +1,103 @@
+name: 6lowReactor native contract
+on:
+  push:
+    paths:
+      - 'native/6lowreactor/**'
+      - '.github/workflows/reactor-native.yml'
+  pull_request:
+    paths:
+      - 'native/6lowreactor/**'
+      - '.github/workflows/reactor-native.yml'
+permissions:
+  contents: read
+jobs:
+  native-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build native policy without optional Celix SDK
+        run: |
+          cmake -S native/6lowreactor -B build/reactor -DS6_WITH_CELIX=OFF
+          cmake --build build/reactor
+          ctest --test-dir build/reactor --output-on-failure
+      - name: Compare native EA2/R2 bytes and rejection behavior with JavaScript
+        run: node native/6lowreactor/test/parity.test.mjs build/reactor/s6_reactor_vectors
+
+  celix-integration:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Celix framework build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake curl unzip zip uuid-dev zlib1g-dev \
+            libzip-dev libcurl4-openssl-dev libjansson-dev libffi-dev \
+            libxml2-dev libssl-dev libcpputest-dev
+      - name: Fetch and verify Apache Celix 2.4.0 source SHA-512
+        run: |
+          curl --fail --location --retry 3 --output celix-2.4.0.tar.gz \
+            https://downloads.apache.org/celix/celix-2.4.0/celix-2.4.0.tar.gz
+          echo "76fb2ba448028894841e7315f62e864a0913144a528b666106b4946a0044b45af13629a558e627de4ea6331788bae482b63601aee669e44bbc32435cc0b72ff0  celix-2.4.0.tar.gz" | sha512sum -c -
+          tar -xf celix-2.4.0.tar.gz
+      - name: Compile and install minimal Celix 2.4.0
+        run: |
+          cmake -S celix-2.4.0 -B build/celix-sdk \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$PWD/build/celix-install" \
+            -DBUILD_PUBSUB=OFF \
+            -DBUILD_REMOTE_SERVICE_ADMIN=OFF \
+            -DBUILD_CXX_REMOTE_SERVICE_ADMIN=OFF \
+            -DBUILD_REMOTE_SHELL=OFF \
+            -DBUILD_HTTP_ADMIN=OFF \
+            -DBUILD_DEPLOYMENT_ADMIN=OFF \
+            -DBUILD_SHELL=OFF -DBUILD_SHELL_WUI=OFF \
+            -DBUILD_SHELL_TUI=OFF -DBUILD_SHELL_BONJOUR=OFF \
+            -DBUILD_EXAMPLES=OFF
+          cmake --build build/celix-sdk --parallel 2
+          cmake --install build/celix-sdk
+      - name: Compile native bundles against real Celix
+        run: |
+          cmake -S native/6lowreactor -B build/celix-reactor \
+            -DS6_WITH_CELIX=ON \
+            -DCMAKE_PREFIX_PATH="$PWD/build/celix-install"
+          cmake --build build/celix-reactor --parallel 2
+          ctest --test-dir build/celix-reactor --output-on-failure
+      - name: Boot mock service container and verify fallback
+        run: |
+          set +e
+          (cd build/celix-reactor/deploy/s6_reactor_demo && \
+            timeout 15s stdbuf -oL ./s6_reactor_demo) \
+            > build/celix-reactor-output.log 2>&1
+          result=$?
+          set -e
+          cat build/celix-reactor-output.log
+          if [ "$result" -ne 0 ] && [ "$result" -ne 124 ]; then
+            exit "$result"
+          fi
+          grep -F '6lowReactor CELIX simulation: app_acknowledged' build/celix-reactor-output.log
+          grep -F 'thread: no_authenticated_receipt' build/celix-reactor-output.log
+          grep -F 'lora-p2p: authenticated_app_receipt' build/celix-reactor-output.log
+      - name: Missing LoRa mock service must remain unconfirmed
+        run: |
+          set +e
+          (cd build/celix-reactor/deploy/s6_reactor_no_lora && \
+            timeout 8s stdbuf -oL ./s6_reactor_no_lora) \
+            > build/celix-no-lora.log 2>&1
+          result=$?
+          set -e
+          cat build/celix-no-lora.log
+          if [ "$result" -ne 0 ] && [ "$result" -ne 124 ]; then
+            exit "$result"
+          fi
+          grep -F '6lowReactor CELIX simulation: unconfirmed' build/celix-no-lora.log
+          grep -F 'thread: no_authenticated_receipt' build/celix-no-lora.log
+          grep -F 'lora-p2p: no_authenticated_receipt' build/celix-no-lora.log
+          if grep -Fq 'authenticated_app_receipt' build/celix-no-lora.log; then
+            echo 'Unexpected authenticated receipt with LoRa service absent' >&2
+            exit 1
+          fi

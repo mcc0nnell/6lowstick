@@ -19,6 +19,7 @@ experiment distinguishes recorded facts from what requires hardware or people.
 | What comes after simulation when funding is secured? | [First Light plan](first-light/README.md) and [funding case](first-light/funding-case.md) | Software-only signal intent, laboratory dependencies, independent physical measurement and a non-submitted budget |
 | Where could AI fit without gaining physical authority? | [OpenThread + AI research direction](ai-physical-systems.md) | Advisory architecture, trust boundaries, evidence levels and research gates |
 | How can we reject unsupported AI trace claims? | [Offline trace review](trace-review.md) | Deterministic reference interpretations and a typed, fail-closed claim check |
+| Where is the native Celix experiment? | [6lowReactor lab](../native/6lowreactor/README.md) | Mock Thread/LoRa service bundles, native EA2/R2 contracts and verification limits |
 | How does scripted failover behave? | [Multi-radio fabric](multiradio-fabric.md) | Attempts, application ACKs, fallback and duplicate suppression |
 | How do I reproduce a simulated run? | [OpenThread POSIX lab](../experiments/thread-alert/README.md) | Environment setup, commands and limitations |
 | Where does a result come from? | [Reliability trials](reliability-trials.md) and [monotonic events](monotonic-evidence.md) | Fixture generation, run provenance, timestamps and exceptions |
