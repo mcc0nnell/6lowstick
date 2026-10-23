@@ -1,0 +1,185 @@
+{
+  "schema": "6lowstick.bang.blade-stress-evidence.v1",
+  "date": "2026-10-23",
+  "platform": "Butcher Linux, two OpenThread POSIX software-simulated nodes",
+  "base_6lowstick_commit": "e5b99928a79a82738d69b0aa9603c296360b1dd1",
+  "openthread_source_pin": "da88541bed383be381c7ea39dc7b98fb9104e03b",
+  "composition_plan_sha256": "beac6201b5871f09be183add25700c66be7ccef59bfb77fb810ff585ab7c1db4",
+  "composition_source_digests": {
+    "native-ot-lab.mjs": "c50fd1a4ab14a49a9ba97eed36a4e5816ec8f171b5612084b747bb14e0ece127",
+    "vendor.c": "8eafebc819d14047f6a72529ca4a2714b3e12650baf826e0e364c643d736749b"
+  },
+  "blade_path": "local Unix socket, admitted signed talkpipe.run, pinned pipeline SHA-256",
+  "composition_pipeline_sha256": "901288e456dd503a639823d208844bff45762ec6e3e3f59fb6ac4748da7a7fbc",
+  "limitations": [
+    "simulated not physical RF",
+    "no reliability SLO",
+    "enqueued is not received",
+    "no device enrollment or E2E encryption",
+    "fixed synthetic test-only signing key"
+  ],
+  "trials": [
+    {
+      "trial": 1,
+      "checks_passed": 25,
+      "radio_port_offset": 639,
+      "send_accounting": [
+        {
+          "attempted": 8,
+          "scheduled": 8,
+          "queued": null,
+          "noBuffers": 0,
+          "otherErrors": 0,
+          "authenticatedPresented": 8,
+          "firstSequence": null,
+          "lastSequence": null
+        },
+        {
+          "attempted": 16,
+          "scheduled": null,
+          "queued": 16,
+          "noBuffers": 0,
+          "otherErrors": 0,
+          "authenticatedPresented": 16,
+          "firstSequence": 14,
+          "lastSequence": 29
+        },
+        {
+          "attempted": 24,
+          "scheduled": null,
+          "queued": 21,
+          "noBuffers": 3,
+          "otherErrors": 0,
+          "authenticatedPresented": 21,
+          "firstSequence": 30,
+          "lastSequence": 53
+        }
+      ],
+      "raw_evidence_sha256": "39be751fc36e8070f7bf84134a430d8db359a398ce48f1dcb30b4db4135d4d5a",
+      "verification": {
+        "authenticated_presented": 45,
+        "buffer_rejections": 3,
+        "input_sha256": "39be751fc36e8070f7bf84134a430d8db359a398ce48f1dcb30b4db4135d4d5a",
+        "other_send_errors": 0,
+        "queued": 45,
+        "radioHardware": false,
+        "reliabilityProven": false,
+        "schema": "6lowstick.blade.evidence-verification.v1",
+        "signed_attempts": 48,
+        "source_digests": {
+          "native-ot-lab.mjs": "c50fd1a4ab14a49a9ba97eed36a4e5816ec8f171b5612084b747bb14e0ece127",
+          "vendor.c": "8eafebc819d14047f6a72529ca4a2714b3e12650baf826e0e364c643d736749b"
+        },
+        "verdict": "PASS"
+      }
+    },
+    {
+      "trial": 2,
+      "checks_passed": 25,
+      "radio_port_offset": 205,
+      "send_accounting": [
+        {
+          "attempted": 8,
+          "scheduled": 8,
+          "queued": null,
+          "noBuffers": 0,
+          "otherErrors": 0,
+          "authenticatedPresented": 8,
+          "firstSequence": null,
+          "lastSequence": null
+        },
+        {
+          "attempted": 16,
+          "scheduled": null,
+          "queued": 16,
+          "noBuffers": 0,
+          "otherErrors": 0,
+          "authenticatedPresented": 16,
+          "firstSequence": 14,
+          "lastSequence": 29
+        },
+        {
+          "attempted": 24,
+          "scheduled": null,
+          "queued": 21,
+          "noBuffers": 3,
+          "otherErrors": 0,
+          "authenticatedPresented": 21,
+          "firstSequence": 30,
+          "lastSequence": 53
+        }
+      ],
+      "raw_evidence_sha256": "88a6fae3f8b0212ab71b9a080cbeab68ae4f55d5d3cea84380874d74e15b65c9",
+      "verification": {
+        "authenticated_presented": 45,
+        "buffer_rejections": 3,
+        "input_sha256": "88a6fae3f8b0212ab71b9a080cbeab68ae4f55d5d3cea84380874d74e15b65c9",
+        "other_send_errors": 0,
+        "queued": 45,
+        "radioHardware": false,
+        "reliabilityProven": false,
+        "schema": "6lowstick.blade.evidence-verification.v1",
+        "signed_attempts": 48,
+        "source_digests": {
+          "native-ot-lab.mjs": "c50fd1a4ab14a49a9ba97eed36a4e5816ec8f171b5612084b747bb14e0ece127",
+          "vendor.c": "8eafebc819d14047f6a72529ca4a2714b3e12650baf826e0e364c643d736749b"
+        },
+        "verdict": "PASS"
+      }
+    },
+    {
+      "trial": 3,
+      "checks_passed": 25,
+      "radio_port_offset": 648,
+      "send_accounting": [
+        {
+          "attempted": 8,
+          "scheduled": 8,
+          "queued": null,
+          "noBuffers": 0,
+          "otherErrors": 0,
+          "authenticatedPresented": 8,
+          "firstSequence": null,
+          "lastSequence": null
+        },
+        {
+          "attempted": 16,
+          "scheduled": null,
+          "queued": 16,
+          "noBuffers": 0,
+          "otherErrors": 0,
+          "authenticatedPresented": 16,
+          "firstSequence": 14,
+          "lastSequence": 29
+        },
+        {
+          "attempted": 24,
+          "scheduled": null,
+          "queued": 21,
+          "noBuffers": 3,
+          "otherErrors": 0,
+          "authenticatedPresented": 21,
+          "firstSequence": 30,
+          "lastSequence": 53
+        }
+      ],
+      "raw_evidence_sha256": "b6ae751bf00b827bd037a034de405cd43fdb8a548bd8292f55e3c708fce7794f",
+      "verification": {
+        "authenticated_presented": 45,
+        "buffer_rejections": 3,
+        "input_sha256": "b6ae751bf00b827bd037a034de405cd43fdb8a548bd8292f55e3c708fce7794f",
+        "other_send_errors": 0,
+        "queued": 45,
+        "radioHardware": false,
+        "reliabilityProven": false,
+        "schema": "6lowstick.blade.evidence-verification.v1",
+        "signed_attempts": 48,
+        "source_digests": {
+          "native-ot-lab.mjs": "c50fd1a4ab14a49a9ba97eed36a4e5816ec8f171b5612084b747bb14e0ece127",
+          "vendor.c": "8eafebc819d14047f6a72529ca4a2714b3e12650baf826e0e364c643d736749b"
+        },
+        "verdict": "PASS"
+      }
+    }
+  ]
+}

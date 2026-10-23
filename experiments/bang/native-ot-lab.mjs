@@ -174,14 +174,23 @@ try {
     // Short bounded burst: enqueue != authenticated reception.
     const burstLines=await tx.command('bangburst '+address+' 8');
     const burst=burstLines.find(x=>x.startsWith('BANG_BURST '));
-    const match=burst?.match(/^BANG_BURST queued=(\d+) no_bufs=(\d+) other_errors=(\d+)$/);
+    const parseBurst=line=>{
+      const match=line?.match(/^BANG_BURST queued=(\d+) no_bufs=(\d+) other_errors=(\d+) attempted=(\d+) first_seq=(\d+) last_seq=(\d+)$/);
+      if(!match)return null;
+      const [,queued,noBuffers,otherErrors,attempted,firstSequence,lastSequence]=match.map(Number);
+      return {queued,noBuffers,otherErrors,attempted,firstSequence,lastSequence};
+    };
+    const burstData=parseBurst(burst);
     check('native OT signed burst explicitly accounts for all eight bounded sends',
-      !!match && Number(match[1])+Number(match[2])+Number(match[3])===8);
+      !!burstData && burstData.queued+burstData.noBuffers+
+        burstData.otherErrors===8 &&
+      burstData.attempted===8 && burstData.firstSequence===6 &&
+      burstData.lastSequence===13);
     await sleep(1400);
     const burstDelivered=evidence(rx)
       .map(x=>x.match(/^BANG_DELIVER (\d+) Burst$/))
       .filter(Boolean).map(m=>Number(m[1]));
-    const scheduled=Number(match[1]);
+    const scheduled=burstData.queued;
     check('bounded burst presents no unsigned, duplicated, or out-of-range sequence',
       burstDelivered.length<=scheduled &&
       burstDelivered.every((n,i)=>n>=6&&n<=13&&(i===0||n>burstDelivered[i-1])) &&
@@ -190,10 +199,40 @@ try {
     const candidates=Number(stressStats?.match(/candidates=(\d+)/)?.[1]??NaN);
     check('receiver candidate count remains bounded by actually scheduled frames',
       candidates>=7 && candidates<=7+scheduled);
+    const bladeMatrix=[];
+    if(process.env.BANG_OT_STRESS_MATRIX==='1') {
+      // Blade-composed, finite matrix. Each stage is independently accounted
+      // for; never infer authentication or delivery from a successful enqueue.
+      for(const count of [16,24]) {
+        const burstResult=(await tx.command('bangburst '+address+' '+count))
+          .find(line=>line.startsWith('BANG_BURST '));
+        const batch=parseBurst(burstResult);
+        check('bounded native stress burst accounts for every send '+count,
+          !!batch && batch.attempted===count &&
+          batch.queued+batch.noBuffers+batch.otherErrors===count &&
+          batch.lastSequence-batch.firstSequence+1===count);
+        await sleep(1550);
+        const authenticated=evidence(rx)
+          .map(line=>line.match(/^BANG_DELIVER (\d+) Burst$/))
+          .filter(Boolean)
+          .map(match=>Number(match[1]))
+          .filter(seq=>seq>=batch.firstSequence&&seq<=batch.lastSequence);
+        check('receiver never overclaims a signed stress burst '+count,
+          authenticated.length<=batch.queued &&
+          authenticated.every((n,i)=>i===0||n>authenticated[i-1]));
+        bladeMatrix.push({...batch,authenticatedPresented:authenticated.length,
+          deliveredSequences:authenticated});
+      }
+      check('Blade-composed bounded matrix attempts exactly 48 signed events',
+        bladeMatrix.reduce((sum,b)=>sum+b.attempted,8)===48 &&
+        bladeMatrix[0].firstSequence===14 &&
+        bladeMatrix[1].firstSequence===30 && bladeMatrix[1].lastSequence===53);
+    }
     result.resilience={
+      bladeMatrix,
       burst:{
-        attempted:8,scheduled,noBuffers:Number(match[2]),
-        otherErrors:Number(match[3]),authenticatedPresented:burstDelivered.length,
+        attempted:8,scheduled,noBuffers:burstData.noBuffers,
+        otherErrors:burstData.otherErrors,authenticatedPresented:burstDelivered.length,
         deliveredSequences:burstDelivered
       },
       applicationDrop:{missingSequence:3,releaseSequence:4,gapReported:true},

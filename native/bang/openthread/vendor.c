@@ -20,7 +20,7 @@ static struct {
     bang_source* source;
     bang_event frame[5];
     bool prepared;
-    uint32_t delivered,rejected,synthetic_dropped;
+    uint32_t delivered,rejected,synthetic_dropped,burst_attempted;
     uint8_t drop_next;
 } state;
 static uint64_t now_ms(void) {
@@ -152,28 +152,37 @@ static otError bang_flush(void* context,uint8_t argc,char* argv[]) {
     }
     return OT_ERROR_NONE;
 }
-// Bounded stress fixture. Scheduling a datagram is NOT delivery. Each event
-// is separately signed, up to eight total, and failures are reported.
+// Source-owned bounded stress fixture: no automatic retransmission.
+// Queued means OpenThread accepted the datagram, not authenticated receipt.
 static otError bang_burst(void* context,uint8_t argc,char* argv[]) {
     (void)context;
-    if(argc!=2 || !state.endpoint.opened || !state.prepared ||
-       strcmp(argv[1],"8"))return OT_ERROR_INVALID_ARGS;
+    if(argc!=2 || !state.endpoint.opened || !state.prepared)
+        return OT_ERROR_INVALID_ARGS;
+    uint32_t count=0;
+    if(strcmp(argv[1],"8")==0)count=8;
+    else if(strcmp(argv[1],"16")==0)count=16;
+    else if(strcmp(argv[1],"24")==0)count=24;
+    else return OT_ERROR_INVALID_ARGS;
+    if(state.burst_attempted+count>48)return OT_ERROR_INVALID_STATE;
     otIp6Address dest={0};
     if(otIp6AddressFromString(argv[0],&dest)!=OT_ERROR_NONE)
         return OT_ERROR_INVALID_ARGS;
     uint32_t queued=0,no_bufs=0,other_errors=0;
-    uint64_t now=now_ms();
-    for(uint32_t i=0;i<8;i++) {
+    uint64_t now=now_ms(),first_seq=0,last_seq=0;
+    for(uint32_t i=0;i<count;i++) {
         bang_event frame={0};
         if(bang_source_emit(state.source,BANG_CAPTION,"Burst",now+i,30000,
                             &frame)!=BANG_OK)return OT_ERROR_FAILED;
+        if(i==0)first_seq=frame.seq;
+        last_seq=frame.seq;
         otError error=lowbang_ot_send(&state.endpoint,&dest,PORT,&frame);
         if(error==OT_ERROR_NONE)queued++;
         else if(error==OT_ERROR_NO_BUFS)no_bufs++;
         else other_errors++;
     }
-    otCliOutputFormat("BANG_BURST queued=%u no_bufs=%u other_errors=%u\r\n",
-        queued,no_bufs,other_errors);
+    state.burst_attempted+=count;
+    otCliOutputFormat("BANG_BURST queued=%u no_bufs=%u other_errors=%u attempted=%u first_seq=%" PRIu64 " last_seq=%" PRIu64 "\r\n",
+        queued,no_bufs,other_errors,count,first_seq,last_seq);
     return OT_ERROR_NONE;
 }
 static otError bang_stats(void* context,uint8_t argc,char* argv[]) {

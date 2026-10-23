@@ -22,7 +22,8 @@
     "bang:native:demo": "bash scripts/bang-native.sh --demo",
     "bang:posix": "bash scripts/bang-posix.sh",
     "bang:native:ot": "bash scripts/bang-native-ot.sh",
-    "bang:native:ot:resilience": "BANG_OT_RESILIENCE=1 bash scripts/bang-native-ot.sh"
+    "bang:native:ot:resilience": "BANG_OT_RESILIENCE=1 bash scripts/bang-native-ot.sh",
+    "bang:native:ot:matrix": "BANG_OT_RESILIENCE=1 BANG_OT_STRESS_MATRIX=1 bash scripts/bang-native-ot.sh"
   },
   "repository": {
     "type": "git",

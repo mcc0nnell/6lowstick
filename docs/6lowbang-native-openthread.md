@@ -73,3 +73,29 @@ These controls are restricted to the research-only vendor extension.
 See 6lowbang-resilience-evidence.md for the measured trial results.
 Physical RF, real ASR/CART, private-caption encryption, human receipt,
 large-scale congestion and sustained fault distributions are still open.
+
+
+## WindAnvil Blade-composed bounded stress matrix
+
+The optional npm run bang:native:ot:matrix exercises three stages: 8, 16,
+and 24 independently signed caption datagrams over native OpenThread C UDP.
+These are simulated-radio packets, not physical IEEE 802.15.4 measurements.
+At most 48 sends per test process are attempted. There is no hidden retry,
+unbounded queue, cloud service, or generic shell executor on the device.
+
+The native C fixture records queued, no_bufs and other_errors separately.
+A queued event is not a received caption. The receiver verifies
+actual presentation with pinned Ed25519 public keys. The harness checks
+sequence order, duplicates, missing captions and finite send budgets.
+
+The deterministic, read-only composer and verifier is
+scripts/blade-compose-stress.py. It hashes the reviewed C source and test
+harness, generates a finite plan, and can independently verify JSON evidence.
+CI runs the local verifier without requiring Blade. On Butcher the very
+same verifier was also run through WindAnvil Blade's signed talkpipe.run
+capability, using its local mode-0600 Unix socket and pinned pipeline hash.
+Blade is an authoring and verification plane, not the Thread runtime.
+
+See docs/6lowbang-blade-stress.md for real local simulator results.
+Hardware RF, sustained throughput, p95 latency, energy and real-world
+packet loss remain unverified.
