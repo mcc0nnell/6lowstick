@@ -1,0 +1,22 @@
+name: 6lowReactor native contract
+on:
+  push:
+    paths:
+      - 'native/6lowreactor/**'
+      - '.github/workflows/reactor-native.yml'
+  pull_request:
+    paths:
+      - 'native/6lowreactor/**'
+      - '.github/workflows/reactor-native.yml'
+permissions:
+  contents: read
+jobs:
+  native-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build native policy without optional Celix SDK
+        run: |
+          cmake -S native/6lowreactor -B build/reactor -DS6_WITH_CELIX=OFF
+          cmake --build build/reactor
+          ctest --test-dir build/reactor --output-on-failure

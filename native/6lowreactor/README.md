@@ -1,0 +1,57 @@
+# 6lowReactor: native Celix experiment
+
+**Experimental and simulation-only.** This is a small native C port of the
+existing `src/fabric` deterministic decision boundary, not a deployed Reactor,
+radio firmware, actual failover, peer discovery, or a safety system.
+
+- `s6_reactor`: native policy and HMAC-SHA-256 EA2/R2 receipt verification.
+  Refuses non-drill input; tries `thread` then `lora-p2p`, once each, with
+  distinct per-attempt 96-bit challenges. Only a verified application R2 receipt
+  confirms. Transport success alone cannot.
+- `s6_radio_thread`: optional Celix service; **scripted no-receipt** fixture.
+- `s6_radio_lora`: optional Celix service; **scripted valid-receipt** fixture.
+- `s6_router`: optional Celix consumer; runs one synthetic drill at bundle
+  startup and prints the outcomes, using Celix's callback-scoped service access.
+
+The demo services use a **public, fixed test key** that must never be used in
+real systems. There is no key provisioning, ciphering, actual radio transport,
+durable replay journal, independent device activation, or human receipt.
+
+## Portable native policy test
+
+Requires CMake, a C11 compiler, and OpenSSL development headers:
+
+```sh
+cmake -S native/6lowreactor -B /tmp/6lowreactor-build -DS6_WITH_CELIX=OFF
+cmake --build /tmp/6lowreactor-build
+ctest --test-dir /tmp/6lowreactor-build --output-on-failure
+```
+
+The native test covers healthy Thread short-circuit, Thread-down fallback,
+lost receipt / duplicate suppression *fixture*, tampered receipt fallback,
+both links down, transport exception, HMAC field binding, invalid input,
+and nonce reuse. It is an independent C test mirroring the synthetic JS
+scenarios, not byte-for-byte differential fuzzing or a Celix runtime test.
+
+## Optional real Celix bundles
+
+Install an Apache Celix 2.4-compatible C SDK and set `Celix_DIR` or
+`CMAKE_PREFIX_PATH`, then:
+
+```sh
+cmake -S native/6lowreactor -B /tmp/6lowreactor-celix \
+  -DS6_WITH_CELIX=ON -DCMAKE_PREFIX_PATH=/path/to/celix/install
+cmake --build /tmp/6lowreactor-celix
+/tmp/6lowreactor-celix/deploy/s6_reactor_demo/s6_reactor_demo
+```
+
+The Celix-specific build and runtime **have not yet been executed on a
+Celix-equipped host**. There is no Celix SDK in the default Node CI job.
+The optional bundles are research scaffolding pending that integration gate.
+
+The plugin contract deliberately lacks hardware access. Before any migration:
+confirm actual Celix build and stop/start behavior; run a JS-vs-C differential
+fixture; define bounded request timeouts and concurrency; model missing services;
+safely provision per-device keys; implement and test durable duplicate
+suppression; measure memory and failover timing; and independently validate RF
+and accessible actuators. See [the existing synthetic-fabric protocol](../../docs/multiradio-fabric.md).
