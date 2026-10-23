@@ -20,6 +20,7 @@ Usage: 6low <command> [arguments]
   lab loop             Run in-memory 6lowLoop demonstration
   lab flare            Run in-memory 6lowFlare demonstration
   evidence review [opts] Review synthetic evidence
+  mesh inspect --input FILE  Inspect recorded POSIX mesh evidence (offline)
   tui [options]        Read-only evidence viewer
   test                 Run repository tests
 
@@ -48,15 +49,20 @@ if (args[0] === 'tui') {
   key = args.slice(0, 2).join(' ');
   extra = args.slice(2);
 }
-if (key !== 'tui' && key !== 'test' && !Object.hasOwn(commands, key)) {
+if (key !== 'tui' && key !== 'test' && key !== 'mesh inspect' && !Object.hasOwn(commands, key)) {
   console.error('Unknown command. Run 6low help.');
   process.exit(2);
 }
-if (key !== 'tui' && key !== 'evidence review' && extra.length) {
+if (key === 'mesh inspect' && (extra.length !== 2 || extra[0] !== '--input' || !extra[1] || extra[1].startsWith('--'))) {
+  console.error('Usage: 6low mesh inspect --input FILE');
+  process.exit(2);
+}
+if (key !== 'tui' && key !== 'evidence review' && key !== 'mesh inspect' && extra.length) {
   console.error('Unexpected arguments. Run 6low help.');
   process.exit(2);
 }
-const script = key === 'tui' ? ['src/tui/cli.mjs', ...extra] :
+const script = key === 'mesh inspect' ? ['scripts/review-traces.mjs', '--posix', extra[1]] :
+  key === 'tui' ? ['src/tui/cli.mjs', ...extra] :
   key === 'evidence review' ? [...commands[key], ...extra] : commands[key];
 const result = key === 'test'
   ? spawnSync('npm', ['test'], {cwd: root, stdio: 'inherit'})
