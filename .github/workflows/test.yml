@@ -38,13 +38,3 @@ jobs:
           npm run bang:native:test
           npm run release:check
       - run: git diff --check
-
-  bang-native:
-    name: Native 6lowBang (C11)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install native build dependencies
-        run: sudo apt-get update && sudo apt-get install -y cmake libssl-dev
-      - name: Compile and test C protocol
-        run: bash scripts/bang-native.sh --demo
