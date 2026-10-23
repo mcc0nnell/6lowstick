@@ -71,7 +71,9 @@ bool s6_sign_alert(const unsigned char *key, size_t n, const char *id,
     return wire_from_body(key, n, body, out);
 }
 bool s6_verify_alert(const unsigned char *key, size_t n, const char *wire) {
-    if (!wire || strncmp(wire, "EA2|", 4) != 0) return false;
+    // Mirror the JS verifier's 100-byte bound before searching for separators.
+    // Never scan an arbitrarily long or unterminated radio-provided string.
+    if (!wire || strnlen(wire, 101) > 100 || strncmp(wire, "EA2|", 4) != 0) return false;
     const char *begin = wire + 4;
     const char *end = strchr(begin, '|');
     if (!end || (size_t)(end - begin) > 32) return false;
