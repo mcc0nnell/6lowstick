@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "6lowSpark")(type "KiCad")(uri "${KIPRJMOD}/6lowSpark.kicad_sym")(options "")(descr "A0 passive interposer symbols") )
+)

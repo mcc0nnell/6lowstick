@@ -1,0 +1,48 @@
+{
+  "J1": [
+    {"pin":"P1_VDD_MEASURE", "net":"HOST_VDD"},
+    {"pin":"GND", "net":"GND"},
+    {"pin":"D13_P1.15_SCK", "net":"SPI_SCK"},
+    {"pin":"D11_P1.13_MOSI", "net":"SPI_MOSI"},
+    {"pin":"D12_P1.14_MISO", "net":"SPI_MISO"},
+    {"pin":"D10_P1.12_LCD_CS", "net":"LCD_CS"},
+    {"pin":"D9_P1.11_RF_NSS", "net":"RF_NSS"},
+    {"pin":"D8_P1.10_RF_NRST", "net":"RF_NRST"},
+    {"pin":"D7_P1.08_RF_DIO1", "net":"RF_DIO1"},
+    {"pin":"D6_P1.07_RF_BUSY", "net":"RF_BUSY"},
+    {"pin":"D5_P1.06_LCD_DISP", "net":"LCD_DISP"},
+    {"pin":"D4_P1.05_BTN_NEXT", "net":"BTN_NEXT"},
+    {"pin":"D3_P1.04_BTN_BACK", "net":"BTN_BACK"},
+    {"pin":"D2_P1.03_RF_TXEN", "net":"RF_TXEN"},
+    {"pin":"D1_P1.02_RF_RXEN", "net":"RF_RXEN"},
+    {"pin":"GND2", "net":"GND"}
+  ],
+  "J2": [
+    {"pin":"VIN_3TO5V", "net":"HOST_VDD"},
+    {"pin":"3V3_OUT_UNUSED", "net":"NC"},
+    {"pin":"GND", "net":"GND"},
+    {"pin":"SCLK", "net":"SPI_SCK"},
+    {"pin":"MOSI_DI", "net":"SPI_MOSI"},
+    {"pin":"CS", "net":"LCD_CS"},
+    {"pin":"EXTCOMIN_NC", "net":"NC"},
+    {"pin":"DISP", "net":"LCD_DISP"},
+    {"pin":"EXTMODE_SOFT", "net":"GND"}
+  ],
+  "J3": [
+    {"pin":"RF_VDD_3V3", "net":"RF_VDD"},
+    {"pin":"GND", "net":"GND"},
+    {"pin":"SCK", "net":"SPI_SCK"},
+    {"pin":"MOSI", "net":"SPI_MOSI"},
+    {"pin":"MISO", "net":"SPI_MISO"},
+    {"pin":"NSS", "net":"RF_NSS"},
+    {"pin":"NRST", "net":"RF_NRST"},
+    {"pin":"BUSY", "net":"RF_BUSY"},
+    {"pin":"DIO1", "net":"RF_DIO1"},
+    {"pin":"TXEN_MODULE_DEP", "net":"RF_TXEN"},
+    {"pin":"RXEN_MODULE_DEP", "net":"RF_RXEN"}
+  ],
+  "J4": [
+    {"pin":"HOST_SIDE", "net":"HOST_VDD"},
+    {"pin":"RF_SIDE", "net":"RF_VDD"}
+  ]
+}
