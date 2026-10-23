@@ -29,3 +29,7 @@ No command in this initial entry point transmits RF, manages radios, dispatches 
 ## Recorded OpenThread CLI observations
 
 `6low mesh observe state --input state.txt` and `6low mesh observe rloc16 --input rloc16.txt` parse bounded, recorded OpenThread CLI text. These commands never attach to or spawn `ot-cli-ftd`, and do not infer the provenance of a recording. Output is JSON with `source: recorded_ot_cli_text` and explicit `physicalRadioVerified: false` / `humanReceiptVerified: false`. Only the `state` and `rloc16` read-only output grammars are supported; malformed, multiple, and oversized results fail closed. This is not a live query adapter.
+
+### Opt-in POSIX simulator observation
+
+`6low mesh query state --binary /absolute/path/to/ot-cli-ftd --node-id 7` starts an explicitly selected OpenThread POSIX simulated-radio CLI and sends only the allowlisted read-only `state` or `rloc16` command. It bounds output to 8 KiB, uses a three-second deadline, and terminates the process after receiving `Done`. This is simulator state, **not physical radio telemetry**. It does not start a Thread network, send a packet, or verify human receipt. Use a dedicated, trusted simulator binary and unused node ID.

@@ -22,6 +22,7 @@ Usage: 6low <command> [arguments]
   evidence review [opts] Review synthetic evidence
   mesh inspect --input FILE  Inspect recorded POSIX mesh evidence (offline)
   mesh observe state|rloc16 --input FILE  Parse recorded OpenThread CLI output
+  mesh query state|rloc16 --binary PATH --node-id N  Query POSIX simulator
   tui [options]        Read-only evidence viewer
   test                 Run repository tests
 
@@ -50,7 +51,7 @@ if (args[0] === 'tui') {
   key = args.slice(0, 2).join(' ');
   extra = args.slice(2);
 }
-if (key !== 'tui' && key !== 'test' && key !== 'mesh inspect' && key !== 'mesh observe' && !Object.hasOwn(commands, key)) {
+if (key !== 'tui' && key !== 'test' && key !== 'mesh inspect' && key !== 'mesh observe' && key !== 'mesh query' && !Object.hasOwn(commands, key)) {
   console.error('Unknown command. Run 6low help.');
   process.exit(2);
 }
@@ -62,11 +63,16 @@ if (key === 'mesh observe' && (extra.length !== 3 || !['state','rloc16'].include
   console.error('Usage: 6low mesh observe state|rloc16 --input FILE');
   process.exit(2);
 }
-if (key !== 'tui' && key !== 'evidence review' && key !== 'mesh inspect' && key !== 'mesh observe' && extra.length) {
+if (key === 'mesh query' && (extra.length !== 5 || !['state','rloc16'].includes(extra[0]) || extra[1] !== '--binary' || !extra[2] || extra[3] !== '--node-id' || !extra[4])) {
+  console.error('Usage: 6low mesh query state|rloc16 --binary PATH --node-id N');
+  process.exit(2);
+}
+if (key !== 'tui' && key !== 'evidence review' && key !== 'mesh inspect' && key !== 'mesh observe' && key !== 'mesh query' && extra.length) {
   console.error('Unexpected arguments. Run 6low help.');
   process.exit(2);
 }
-const script = key === 'mesh observe' ? ['scripts/ot-observe.mjs', ...extra] :
+const script = key === 'mesh query' ? ['scripts/ot-posix-observe.mjs', ...extra] :
+  key === 'mesh observe' ? ['scripts/ot-observe.mjs', ...extra] :
   key === 'mesh inspect' ? ['scripts/review-traces.mjs', '--posix', extra[1]] :
   key === 'tui' ? ['src/tui/cli.mjs', ...extra] :
   key === 'evidence review' ? [...commands[key], ...extra] : commands[key];
