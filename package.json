@@ -15,7 +15,8 @@
     "release:check": "node scripts/release-check.mjs",
     "release:source": "bash scripts/package-release.sh",
     "site:check": "node scripts/check-field-station.mjs",
-    "flare:demo": "node scripts/flare-demo.mjs"
+    "flare:demo": "node scripts/flare-demo.mjs",
+    "flare:posix": "node experiments/flare/posix-lab.mjs"
   },
   "repository": {
     "type": "git",
