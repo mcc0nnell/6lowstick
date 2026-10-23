@@ -14,6 +14,7 @@ experiment distinguishes recorded facts from what requires hardware or people.
 | --- | --- | --- |
 | How will I find and reach my friends? | [6lowLoop](6lowloop.md) | Core Matrix-first vision, opt-in local presence model and integration gates |
 | How can an authorized group send a short-lived signal? | [6lowFlare](6lowflare.md) | In-memory authenticated flare and bounded cooperative relay model; non-claims and future test gates |
+| What is the proposed magnetic battery and LoRa accessory? | [6lowSpark](6lowspark.md) | Product boundaries, conceptual radio paths, design targets and hardware validation gates |
 | What can 6lowStick demonstrate today? | [README](../README.md#what-we-can-show) | An instrument-by-instrument software/physical evidence boundary |
 | What comes after simulation when funding is secured? | [First Light plan](first-light/README.md) and [funding case](first-light/funding-case.md) | Software-only signal intent, laboratory dependencies, independent physical measurement and a non-submitted budget |
 | Where could AI fit without gaining physical authority? | [OpenThread + AI research direction](ai-physical-systems.md) | Advisory architecture, trust boundaries, evidence levels and research gates |
@@ -25,6 +26,10 @@ experiment distinguishes recorded facts from what requires hardware or people.
 | What remains unsafe or unknown? | [Threat model](threat-model.md) | Origin trust, replay, failure interpretation and missing validation |
 
 ## Experiments and instruments
+
+**6lowSpark** is a separately proposed hardware form factor, not an implemented
+transport, phone accessory or currently demonstrated emergency communications
+capability. See the [battery and radio concept](6lowspark.md).
 
 The **Thread alert lab** models accessible notification behavior in OpenThread
 POSIX; it is a network simulation, not an 802.15.4 lab. See the
