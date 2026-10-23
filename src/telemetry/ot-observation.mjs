@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 // Parse recorded, read-only OpenThread CLI observations. No CLI process or radio is started.
 const commands = Object.freeze({
-  state: /^\b(disabled|detached|child|router|leader)\b$/,
+  state: /^(disabled|detached|child|router|leader)$/,
   rloc16: /^(?:0x)?[0-9a-fA-F]{1,4}$/,
 });
-const hex = /^[0-9a-fA-F]{4}$/;
 export function parseOtObservation(command, stdout) {
   if (!Object.hasOwn(commands, command)) throw new Error('Unsupported observation command');
   if (typeof stdout !== 'string' || Buffer.byteLength(stdout, 'utf8') > 8192 || stdout.includes('\0'))
