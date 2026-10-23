@@ -45,3 +45,10 @@ jobs:
         run: |
           BANG_NATIVE_OT_CLI="$RUNNER_TEMP/sixs-native-ot/examples/apps/cli/ot-cli-ftd" \
             node experiments/bang/native-ot-lab.mjs
+      - name: Exercise application gaps, radio partition and bounded burst
+        env:
+          BANG_OT_BASE_ID: '25'
+          BANG_OT_RESILIENCE: '1'
+        run: |
+          BANG_NATIVE_OT_CLI="$RUNNER_TEMP/sixs-native-ot/examples/apps/cli/ot-cli-ftd" \
+            node experiments/bang/native-ot-lab.mjs

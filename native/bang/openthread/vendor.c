@@ -18,9 +18,10 @@ static struct {
     lowbang_ot_endpoint endpoint;
     bang_receiver* receiver;
     bang_source* source;
-    bang_event frame[2];
+    bang_event frame[5];
     bool prepared;
-    uint32_t delivered,rejected;
+    uint32_t delivered,rejected,synthetic_dropped;
+    uint8_t drop_next;
 } state;
 static uint64_t now_ms(void) {
     struct timespec t={0};
@@ -44,6 +45,13 @@ static const char* status_label(bang_status s) {
 static void incoming(void* context,const bang_event* frame) {
     (void)context;
     if(!state.receiver)return;
+    // Test-only application discard, deliberately NOT RF loss.
+    if(state.drop_next) {
+        state.drop_next--;
+        state.synthetic_dropped++;
+        otCliOutputFormat("BANG_APP_DROPPED %" PRIu64 "\r\n",frame->seq);
+        return;
+    }
     bang_delivery result={0};
     bang_status status=bang_receiver_receive(state.receiver,frame,now_ms(),&result);
     if(status!=BANG_OK) {
@@ -92,36 +100,98 @@ static otError bang_send(void* context,uint8_t argc,char* argv[]) {
     if(otIp6AddressFromString(argv[0],&destination)!=OT_ERROR_NONE)
         return OT_ERROR_INVALID_ARGS;
     const char* choice=argv[1];
-    if(strcmp(choice,"1") && strcmp(choice,"2") && strcmp(choice,"tamper"))
+    if(strcmp(choice,"1") && strcmp(choice,"2") &&
+       strcmp(choice,"3") && strcmp(choice,"4") &&
+       strcmp(choice,"5") && strcmp(choice,"tamper"))
         return OT_ERROR_INVALID_ARGS;
     if(!state.prepared) {
         state.source=bang_source_new("main-stage","en",SESSION,test_seed);
         if(!state.source)return OT_ERROR_NO_BUFS;
         uint64_t now=now_ms();
         if(!now ||
-           bang_source_emit(state.source,BANG_CAPTION,"Gates open",now,25000,&state.frame[0])!=BANG_OK ||
-           bang_source_emit(state.source,BANG_SOUND,"[APPLAUSE]",now+1,25000,&state.frame[1])!=BANG_OK)
+           bang_source_emit(state.source,BANG_CAPTION,"Gates open",now,30000,&state.frame[0])!=BANG_OK ||
+           bang_source_emit(state.source,BANG_SOUND,"[APPLAUSE]",now+1,30000,&state.frame[1])!=BANG_OK ||
+           bang_source_emit(state.source,BANG_CAPTION,"Encore",now+2,30000,&state.frame[2])!=BANG_OK ||
+           bang_source_emit(state.source,BANG_CAPTION,"Final set",now+3,30000,&state.frame[3])!=BANG_OK ||
+           bang_source_emit(state.source,BANG_SOUND,"[CHEERS]",now+4,30000,&state.frame[4])!=BANG_OK)
             return OT_ERROR_FAILED;
         state.prepared=true;
     }
-    bang_event frame=strcmp(choice,"2")==0?state.frame[1]:state.frame[0];
+    size_t index=strcmp(choice,"2")==0?1:
+                 strcmp(choice,"3")==0?2:
+                 strcmp(choice,"4")==0?3:
+                 strcmp(choice,"5")==0?4:0;
+    bang_event frame=state.frame[index];
     if(!strcmp(choice,"tamper"))frame.text[0]='X';
     otError error=lowbang_ot_send(&state.endpoint,&destination,PORT,&frame);
     if(error==OT_ERROR_NONE)otCliOutputFormat("BANG_SENT %s\r\n",choice);
     return error;
 }
+static otError bang_drop(void* context,uint8_t argc,char* argv[]) {
+    (void)context;
+    if(argc!=1 || !state.endpoint.opened || strcmp(argv[0],"1"))
+        return OT_ERROR_INVALID_ARGS;
+    state.drop_next=1;
+    otCliOutputFormat("BANG_APP_DROP_ARMED 1\r\n");
+    return OT_ERROR_NONE;
+}
+static otError bang_flush(void* context,uint8_t argc,char* argv[]) {
+    (void)context;(void)argv;
+    if(argc || !state.receiver)return OT_ERROR_INVALID_ARGS;
+    bang_delivery result={0};
+    bang_status status=bang_receiver_flush(state.receiver,"main-stage",SESSION,
+                                            now_ms(),250,&result);
+    if(status!=BANG_OK)return OT_ERROR_FAILED;
+    if(result.gap_reported)
+        otCliOutputFormat("BANG_GAP %" PRIu64 "-%" PRIu64 "\r\n",
+                          result.missing_from,result.missing_through);
+    for(size_t i=0;i<result.ready_count;i++) {
+        state.delivered++;
+        otCliOutputFormat("BANG_DELIVER %" PRIu64 " %s\r\n",
+                           result.ready[i].seq,result.ready[i].text);
+    }
+    return OT_ERROR_NONE;
+}
+// Bounded stress fixture. Scheduling a datagram is NOT delivery. Each event
+// is separately signed, up to eight total, and failures are reported.
+static otError bang_burst(void* context,uint8_t argc,char* argv[]) {
+    (void)context;
+    if(argc!=2 || !state.endpoint.opened || !state.prepared ||
+       strcmp(argv[1],"8"))return OT_ERROR_INVALID_ARGS;
+    otIp6Address dest={0};
+    if(otIp6AddressFromString(argv[0],&dest)!=OT_ERROR_NONE)
+        return OT_ERROR_INVALID_ARGS;
+    uint32_t queued=0,no_bufs=0,other_errors=0;
+    uint64_t now=now_ms();
+    for(uint32_t i=0;i<8;i++) {
+        bang_event frame={0};
+        if(bang_source_emit(state.source,BANG_CAPTION,"Burst",now+i,30000,
+                            &frame)!=BANG_OK)return OT_ERROR_FAILED;
+        otError error=lowbang_ot_send(&state.endpoint,&dest,PORT,&frame);
+        if(error==OT_ERROR_NONE)queued++;
+        else if(error==OT_ERROR_NO_BUFS)no_bufs++;
+        else other_errors++;
+    }
+    otCliOutputFormat("BANG_BURST queued=%u no_bufs=%u other_errors=%u\r\n",
+        queued,no_bufs,other_errors);
+    return OT_ERROR_NONE;
+}
 static otError bang_stats(void* context,uint8_t argc,char* argv[]) {
     (void)context;(void)argv;
     if(argc || !state.endpoint.opened)return OT_ERROR_INVALID_ARGS;
-    otCliOutputFormat("BANG_STATS delivered=%u rejected=%u malformed=%u candidates=%u binary_bytes=%u\r\n",
+    otCliOutputFormat("BANG_STATS delivered=%u rejected=%u malformed=%u candidates=%u binary_bytes=%u app_dropped=%u\r\n",
       (unsigned)state.delivered,(unsigned)state.rejected,
       (unsigned)state.endpoint.malformed_dropped,
       (unsigned)state.endpoint.valid_candidate_count,
-      (unsigned)state.endpoint.last_binary_payload_bytes);
+      (unsigned)state.endpoint.last_binary_payload_bytes,
+      (unsigned)state.synthetic_dropped);
     return OT_ERROR_NONE;
 }
 static const otCliCommand commands[]={
     {"bangopen",bang_open},
+    {"bangdrop",bang_drop},
+    {"bangburst",bang_burst},
+    {"bangflush",bang_flush},
     {"bangsend",bang_send},
     {"bangstats",bang_stats},
 };

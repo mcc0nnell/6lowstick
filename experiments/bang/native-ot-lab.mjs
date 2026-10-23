@@ -127,7 +127,82 @@ try {
   check('modified signed text rejected after native UDP delivery',true);
   const stats=(await rx.command('bangstats')).find(x=>x.startsWith('BANG_STATS '));
   check('receiver delivered exactly two events; rejected two others',
-    /delivered=2 rejected=2 malformed=0 candidates=4 binary_bytes=133$/.test(stats??''));
+    /delivered=2 rejected=2 malformed=0 candidates=4 binary_bytes=133(?: app_dropped=0)?$/.test(stats??''));
+  if(process.env.BANG_OT_RESILIENCE==='1') {
+    // Controlled loss AFTER binary decoding. This must not be described
+    // as RF loss, regardless of the observed caption-gap behavior.
+    check('native C application-drop gate armed',
+      (await rx.command('bangdrop 1')).includes('BANG_APP_DROP_ARMED 1'));
+    await tx.command('bangsend '+address+' 3');
+    await until(()=>evidence(rx).includes('BANG_APP_DROPPED 3'),8000);
+    check('exact signed sequence 3 intentionally suppressed at receiver application',true);
+    await tx.command('bangsend '+address+' 4');
+    await until(()=>evidence(rx).includes('BANG_HELD 3'),8000);
+    check('sequence 4 waits for missing signed sequence 3',true);
+    await sleep(400);
+    const flushed=await rx.command('bangflush');
+    check('explicit timeout reports exact missing sequence without invented words',
+      flushed.includes('BANG_GAP 3-3') &&
+      flushed.includes('BANG_DELIVER 4 Final set') &&
+      !evidence(rx).includes('BANG_DELIVER 3 Encore'));
+
+    // True software-radio partition: OpenThread simulation node-id filters
+    // block both directions. This is not just withholding the C callback.
+    await tx.command('nodeidfilter deny '+(base+1));
+    await rx.command('nodeidfilter deny '+base);
+    const txFilter=(await tx.command('nodeidfilter')).join(' ');
+    const rxFilter=(await rx.command('nodeidfilter')).join(' ');
+    check('OpenThread simulated radio filters exclude each peer',
+      txFilter.includes('deny-list') && rxFilter.includes('deny-list'));
+    await sleep(400);
+    const before=evidence(rx).filter(x=>x==='BANG_DELIVER 5 [CHEERS]').length;
+    await tx.command('bangsend '+address+' 5');
+    await sleep(1100);
+    const during=evidence(rx).filter(x=>x==='BANG_DELIVER 5 [CHEERS]').length;
+    check('no signed event presented while simulated radio link is partitioned',
+      before===0 && during===0);
+    await tx.command('nodeidfilter clear');
+    await rx.command('nodeidfilter clear');
+    await sleep(750);
+    await tx.command('bangsend '+address+' 5');
+    await until(()=>evidence(rx).includes('BANG_DELIVER 5 [CHEERS]'),15000);
+    check('authenticated caption resumes after radio partition is cleared',true);
+    const afterStats=(await rx.command('bangstats')).find(x=>x.startsWith('BANG_STATS '));
+    check('gap was not silently repaired; no fabricated sequence 3',
+      /delivered=4 rejected=2 malformed=0 candidates=7 binary_bytes=\d+ app_dropped=1$/.test(afterStats??'') &&
+      !evidence(rx).includes('BANG_DELIVER 3 Encore'));
+    // Short bounded burst: enqueue != authenticated reception.
+    const burstLines=await tx.command('bangburst '+address+' 8');
+    const burst=burstLines.find(x=>x.startsWith('BANG_BURST '));
+    const match=burst?.match(/^BANG_BURST queued=(\d+) no_bufs=(\d+) other_errors=(\d+)$/);
+    check('native OT signed burst explicitly accounts for all eight bounded sends',
+      !!match && Number(match[1])+Number(match[2])+Number(match[3])===8);
+    await sleep(1400);
+    const burstDelivered=evidence(rx)
+      .map(x=>x.match(/^BANG_DELIVER (\d+) Burst$/))
+      .filter(Boolean).map(m=>Number(m[1]));
+    const scheduled=Number(match[1]);
+    check('bounded burst presents no unsigned, duplicated, or out-of-range sequence',
+      burstDelivered.length<=scheduled &&
+      burstDelivered.every((n,i)=>n>=6&&n<=13&&(i===0||n>burstDelivered[i-1])) &&
+      !evidence(rx).includes('BANG_DELIVER 3 Encore'));
+    const stressStats=(await rx.command('bangstats')).find(x=>x.startsWith('BANG_STATS '));
+    const candidates=Number(stressStats?.match(/candidates=(\d+)/)?.[1]??NaN);
+    check('receiver candidate count remains bounded by actually scheduled frames',
+      candidates>=7 && candidates<=7+scheduled);
+    result.resilience={
+      burst:{
+        attempted:8,scheduled,noBuffers:Number(match[2]),
+        otherErrors:Number(match[3]),authenticatedPresented:burstDelivered.length,
+        deliveredSequences:burstDelivered
+      },
+      applicationDrop:{missingSequence:3,releaseSequence:4,gapReported:true},
+      radioPartition:{blockedNodeIds:[base,base+1],durationObservedMs:1100,
+        sentUnderPartition:1,deliveredUnderPartition:0,
+        resumedAfterFilterClear:true},
+      counters:afterStats
+    };
+  }
   const deliveredAt=rx.events.find(x=>x.line==='BANG_DELIVER 2 [APPLAUSE]').time;
   result.observedCliInitiationToNativeCallbackMs=[
     Math.round((heldAt-sent2)*1000)/1000,

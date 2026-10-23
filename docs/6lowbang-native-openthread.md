@@ -38,6 +38,38 @@ Local observed CLI-send to native C receive-callback output varied by a few mill
 
 ## Still unimplemented
 
-Real Thread hardware/Spinel RCP; deliberate simulated network partitions and loss distributions; congestion/backpressure and memory profiling on embedded targets; optimized RF framing and airtime accounting; production publisher enrollment, revocation, and E2E private-caption encryption; authenticated human receipt, ASR/CART ingestion and accessible phone/6lowSpark UX. The 133-byte application event exceeds the 127-byte IEEE 802.15.4 PHY frame limit before MAC and 6LoWPAN overhead; fragmentation and airtime must be evaluated before any hardware deployment.
+Real Thread hardware/Spinel RCP; probabilistic loss distributions, longer-lived partitions, repeated congestion/backpressure and memory profiling on embedded targets; optimized RF framing and airtime accounting; production publisher enrollment, revocation, and E2E private-caption encryption; authenticated human receipt, ASR/CART ingestion and accessible phone/6lowSpark UX. The 133-byte application event exceeds the 127-byte IEEE 802.15.4 PHY frame limit before MAC and 6LoWPAN overhead; fragmentation and airtime must be evaluated before any hardware deployment.
 
 For the protocol, see [6lowBang](6lowbang.md) and [the common C binary/UDP transport](6lowbang-transport.md).
+
+## Fault injection and bounded burst (October 23, 2026)
+
+Run BANG_OT_RESILIENCE=1 npm run bang:native:ot to extend the two-node
+simulation. The pinned-source CI also runs the same scenario.
+
+Three distinct failure mechanisms are tested:
+
+1. Test-only application loss (not radio loss): bangdrop 1 discards the
+   next decoded but not-yet-authenticated event, sequence 3. The verified
+   receiver holds signed sequence 4, then bangflush reports exactly
+   BANG_GAP 3-3 after the required 250-ms hold and releases #4. No
+   missing words are manufactured.
+2. Bidirectional simulated radio partition: native OpenThread's
+   nodeidfilter deny excludes both peer nodes. The harness checks
+   zero presented captions for 1.1 seconds after sending #5.
+   It clears the filters and resends the same signed #5 to confirm
+   recovery. This does not prove radio RF range or long-term repairs.
+3. Bounded eight-event burst: bangburst schedules separately signed
+   sequences 6 through 13 over otUdpSend, recording the number
+   scheduled, no-buffer failures, and other send errors. Independently
+   count actual application presentation at the receiver. Scheduling
+   a datagram does not prove receipt, and a successful small burst
+   does not prove sustainable throughput or a captioning SLA.
+
+The lab is run with new private OpenThread simulated flash and a
+randomized radio port offset. No host firewall settings are altered.
+These controls are restricted to the research-only vendor extension.
+
+See 6lowbang-resilience-evidence.md for the measured trial results.
+Physical RF, real ASR/CART, private-caption encryption, human receipt,
+large-scale congestion and sustained fault distributions are still open.

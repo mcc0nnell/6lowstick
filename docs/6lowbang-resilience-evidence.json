@@ -1,0 +1,205 @@
+{
+  "schema": "6lowstick.bang.native-ot-resilience.v1",
+  "date": "2026-10-23",
+  "host": "Butcher, software-only OpenThread POSIX simulation",
+  "pinned_OpenThread": "da88541bed383be381c7ea39dc7b98fb9104e03b",
+  "base_6lowStick": "b30af9abcc91f61aec06e8f785c6c22a7b474367",
+  "transport": "native C otUdpSend/otUdpReceive of signed binary 6lowBang events",
+  "trials": [
+    {
+      "trial": 1,
+      "outcome": "PASS",
+      "checks_passed": 20,
+      "node_ids": [
+        25,
+        26
+      ],
+      "radio_port_offset": 471,
+      "initial_pair_cli_to_callback_ms": [
+        8.68,
+        4.921
+      ],
+      "application_drop": {
+        "missingSequence": 3,
+        "releaseSequence": 4,
+        "gapReported": true
+      },
+      "radio_partition": {
+        "blockedNodeIds": [
+          25,
+          26
+        ],
+        "durationObservedMs": 1100,
+        "sentUnderPartition": 1,
+        "deliveredUnderPartition": 0,
+        "resumedAfterFilterClear": true
+      },
+      "bounded_eight_event_burst": {
+        "attempted": 8,
+        "scheduled": 8,
+        "noBuffers": 0,
+        "otherErrors": 0,
+        "authenticatedPresented": 8,
+        "deliveredSequences": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "receiver_counters_after_partition": "BANG_STATS delivered=4 rejected=2 malformed=0 candidates=7 binary_bytes=131 app_dropped=1"
+    },
+    {
+      "trial": 2,
+      "outcome": "PASS",
+      "checks_passed": 20,
+      "node_ids": [
+        25,
+        26
+      ],
+      "radio_port_offset": 665,
+      "initial_pair_cli_to_callback_ms": [
+        9.428,
+        5.356
+      ],
+      "application_drop": {
+        "missingSequence": 3,
+        "releaseSequence": 4,
+        "gapReported": true
+      },
+      "radio_partition": {
+        "blockedNodeIds": [
+          25,
+          26
+        ],
+        "durationObservedMs": 1100,
+        "sentUnderPartition": 1,
+        "deliveredUnderPartition": 0,
+        "resumedAfterFilterClear": true
+      },
+      "bounded_eight_event_burst": {
+        "attempted": 8,
+        "scheduled": 8,
+        "noBuffers": 0,
+        "otherErrors": 0,
+        "authenticatedPresented": 8,
+        "deliveredSequences": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "receiver_counters_after_partition": "BANG_STATS delivered=4 rejected=2 malformed=0 candidates=7 binary_bytes=131 app_dropped=1"
+    },
+    {
+      "trial": 3,
+      "outcome": "PASS",
+      "checks_passed": 20,
+      "node_ids": [
+        25,
+        26
+      ],
+      "radio_port_offset": 464,
+      "initial_pair_cli_to_callback_ms": [
+        8.744,
+        3.288
+      ],
+      "application_drop": {
+        "missingSequence": 3,
+        "releaseSequence": 4,
+        "gapReported": true
+      },
+      "radio_partition": {
+        "blockedNodeIds": [
+          25,
+          26
+        ],
+        "durationObservedMs": 1100,
+        "sentUnderPartition": 1,
+        "deliveredUnderPartition": 0,
+        "resumedAfterFilterClear": true
+      },
+      "bounded_eight_event_burst": {
+        "attempted": 8,
+        "scheduled": 8,
+        "noBuffers": 0,
+        "otherErrors": 0,
+        "authenticatedPresented": 8,
+        "deliveredSequences": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "receiver_counters_after_partition": "BANG_STATS delivered=4 rejected=2 malformed=0 candidates=7 binary_bytes=131 app_dropped=1"
+    },
+    {
+      "trial": 4,
+      "outcome": "PASS",
+      "checks_passed": 20,
+      "node_ids": [
+        25,
+        26
+      ],
+      "radio_port_offset": 351,
+      "initial_pair_cli_to_callback_ms": [
+        8.941,
+        3.698
+      ],
+      "application_drop": {
+        "missingSequence": 3,
+        "releaseSequence": 4,
+        "gapReported": true
+      },
+      "radio_partition": {
+        "blockedNodeIds": [
+          25,
+          26
+        ],
+        "durationObservedMs": 1100,
+        "sentUnderPartition": 1,
+        "deliveredUnderPartition": 0,
+        "resumedAfterFilterClear": true
+      },
+      "bounded_eight_event_burst": {
+        "attempted": 8,
+        "scheduled": 8,
+        "noBuffers": 0,
+        "otherErrors": 0,
+        "authenticatedPresented": 8,
+        "deliveredSequences": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "receiver_counters_after_partition": "BANG_STATS delivered=4 rejected=2 malformed=0 candidates=7 binary_bytes=131 app_dropped=1"
+    }
+  ],
+  "unverified": [
+    "physical RF range, LoRa, RCP, interference or airtime",
+    "probabilistic radio loss distribution or sustained congestion",
+    "end-to-end latency SLA or caption throughput at scale",
+    "safe key enrollment/revocation, private transcript encryption",
+    "ASR/CART ingestion, UI, haptic or human receipt"
+  ]
+}

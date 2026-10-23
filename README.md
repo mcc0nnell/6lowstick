@@ -53,6 +53,10 @@ builds the 6s C extension against pinned OpenThread APIs and moves binary
 signed events between two simulated Thread nodes, with no CLI ASCII-hex
 caption data path. Run the bang:native:ot script on a provisioned machine
 with a reviewed extended binary or a clean pinned OpenThread checkout.
+The opt-in resilience gate (docs/6lowbang-native-openthread.md)
+exercises application drops, simulated radio partition and recovery,
+explicit missing-caption reporting and bounded bursts with
+npm run bang:native:ot:resilience. A queued UDP packet is not human receipt.
 **There is no speech recognition, physical RF, LoRa caption feed,
 receiver device UI, encrypted private conversation or human receipt
 in this slice.**
