@@ -16,7 +16,15 @@
     "release:source": "bash scripts/package-release.sh",
     "site:check": "node scripts/check-field-station.mjs",
     "flare:demo": "node scripts/flare-demo.mjs",
-    "flare:posix": "node experiments/flare/posix-lab.mjs"
+    "flare:posix": "node experiments/flare/posix-lab.mjs",
+    "bang:demo": "node scripts/bang-demo.mjs",
+    "bang:native:test": "bash scripts/bang-native.sh",
+    "bang:native:demo": "bash scripts/bang-native.sh --demo",
+    "bang:posix": "bash scripts/bang-posix.sh",
+    "bang:native:ot": "bash scripts/bang-native-ot.sh",
+    "bang:native:ot:resilience": "BANG_OT_RESILIENCE=1 bash scripts/bang-native-ot.sh",
+    "bang:native:ot:matrix": "BANG_OT_RESILIENCE=1 BANG_OT_STRESS_MATRIX=1 bash scripts/bang-native-ot.sh",
+    "bang:native:ot:pace": "BANG_OT_RESILIENCE=1 BANG_OT_STRESS_MATRIX=1 BANG_OT_PACE_FINAL=1 bash scripts/bang-native-ot.sh"
   },
   "repository": {
     "type": "git",

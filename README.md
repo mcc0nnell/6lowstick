@@ -8,6 +8,7 @@
     <a href="https://mcc0nnell.github.io/6lowstick/"><strong>Explore the Field Station ↗</strong></a>
     &nbsp;·&nbsp; <a href="#why-6lowstick">The idea</a>
     &nbsp;·&nbsp; <a href="#6lowloop-find-your-people">6lowLoop</a>
+    &nbsp;·&nbsp; <a href="#6lowbang-captions-and-acoustic-context">6lowBang</a>
     &nbsp;·&nbsp; <a href="#6lowflare-signal-what-matters">6lowFlare</a>
     &nbsp;·&nbsp; <a href="#6lowspark-power--signal">6lowSpark</a>
     &nbsp;·&nbsp; <a href="#try-the-lab">Try the lab</a>
@@ -42,6 +43,29 @@ Emergency alerting is one demanding application, **not the definition of the pro
 **Matrix is the planned account, verified-device, encrypted messaging and group layer.** 6lowLoop adds local, short-lived friend presence and signaling over separately validated transports. Matrix federation requires a homeserver; an isolated radio mesh is not automatically a Matrix deployment.
 
 The first executable slice implements opt-in, in-memory presence and ping/ACK framing between **pre-paired Matrix-ID-labeled friends**: `npm run loop:demo`. It does **not** connect to Matrix, discover people over a radio, obtain location or prove human receipt. See the [6lowLoop architecture and gates](docs/6lowloop.md).
+
+## 6lowBang: captions and acoustic context
+
+**Information should travel even when cellular service doesn't.** 6lowBang is the proposed opt-in caption distribution layer: finalized stage captions and explicitly source-authored sound descriptions, eventually delivered through independently verified local transports.
+
+**C11 is now the 6lowBang protocol and transport owner**, built with CMake and OpenSSL Ed25519: signed finalized text, pinned publisher keys, replay and expiry checks, bounded reordering, explicit missing-caption reporting, plus a reusable bounded binary codec and opt-in IPv6 loopback transport. Try `npm run bang:native:demo` and `npm run bang:native:test`. The Node.js `npm run bang:demo` remains a **software reference**, not the production runtime. See the [6lowBang architecture, trust and test gates](docs/6lowbang.md). The 6s-owned C transport guide (docs/6lowbang-transport.md) covers native two-process binary UDP tests and the opt-in simulated OpenThread CLI lab using the bang:posix script with a reviewed OT_CLI_PATH. The separate [native C OpenThread UDP pilot](docs/6lowbang-native-openthread.md)
+builds the 6s C extension against pinned OpenThread APIs and moves binary
+signed events between two simulated Thread nodes, with no CLI ASCII-hex
+caption data path. Run the bang:native:ot script on a provisioned machine
+with a reviewed extended binary or a clean pinned OpenThread checkout.
+The opt-in resilience gate (docs/6lowbang-native-openthread.md)
+exercises application drops, simulated radio partition and recovery,
+explicit missing-caption reporting and bounded bursts with
+npm run bang:native:ot:resilience. An opt-in bounded WindAnvil Blade-composed
+8/16/24-event matrix is available with npm run bang:native:ot:matrix;
+scripts/blade-compose-stress.py verifies the evidence independently.
+The explicitly paced 24-event capacity comparison is available with
+npm run bang:native:ot:pace; the independent source-owned comparison
+tool is scripts/blade-capacity-compare.py. A queued UDP packet is not
+human receipt. See docs/6lowbang-capacity.md.
+**There is no speech recognition, physical RF, LoRa caption feed,
+receiver device UI, encrypted private conversation or human receipt
+in this slice.**
 
 ## 6lowFlare: signal what matters
 

@@ -1,0 +1,121 @@
+{
+  "schema": "6lowstick.bang.blade-capacity-evidence.v1",
+  "date": "2026-10-23",
+  "host": "Butcher Linux, software-only native OpenThread POSIX simulation",
+  "openthread_source_pin": "da88541bed383be381c7ea39dc7b98fb9104e03b",
+  "sixs_base_commit": "6b17b3f11f9271d433e98f0a9cf0ebb453830d9f",
+  "source_digests": {
+    "native-ot-lab.mjs": "34875d6b7f77fde29d72acac713f91801a0e8e09be00fe6aa70b4f83dee94f47",
+    "vendor.c": "77ab5bcbd6ecc7028d5d124a46861de60a790dd12e340d0aa3ffe5b74996d6b4"
+  },
+  "blade_composition_sha256": "aae593e735336ed4639fdbebd7e564a132e2ad37569ef405601fef6c1d55da39",
+  "simulation_only": true,
+  "bounded_pacing_between_commands_ms": 10,
+  "method": "fresh independent radio simulator scratch per run; 8/16 immediate signed events, followed by 24 immediate or individual CLI-command 10ms paced sends; maximum 48 attempts, no automatic resend",
+  "blade_authority": "pre-admitted signed talkpipe.run through private local Unix socket; pinned SHA-256 ChatterLang pipeline; read-only plan and verifier",
+  "pairs": [
+    {
+      "pair": 1,
+      "control": {
+        "attempted": 24,
+        "authenticatedPresented": 21,
+        "checksPassed": 25,
+        "mode": "immediate",
+        "noBuffers": 3,
+        "otherErrors": 0,
+        "queued": 21,
+        "sha256": "680ca2c59873faf5f07cd6ddbd75ac7bd621b843ff11c76d985549bb4aeebd82",
+        "submissionWindowMs": 1.507,
+        "verifiedSignedAttemptsAcrossStages": 48
+      },
+      "paced": {
+        "attempted": 24,
+        "authenticatedPresented": 24,
+        "checksPassed": 26,
+        "mode": "paced_10ms",
+        "noBuffers": 0,
+        "otherErrors": 0,
+        "queued": 24,
+        "sha256": "2643634acd4cba6a7f9e4ed801f0d8a7541e7b57a310dc40eb99605cdff534e5",
+        "submissionWindowMs": 249.164,
+        "verifiedSignedAttemptsAcrossStages": 48
+      },
+      "difference": {
+        "authenticatedPresented": 3,
+        "noBuffers": -3,
+        "queued": 3
+      }
+    },
+    {
+      "pair": 2,
+      "control": {
+        "attempted": 24,
+        "authenticatedPresented": 21,
+        "checksPassed": 25,
+        "mode": "immediate",
+        "noBuffers": 3,
+        "otherErrors": 0,
+        "queued": 21,
+        "sha256": "049581d5b56840867144308072e949d73abcac0e4ab482cbd0df6b09791bb9d5",
+        "submissionWindowMs": 2.162,
+        "verifiedSignedAttemptsAcrossStages": 48
+      },
+      "paced": {
+        "attempted": 24,
+        "authenticatedPresented": 24,
+        "checksPassed": 26,
+        "mode": "paced_10ms",
+        "noBuffers": 0,
+        "otherErrors": 0,
+        "queued": 24,
+        "sha256": "953e3ab044e3851ca68d0d2d3cf8ed1b7a1398ee6d966bf621447c12b075d259",
+        "submissionWindowMs": 245.221,
+        "verifiedSignedAttemptsAcrossStages": 48
+      },
+      "difference": {
+        "authenticatedPresented": 3,
+        "noBuffers": -3,
+        "queued": 3
+      }
+    },
+    {
+      "pair": 3,
+      "control": {
+        "attempted": 24,
+        "authenticatedPresented": 21,
+        "checksPassed": 25,
+        "mode": "immediate",
+        "noBuffers": 3,
+        "otherErrors": 0,
+        "queued": 21,
+        "sha256": "ee0f924714388c79cfd852a55e36d8d8a5e8cbefb753ffc7d9124a417d73bfe7",
+        "submissionWindowMs": 2.793,
+        "verifiedSignedAttemptsAcrossStages": 48
+      },
+      "paced": {
+        "attempted": 24,
+        "authenticatedPresented": 24,
+        "checksPassed": 26,
+        "mode": "paced_10ms",
+        "noBuffers": 0,
+        "otherErrors": 0,
+        "queued": 24,
+        "sha256": "cb7d6c0f706be93d7517b875afcf78a87b05c7a746c44f89dfe7fdd2c52bd360",
+        "submissionWindowMs": 252.276,
+        "verifiedSignedAttemptsAcrossStages": 48
+      },
+      "difference": {
+        "authenticatedPresented": 3,
+        "noBuffers": -3,
+        "queued": 3
+      }
+    }
+  ],
+  "limitations": [
+    "no physical RF or hardware RCP",
+    "not statistical pairing or generalized buffer capacity",
+    "submission duration not human caption latency",
+    "no signed receipt backchannel or retransmission protocol",
+    "only short synthetic captions; no private E2E encryption or live ASR"
+  ]
+}

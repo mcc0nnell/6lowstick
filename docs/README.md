@@ -13,6 +13,7 @@ experiment distinguishes recorded facts from what requires hardware or people.
 | Your question | Begin with | You'll find |
 | --- | --- | --- |
 | How will I find and reach my friends? | [6lowLoop](6lowloop.md) | Core Matrix-first vision, opt-in local presence model and integration gates |
+| How could captions and acoustic events reach a local audience? | [6lowBang](6lowbang.md) | Signed local-model final captions and sound labels, subscriptions, ordering and real-radio integration gates |
 | How can an authorized group send a short-lived signal? | [6lowFlare](6lowflare.md) | In-memory authenticated flare and bounded cooperative relay model; non-claims and future test gates |
 | What is the proposed magnetic battery and LoRa accessory? | [6lowSpark](6lowspark.md) | Product boundaries, conceptual radio paths, design targets and hardware validation gates |
 | What can 6lowStick demonstrate today? | [README](../README.md#what-we-can-show) | An instrument-by-instrument software/physical evidence boundary |
