@@ -1,0 +1,39 @@
+name: 6lowSpark A0 KiCad
+on:
+  pull_request:
+    paths:
+      - 'hardware/6lowspark/a0/**'
+      - '.github/workflows/kicad-a0.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  kicad-a0:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin-map and deterministic schematic checks
+        run: python3 hardware/6lowspark/a0/check.py
+      - name: KiCad 9 native schematic export and ERC
+        run: |
+          mkdir -p a0-kicad-reports
+          docker run --rm \
+            -v "$PWD:/project" -w /project \
+            --user "$(id -u):$(id -g)" \
+            kicad/kicad:9.0 \
+            kicad-cli sch export svg -o /project/a0-kicad-reports/ \
+              hardware/6lowspark/a0/6lowSpark_A0_Interposer.kicad_sch
+          docker run --rm \
+            -v "$PWD:/project" -w /project \
+            --user "$(id -u):$(id -g)" \
+            kicad/kicad:9.0 \
+            kicad-cli sch erc --exit-code-violations \
+              -o /project/a0-kicad-reports/erc.rpt \
+              hardware/6lowspark/a0/6lowSpark_A0_Interposer.kicad_sch
+      - name: Preserve KiCad reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 6lowspark-a0-kicad-reports
+          path: a0-kicad-reports/
+          if-no-files-found: warn
