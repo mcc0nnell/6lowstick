@@ -11,7 +11,7 @@ const commands = {
   'lab loop': ['scripts/loop-demo.mjs'],
   'lab flare': ['scripts/flare-demo.mjs'],
   'evidence review': ['scripts/review-traces.mjs'],
-  'test': ['--test', 'test/*.test.mjs', 'experiments/thread-alert/*.test.mjs'],
+  'test': [],
 };
 const help = `6low — 6lowStick local research CLI (experimental)
 Usage: 6low <command> [arguments]
@@ -58,7 +58,9 @@ if (key !== 'tui' && extra.length) {
   process.exit(2);
 }
 const script = key === 'tui' ? ['src/tui/cli.mjs', ...extra] : commands[key];
-const result = spawnSync(process.execPath, script, {cwd: root, stdio: 'inherit'});
+const result = key === 'test'
+  ? spawnSync('npm', ['test'], {cwd: root, stdio: 'inherit'})
+  : spawnSync(process.execPath, script, {cwd: root, stdio: 'inherit'});
 if (result.error) {
   console.error(result.error.message);
   process.exit(1);
