@@ -43,7 +43,8 @@ jobs:
         run: |
           cmake -S celix-2.4.0 -B build/celix-sdk \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX="$PWD/build/celix-install" \
+            -DCMAKE_INSTALL_PREFIX="$PWD/build/celix-install"
+            -DBUILD_PUBSUB_PSA_ZMQ=OFF \
             -DBUILD_ALL=OFF -DBUILD_PUBSUB=OFF \
             -DBUILD_PUBSUB_PSA_ZMQ=OFF -DBUILD_REMOTE_SERVICE_ADMIN=OFF \
             -DBUILD_HTTP_ADMIN=OFF -DBUILD_DEPLOYMENT_ADMIN=OFF \
