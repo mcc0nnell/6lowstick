@@ -114,6 +114,8 @@ npm run evidence:review -- --posix /path/to/mesh-run.json
 
 `--demo` uses illustrative data. For a static, no-color terminal snapshot use `npm run tui -- --demo --snapshot --plain`. Interactive display has reduced-motion support. To replay separately generated POSIX simulator evidence use `npm run tui -- --input evidence/mesh-run.json` after creating that local file.
 
+**Optional 6lowReactor native lab:** C11/OpenSSL policy tests and proposed Apache Celix mock radio services live in [native/6lowreactor](native/6lowreactor/README.md). This is simulation-only, not a production runtime; the Celix-specific build and dynamic service lifecycle remain unverified. No hardware integration or operational alert dispatch is enabled.
+
 **Optional Camel 4.22.1 observer:** `npm run camel:export -- --demo` writes sanitized evidence copies, and `camel run integrations/camel/mesh-observe.camel.yaml` consumes them through a file-only log route. It does not send signals or authorize physical actions. See [the development-only Camel observer guide](integrations/camel/README.md); Camel is not required for the TUI or lab.
 
 **OpenThread is a separate toolchain.** Building or supplying a compatible `ot-cli-ftd` and setting `OT_CLI_PATH` enables the opt-in POSIX lab via `bash scripts/run-evidence.sh`; the repository does not pin or build that binary. See [reproduction notes](experiments/thread-alert/README.md) and [measured Node-harness event limitations](docs/monotonic-evidence.md).
