@@ -59,7 +59,10 @@ explicit missing-caption reporting and bounded bursts with
 npm run bang:native:ot:resilience. An opt-in bounded WindAnvil Blade-composed
 8/16/24-event matrix is available with npm run bang:native:ot:matrix;
 scripts/blade-compose-stress.py verifies the evidence independently.
-A queued UDP packet is not human receipt.
+The explicitly paced 24-event capacity comparison is available with
+npm run bang:native:ot:pace; the independent source-owned comparison
+tool is scripts/blade-capacity-compare.py. A queued UDP packet is not
+human receipt. See docs/6lowbang-capacity.md.
 **There is no speech recognition, physical RF, LoRa caption feed,
 receiver device UI, encrypted private conversation or human receipt
 in this slice.**

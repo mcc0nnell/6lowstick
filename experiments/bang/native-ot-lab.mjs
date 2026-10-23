@@ -204,9 +204,37 @@ try {
       // Blade-composed, finite matrix. Each stage is independently accounted
       // for; never infer authentication or delivery from a successful enqueue.
       for(const count of [16,24]) {
-        const burstResult=(await tx.command('bangburst '+address+' '+count))
-          .find(line=>line.startsWith('BANG_BURST '));
-        const batch=parseBurst(burstResult);
+        const paced=count===24 && process.env.BANG_OT_PACE_FINAL==='1';
+        const started=performance.now();
+        let batch=null;
+        if(paced) {
+          // One signed event per CLI turn. No implicit retransmits.
+          // The 10 ms delay is BETWEEN commands so OT tasklets can run.
+          const steps=[];
+          for(let i=0;i<count;i++) {
+            const line=(await tx.command('bangstep '+address))
+              .find(x=>x.startsWith('BANG_STEP '));
+            steps.push(parseBurst(line?.replace(/^BANG_STEP /,'BANG_BURST ')));
+            if(i<count-1)await sleep(10);
+          }
+          check('all 24 bounded CLI-paced sends reported independently',
+            steps.length===24 &&
+            steps.every(x=>x?.attempted===1 && x.firstSequence===x.lastSequence) &&
+            steps.every((x,i)=>i===0 || x.firstSequence===steps[i-1].firstSequence+1));
+          batch={
+            queued:steps.reduce((total,x)=>total+x.queued,0),
+            noBuffers:steps.reduce((total,x)=>total+x.noBuffers,0),
+            otherErrors:steps.reduce((total,x)=>total+x.otherErrors,0),
+            attempted:count,
+            firstSequence:steps[0].firstSequence,
+            lastSequence:steps.at(-1).lastSequence
+          };
+        } else {
+          const burstResult=(await tx.command('bangburst '+address+' '+count))
+            .find(line=>line.startsWith('BANG_BURST '));
+          batch=parseBurst(burstResult);
+        }
+        const issueMs=Math.round((performance.now()-started)*1000)/1000;
         check('bounded native stress burst accounts for every send '+count,
           !!batch && batch.attempted===count &&
           batch.queued+batch.noBuffers+batch.otherErrors===count &&
@@ -221,7 +249,8 @@ try {
           authenticated.length<=batch.queued &&
           authenticated.every((n,i)=>i===0||n>authenticated[i-1]));
         bladeMatrix.push({...batch,authenticatedPresented:authenticated.length,
-          deliveredSequences:authenticated});
+          deliveredSequences:authenticated,sendMode:paced?'paced_10ms':'immediate',
+          submissionWindowMs:issueMs});
       }
       check('Blade-composed bounded matrix attempts exactly 48 signed events',
         bladeMatrix.reduce((sum,b)=>sum+b.attempted,8)===48 &&

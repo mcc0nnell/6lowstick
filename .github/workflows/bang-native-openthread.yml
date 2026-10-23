@@ -61,3 +61,15 @@ jobs:
           BANG_NATIVE_OT_CLI="$RUNNER_TEMP/sixs-native-ot/examples/apps/cli/ot-cli-ftd" \
             node experiments/bang/native-ot-lab.mjs > "$RUNNER_TEMP/bang-blade-matrix.json"
           python3 scripts/blade-compose-stress.py --verify "$RUNNER_TEMP/bang-blade-matrix.json"
+      - name: Compare paced and immediate signed burst capacity
+        env:
+          BANG_OT_BASE_ID: '25'
+          BANG_OT_RESILIENCE: '1'
+          BANG_OT_STRESS_MATRIX: '1'
+          BANG_OT_PACE_FINAL: '1'
+        run: |
+          BANG_NATIVE_OT_CLI="$RUNNER_TEMP/sixs-native-ot/examples/apps/cli/ot-cli-ftd" \
+            node experiments/bang/native-ot-lab.mjs > "$RUNNER_TEMP/bang-blade-paced.json"
+          python3 scripts/blade-compose-stress.py --verify "$RUNNER_TEMP/bang-blade-paced.json"
+          python3 scripts/blade-capacity-compare.py \
+            "$RUNNER_TEMP/bang-blade-matrix.json" "$RUNNER_TEMP/bang-blade-paced.json"

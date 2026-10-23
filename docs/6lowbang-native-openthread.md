@@ -99,3 +99,30 @@ Blade is an authoring and verification plane, not the Thread runtime.
 See docs/6lowbang-blade-stress.md for real local simulator results.
 Hardware RF, sustained throughput, p95 latency, energy and real-world
 packet loss remain unverified.
+
+
+## Bounded queue-pressure comparison (October 23, 2026)
+
+The source-owned opt-in bangstep OpenThread vendor command sends
+one independently signed event per CLI iteration and reports
+queued, no_bufs and other_errors. Its invocation is bounded
+to the final 24 events after the preceding 8+16 attempts. Unlike
+sleep inside a single C command, separate CLI iterations allow
+OpenThread's tasklet and radio scheduler to make progress.
+
+Set BANG_OT_PACE_FINAL=1 with both BANG_OT_RESILIENCE=1 and
+BANG_OT_STRESS_MATRIX=1 (or run npm run bang:native:ot:pace
+with a reviewed BANG_NATIVE_OT_CLI binary). The baseline matrix
+continues to run unpaced. Both attempt at most 48 independently
+signed events without automatic retransmission.
+
+The read-only verifier scripts/blade-capacity-compare.py checks both
+underlying Blade stress verifications, exact stage counts and signed
+sequence ranges, then compares observed queue acceptance and
+authenticated presentation. The source-pinned native OpenThread CI
+runs baseline and paced scenarios in separate fresh networks.
+
+This is software-only, workload-specific queue pressure. It is
+not production flow control, a statistically paired experiment,
+physical RF, guaranteed reliability or an airtime SLA. See
+docs/6lowbang-capacity.md for observed data and remaining gates.

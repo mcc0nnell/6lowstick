@@ -185,6 +185,29 @@ static otError bang_burst(void* context,uint8_t argc,char* argv[]) {
         queued,no_bufs,other_errors,count,first_seq,last_seq);
     return OT_ERROR_NONE;
 }
+// The bounded paced experiment submits ONE signed event per CLI turn.
+// OpenThread can service its radio tasklets between invocations; merely
+// sleeping inside a single 24-send CLI command would block that task loop.
+static otError bang_step(void* context,uint8_t argc,char* argv[]) {
+    (void)context;
+    if(argc!=1 || !state.endpoint.opened || !state.prepared ||
+       state.burst_attempted<24 || state.burst_attempted>=48)
+        return OT_ERROR_INVALID_STATE;
+    otIp6Address dest={0};
+    if(otIp6AddressFromString(argv[0],&dest)!=OT_ERROR_NONE)
+        return OT_ERROR_INVALID_ARGS;
+    bang_event frame={0};
+    if(bang_source_emit(state.source,BANG_CAPTION,"Burst",now_ms(),30000,
+                        &frame)!=BANG_OK)return OT_ERROR_FAILED;
+    state.burst_attempted++;
+    otError error=lowbang_ot_send(&state.endpoint,&dest,PORT,&frame);
+    uint32_t queued=error==OT_ERROR_NONE;
+    uint32_t no_bufs=error==OT_ERROR_NO_BUFS;
+    uint32_t other_errors=error!=OT_ERROR_NONE && error!=OT_ERROR_NO_BUFS;
+    otCliOutputFormat("BANG_STEP queued=%u no_bufs=%u other_errors=%u attempted=1 first_seq=%" PRIu64 " last_seq=%" PRIu64 "\r\n",
+       queued,no_bufs,other_errors,frame.seq,frame.seq);
+    return OT_ERROR_NONE;
+}
 static otError bang_stats(void* context,uint8_t argc,char* argv[]) {
     (void)context;(void)argv;
     if(argc || !state.endpoint.opened)return OT_ERROR_INVALID_ARGS;
@@ -202,6 +225,7 @@ static const otCliCommand commands[]={
     {"bangburst",bang_burst},
     {"bangflush",bang_flush},
     {"bangsend",bang_send},
+    {"bangstep",bang_step},
     {"bangstats",bang_stats},
 };
 void otCliVendorSetUserCommands(void) {
