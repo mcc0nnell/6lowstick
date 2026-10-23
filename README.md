@@ -48,7 +48,7 @@ The first executable slice implements opt-in, in-memory presence and ping/ACK fr
 
 **Information should travel even when cellular service doesn't.** 6lowBang is the proposed opt-in caption distribution layer: finalized stage captions and explicitly source-authored sound descriptions, eventually delivered through independently verified local transports.
 
-The first executable slice is a **process-local Ed25519-signed caption-event model**, with pinned publisher keys, replay and expiry checks, bounded reordering, and explicit missing-caption reporting. Try `npm run bang:demo`; read the [6lowBang architecture, trust and test gates](docs/6lowbang.md). **There is no speech recognition, actual radio transport, LoRa caption feed, receiver device UI, encrypted private conversation or human receipt in this slice.**
+**C11 is now the primary protocol core**, built with CMake and OpenSSL Ed25519: signed finalized text, pinned publisher keys, replay and expiry checks, bounded reordering, and explicit missing-caption reporting. Try `npm run bang:native:demo` and `npm run bang:native:test`. The Node.js `npm run bang:demo` remains a **software reference**, not the production runtime. See the [6lowBang architecture, trust and test gates](docs/6lowbang.md). **There is no speech recognition, actual radio transport, Celix service registration, LoRa caption feed, receiver device UI, encrypted private conversation or human receipt in this slice.**
 
 ## 6lowFlare: signal what matters
 
