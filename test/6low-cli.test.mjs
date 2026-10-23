@@ -30,3 +30,17 @@ test('unknown command exits with usage error', () => {
 test('unexpected arguments rejected', () => {
   assert.equal(run('lab', 'loop', '--send').status, 2);
 });
+
+test('evidence review accepts template option', () => {
+  const r = run('evidence', 'review', '--template');
+  assert.equal(r.status, 0, r.stderr);
+  assert.doesNotThrow(() => JSON.parse(r.stdout));
+});
+test('simulation demos run from the CLI', () => {
+  const loop = run('lab', 'loop');
+  assert.equal(loop.status, 0, loop.stderr);
+  assert.match(loop.stdout, /software-only/);
+  const flare = run('lab', 'flare');
+  assert.equal(flare.status, 0, flare.stderr);
+  assert.match(flare.stdout, /No radio/);
+});
