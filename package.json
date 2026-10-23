@@ -17,7 +17,9 @@
     "site:check": "node scripts/check-field-station.mjs",
     "flare:demo": "node scripts/flare-demo.mjs",
     "flare:posix": "node experiments/flare/posix-lab.mjs",
-    "bang:demo": "node scripts/bang-demo.mjs"
+    "bang:demo": "node scripts/bang-demo.mjs",
+    "bang:native:test": "bash scripts/bang-native.sh",
+    "bang:native:demo": "bash scripts/bang-native.sh --demo"
   },
   "repository": {
     "type": "git",
