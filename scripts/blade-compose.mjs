@@ -53,7 +53,7 @@ try {
   if (flareResult.samApplicationReceipt !== true ||
       flareResult.bobApplicationReceipt !== true ||
       flareResult.duplicateSuppressed !== true ||
-      flareResult.physicalOutput !== false || flareResult.humanDetected !== false)
+      flareResult.physicalOutput !== 'unknown' || flareResult.humanDetected !== 'unknown')
     throw new Error('6lowFlare model assertions failed');
   const components = [
     {name:'openthread',mode:'recorded-parser',verified:true},
