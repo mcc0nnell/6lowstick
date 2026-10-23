@@ -1,5 +1,7 @@
 # 6lowSpark Display — standalone communicator concept
 
+**Engineering follow-up:** [Rev A hardware requirements, BOM and acceptance gates](hardware/README.md). This remains a bench candidate, not a produced device.
+
 **Status: hardware proposal with a simulation-only display model.**
 No screen, electronics, standalone device, mobile application, real radio,
 physical output or independent measurement has been built.
