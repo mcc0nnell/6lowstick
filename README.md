@@ -49,6 +49,8 @@ The first executable slice implements opt-in, in-memory presence and ping/ACK fr
 
 The **first executable slice** is an in-memory, HMAC-authenticated model with opt-in receivers and separate opt-in relays, expiry, replay rejection and explicit unknown physical/human outcomes: `npm run flare:demo`. It has **no actual broadcast, radio, GPS, Matrix account, encryption, device activation or public channel**. Shared audience keys are pre-provisioned and do not establish individual sender attribution or real group consent. [See the 6lowFlare protocol, limitations and integration gates](docs/6lowflare.md).
 
+**Experimental POSIX integration:** an opt-in three-node OpenThread **simulated-radio UDP** lab now exercises an actual software-network relay and authenticated application receipts: `OT_CLI_PATH=/absolute/path/to/ot-cli-ftd npm run flare:posix`. A separate synthetic output recorder distinguishes requested light/haptic modalities, injected fixture observations, and **unverified** physical/human responses. This does not demonstrate hardware RF, Matrix federation or a notification actuator.
+
 ## 6lowSpark: power + signal
 
 **6lowSpark is the proposed magnetic battery-and-radio accessory for 6lowStick.** When electricity and conventional networks are unreliable, the same pocket device could help keep a phone powered and carry short, authorized messages across a separately validated, low-bandwidth LoRa relay network. Everyday use as a power bank is the reason to carry it; local resilience is the reason to build it.
@@ -100,6 +102,8 @@ npm test
 
 npm run loop:demo                 # 6lowLoop opt-in, process-local friend protocol model
 npm run flare:demo                # 6lowFlare opt-in, bounded group relay model
+# With a separately built ot-cli-ftd binary:
+OT_CLI_PATH=/absolute/path/to/ot-cli-ftd npm run flare:posix
 npm run tui -- --demo --report    # Accessible, noninteractive text
 npm run tui -- --demo             # Keyboard-operated Mesh Control
 npm run evidence:multiradio       # Deterministic synthetic scenarios
@@ -118,7 +122,7 @@ npm run evidence:review -- --posix /path/to/mesh-run.json
 
 | Instrument | Demonstrated in software | Not demonstrated |
 | --- | --- | --- |
-| **6lowFlare** | Offline pre-provisioned group flare admission, signed cooperative hop decrement, explicit relay opt-in, expiry and replay suppression | RF broadcasting, Matrix/group identity, encryption, physical activation or human acknowledgment |
+| **6lowFlare** | Pre-provisioned group flare admission, bounded cooperative relays, replay suppression; opt-in OpenThread POSIX simulated-radio UDP lab; synthetic light/haptic output request vs fixture-observation split | Physical RF, Matrix/group identity, encryption, independent physical sensor measurement or human acknowledgment |
 | **Thread alert lab** | OpenThread POSIX simulated traffic, local HMAC, replay journal, synthetic modalities | RF delivery or reliably reaching a person |
 | **Multi-radio fabric** | Scripted Thread/direct-LoRa cases plus an opt-in OpenThread POSIX simulated-radio UDP receipt/failover exercise with authenticated application ACKs and duplicate suppression | Physical Thread/LoRa RF, LoRaWAN, reliable delivery or human receipt |
 | **NOAA/SAME observer** | Receive-only decoder-line parsing and mock/replay input | Origin authentication or field measurement |

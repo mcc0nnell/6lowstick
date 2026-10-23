@@ -7,6 +7,7 @@ certified accessible emergency notification capabilities.
 ## [Unreleased]
 
 ### 6lowFlare (simulation-only)
+- Add opt-in three-node OpenThread POSIX simulated-radio UDP route with authenticated application receipts and bounded relay, plus negative transport tests and a separate synthetic light/haptic request-versus-fixture-observation journal; no RF device, actuator or measured human delivery.
 - Introduce an opt-in, authenticated, short-lived group signaling and bounded relay model with an explicit relay toggle, replay protection, offline demo and negative tests. No radio transmission, Matrix client, public broadcast or physical/human notification evidence.
 ### 6lowSpark product concept (documentation only)
 - Introduce **6lowSpark** as a proposed magnetic battery pack and LoRa-capable messaging/relay accessory within 6lowStick. Add conceptual architecture, proposed interfaces, safety boundaries, and an evidence-driven bench plan; **no hardware, firmware, wireless charging, or physical RF validation**.

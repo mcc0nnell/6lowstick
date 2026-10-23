@@ -94,11 +94,67 @@ The simulator caller wires these frames together manually; there is
   not an authenticated emergency declaration. This prototype must not
   originate public warnings, actuate devices or trigger safety responses.
 
+## OpenThread POSIX simulated-radio integration (follow-up PR)
+
+The second executable research slice exercises **actual simulated-network UDP**
+between three `ot-cli-ftd` processes, using OpenThread POSIX **simulated
+radio**, not mock driver calls. It requires a separately built OpenThread CLI:
+
+```sh
+OT_CLI_PATH=/absolute/path/to/ot-cli-ftd npm run flare:posix
+node --test test/flare-posix-output.test.mjs
+```
+
+The optional harness creates a private temporary flash directory, picks an
+isolated simulation port offset, brings up a three-node Thread network, and
+cleans up spawned processes and files on exit. `FLARE_POSIX_BASE_ID` (default
+22, permitted 1–27) and `FLARE_POSIX_PORT_OFFSET` (default randomized,
+permitted 1–500) control isolation when several experiments share a machine.
+
+The transport codec `experiments/flare/posix-transport.mjs` encodes a bounded
+ASCII `FL1` frame; the *receiving application* validates the complete HMAC,
+audience, TTL, token, hop count and replay state with `src/flare/core.mjs`.
+Application acknowledgments are separately HMAC-bound `FA2` replies:
+the sender must observe a matching, authenticated receipt **after** sending;
+an `ot-cli` `Done` response is not evidence of delivery.
+
+The fixture exercises:
+
+1. Gateway (Alice) sends `here` to Sam with one permitted relay hop.
+2. Sam's enabled relay validates it, sends an application receipt and forwards
+   a re-signed hop-zero frame to Bob over a second simulated UDP route.
+3. Bob validates it, sends an application receipt, and writes a **modeled**
+   request for light/haptic outputs into a separate in-memory recorder.
+4. The fixture injects an observation for **light only**, leaving the
+   haptic fixture observation absent. Neither is a physical measurement.
+5. Repeating Alice's identical frame is rejected without another application
+   admission or relay. The assertion measures **one** successful local run,
+   not transport reliability.
+
+The output recorder `src/flare/output-evidence.mjs` requires an explicit
+application admission and a second explicit **scripted fixture observation**.
+It never translates either into `physicalOutput: verified`; real photometry,
+vibration sensing, human detection and comprehension are all **unknown**.
+An absent fixture observation does not establish that a real light or motor
+failed.
+
+The `FA2` group-key receipt validates a participant *holding the shared
+key*, not an independently attested Bob or Sam. The key also enables
+members to re-sign the hop count. A real deployment needs device-bound
+identity, per-sender authorization, revocation, anti-stalking consent UX,
+traffic-volume and power limits, and physical observation.
+
+The optional POSIX test is **not** built or pinned in CI; the current CI
+checks the codec, fake-CLI negative tests and output-recorder behavior.
+The POSIX binary and compiled radio model must be separately provisioned.
+There is no automatic broadcast listener, background relay daemon,
+on-air RF, LoRa fallback, Matrix E2EE integration or emergency dispatch.
+
 ## Evidence ladder / next integration gates
 
-1. Wire a **separate opt-in simulated transport adapter** to the existing
-   OpenThread POSIX research bench; document packet size, retries,
-   duplicates, explicit device/audience pairing and relay loops.
+1. Expand the opt-in OpenThread POSIX research harness to measure packet
+   size, repeated trials, partitions, retries, group/device pairing and
+   relay loops (the first 3-node simulated UDP exercise now exists).
 2. Integrate real Matrix identity/device verification and membership
    through an explicitly authorized bridge. Matrix homeservers and E2EE
    sessions are not replaced by offline HMAC frames.
