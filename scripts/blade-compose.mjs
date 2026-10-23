@@ -4,7 +4,7 @@
 // Compose existing read-only 6low capabilities with external WindAnvil assurance.
 // Blade/TalkPipe remain external; this does not install a runtime dependency.
 import {spawnSync} from 'node:child_process';
-import {readFileSync, mkdtempSync, rmSync} from 'node:fs';
+import {readFileSync, writeFileSync, mkdtempSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -37,17 +37,32 @@ try {
     summary.push({capability, requestDigest:result.requestDigest, resultDigest:result.resultDigest,
       planDigest:result.planDigest, contractSatisfied:true});
   }
+  const recording = join(temp, 'state.txt');
+  writeFileSync(recording, 'state\nrouter\nDone\n');
+  const observed = JSON.parse(run(process.execPath,
+    [join(root,'bin/6low.mjs'),'mesh','observe','state','--input',recording], root));
+  if (observed.value !== 'router' || observed.source !== 'recorded_ot_cli_text' ||
+      observed.physicalRadioVerified !== false) throw new Error('OpenThread parser contract failed');
+  const loop = run(process.execPath, [join(root,'bin/6low.mjs'),'lab','loop'], root);
+  if (!loop.includes('Alice presence accepted by Bob: true') ||
+      !loop.includes('Bob ping accepted by Alice: true') ||
+      !loop.includes('Alice application ACK accepted by Bob: true'))
+    throw new Error('6lowLoop model assertions failed');
+  const flare = run(process.execPath, [join(root,'bin/6low.mjs'),'lab','flare'], root);
+  const flareResult = JSON.parse(flare.slice(flare.indexOf('{'), flare.lastIndexOf('}') + 1));
+  if (flareResult.samApplicationReceipt !== true ||
+      flareResult.bobApplicationReceipt !== true ||
+      flareResult.duplicateSuppressed !== true ||
+      flareResult.physicalOutput !== false || flareResult.humanDetected !== false)
+    throw new Error('6lowFlare model assertions failed');
   const components = [
-    ['openthread','recorded mesh observation parser', []],
-    ['celix','external Blade worker assurance', []],
-    ['6lowLoop','offline friend-finding', ['lab','loop']],
-    ['6lowFlare','offline relay', ['lab','flare']],
+    {name:'openthread',mode:'recorded-parser',verified:true},
+    {name:'celix',mode:'Blade source-assurance worker',verified:true},
+    {name:'6lowLoop',mode:'offline model',verified:true},
+    {name:'6lowFlare',mode:'offline model',verified:true},
   ];
-  for (const [name,description,argv] of components) {
-    if (argv.length) run(process.execPath, [join(root,'bin/6low.mjs'),...argv],root);
-  }
   console.log(JSON.stringify({schema:'6lowstick.blade-composition.v1', specimenSha:sha,
-    assurance:summary, components:components.map(([name,description])=>({name,description})),
+    assurance:summary, components,
     mode:'offline-model-and-source-assurance', physicalRadioVerified:false,
     humanReceiptVerified:false, applicationExecutionThroughBlade:false},null,2));
 } catch (error) {console.error('Blade composition failed: '+error.message);process.exitCode=1;}
