@@ -14,7 +14,7 @@ npm run cli -- tui --demo --snapshot
 npm run cli -- test
 ```
 
-Alternatively, run `node bin/6low.mjs` with the same arguments. The package registers the `6low` executable for package-manager installations; it is not published as a package.
+Alternatively, run `node bin/6low.mjs` with the same arguments. The package registers the `6low` executable for package-manager installations; it is not published as a package. The executable is tracked in Git with mode `100755`. From a checkout, `./bin/6low.mjs status --json` works after Git restores the executable bit.
 
 ## Output contract
 
