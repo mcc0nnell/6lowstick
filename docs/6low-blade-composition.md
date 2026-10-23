@@ -14,6 +14,12 @@ Scope: research-grade, read-only OpenThread POSIX mesh diagnostics.
 6. Add adversarial tests for missing process, truncated output, malformed response, timeout, process exit, and simulated observations incorrectly labeled as RF.
 7. Verify with `npm ci`, `npm test`, CLI smoke tests, and GitHub Actions. Keep the existing release safety warnings.
 
+## Composition architecture
+
+6low exposes OpenThread, Celix, 6lowLoop, and 6lowFlare capabilities. WindAnvil Blade is the external composition and validation environment. TalkPipe belongs inside WindAnvil Blade as its internal semantic planning and placement mechanism; do not introduce TalkPipe as a 6low runtime transport or dependency.
+
+Inspect the existing WindAnvil capability manifest, planner, placement, and invocation interfaces before choosing a composition adapter. Keep that integration separate from the 6low CLI binary.
+
 ## Blade boundary
 
 WindAnvil Blade vivisection is an evidence and authorization mechanism, not an unconstrained code-generation service. Before a Blade execution, identify the concrete signed capability manifest, signed grant, probe descriptor, and observable receipt stream. Do not manufacture credentials, claim a Blade run without receipts, or grant mutation effects for an observation-only task.
