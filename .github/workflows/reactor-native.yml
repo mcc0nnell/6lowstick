@@ -47,6 +47,7 @@ jobs:
             -DBUILD_PUBSUB_PSA_ZMQ=OFF \
             -DBUILD_PUBSUB=OFF \
             -DBUILD_REMOTE_SERVICE_ADMIN=OFF \
+            -DBUILD_CXX_REMOTE_SERVICE_ADMIN=OFF \
             -DBUILD_REMOTE_SHELL=OFF \
             -DBUILD_HTTP_ADMIN=OFF \
             -DBUILD_DEPLOYMENT_ADMIN=OFF \
