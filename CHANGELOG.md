@@ -6,6 +6,9 @@ certified accessible emergency notification capabilities.
 
 ## [Unreleased]
 
+### 6lowFlare (simulation-only)
+- Introduce an opt-in, authenticated, short-lived group signaling and bounded relay model with an explicit relay toggle, replay protection, offline demo and negative tests. No radio transmission, Matrix client, public broadcast or physical/human notification evidence.
+
 ### Funding plan revision
 - Expand the 12-month specialist allocation from $20k to $50k for part-time accessibility coordination, project logistics, and grant tracking; revise the illustrative request to $330k without cutting technical or equipment lines. No award, hire, procurement or submission.
 

@@ -13,6 +13,7 @@ experiment distinguishes recorded facts from what requires hardware or people.
 | Your question | Begin with | You'll find |
 | --- | --- | --- |
 | How will I find and reach my friends? | [6lowLoop](6lowloop.md) | Core Matrix-first vision, opt-in local presence model and integration gates |
+| How can an authorized group send a short-lived signal? | [6lowFlare](6lowflare.md) | In-memory authenticated flare and bounded cooperative relay model; non-claims and future test gates |
 | What can 6lowStick demonstrate today? | [README](../README.md#what-we-can-show) | An instrument-by-instrument software/physical evidence boundary |
 | What comes after simulation when funding is secured? | [First Light plan](first-light/README.md) and [funding case](first-light/funding-case.md) | Software-only signal intent, laboratory dependencies, independent physical measurement and a non-submitted budget |
 | Where could AI fit without gaining physical authority? | [OpenThread + AI research direction](ai-physical-systems.md) | Advisory architecture, trust boundaries, evidence levels and research gates |

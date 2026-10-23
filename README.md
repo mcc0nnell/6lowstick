@@ -3,11 +3,12 @@
 
   <h1>6lowStick</h1>
   <p><strong>Find your people. Signal what matters.</strong></p>
-  <p>6lowLoop makes finding and reaching friends a core ambition. 6lowStick explores low-power presence, signaling, physical notifications, and the evidence of delivery.</p>
+  <p>6lowLoop finds your people. 6lowFlare models short-lived group signals and bounded relay. 6lowStick studies how low-power signals become independently observable physical notifications.</p>
   <p>
     <a href="https://mcc0nnell.github.io/6lowstick/"><strong>Explore the Field Station ↗</strong></a>
     &nbsp;·&nbsp; <a href="#why-6lowstick">The idea</a>
     &nbsp;·&nbsp; <a href="#6lowloop-find-your-people">6lowLoop</a>
+    &nbsp;·&nbsp; <a href="#6lowflare-signal-what-matters">6lowFlare</a>
     &nbsp;·&nbsp; <a href="#try-the-lab">Try the lab</a>
     &nbsp;·&nbsp; <a href="#what-we-can-show">Evidence and limits</a>
     &nbsp;·&nbsp; <a href="#openthread-and-ai">OpenThread + AI</a>
@@ -41,6 +42,12 @@ Emergency alerting is one demanding application, **not the definition of the pro
 
 The first executable slice implements opt-in, in-memory presence and ping/ACK framing between **pre-paired Matrix-ID-labeled friends**: `npm run loop:demo`. It does **not** connect to Matrix, discover people over a radio, obtain location or prove human receipt. See the [6lowLoop architecture and gates](docs/6lowloop.md).
 
+## 6lowFlare: signal what matters
+
+**6lowLoop finds your people. 6lowFlare lets your people signal.** Send a short-lived `here`, `rendezvous`, `attention`, or `assistance` code to an explicitly provisioned audience; an authorized neighbor can relay it with a bounded hop budget. No location, free text, or Matrix IDs are placed in the frame.
+
+The **first executable slice** is an in-memory, HMAC-authenticated model with opt-in receivers and separate opt-in relays, expiry, replay rejection and explicit unknown physical/human outcomes: `npm run flare:demo`. It has **no actual broadcast, radio, GPS, Matrix account, encryption, device activation or public channel**. Shared audience keys are pre-provisioned and do not establish individual sender attribution or real group consent. [See the 6lowFlare protocol, limitations and integration gates](docs/6lowflare.md).
+
 ## OpenThread and AI
 
 **The signal is the point. OpenThread is one way to carry it. AI is one way to interpret it.**
@@ -55,7 +62,7 @@ Future direct-LoRa relaying would be a **separate application transport**, not a
 
 ## How it works
 
-The current instruments explore a narrow, synthetic notification protocol. The general-purpose glow-stick vision above is **not** implemented by these lanes.
+The current instruments explore narrow, software-only signaling and notification protocols. The full physical glow-stick vision above is **not** implemented by these lanes.
 
 | Research lane | What it does | What it does **not** establish |
 | --- | --- | --- |
@@ -80,6 +87,7 @@ npm ci
 npm test
 
 npm run loop:demo                 # 6lowLoop opt-in, process-local friend protocol model
+npm run flare:demo                # 6lowFlare opt-in, bounded group relay model
 npm run tui -- --demo --report    # Accessible, noninteractive text
 npm run tui -- --demo             # Keyboard-operated Mesh Control
 npm run evidence:multiradio       # Deterministic synthetic scenarios
@@ -98,6 +106,7 @@ npm run evidence:review -- --posix /path/to/mesh-run.json
 
 | Instrument | Demonstrated in software | Not demonstrated |
 | --- | --- | --- |
+| **6lowFlare** | Offline pre-provisioned group flare admission, signed cooperative hop decrement, explicit relay opt-in, expiry and replay suppression | RF broadcasting, Matrix/group identity, encryption, physical activation or human acknowledgment |
 | **Thread alert lab** | OpenThread POSIX simulated traffic, local HMAC, replay journal, synthetic modalities | RF delivery or reliably reaching a person |
 | **Multi-radio fabric** | Scripted Thread/direct-LoRa cases plus an opt-in OpenThread POSIX simulated-radio UDP receipt/failover exercise with authenticated application ACKs and duplicate suppression | Physical Thread/LoRa RF, LoRaWAN, reliable delivery or human receipt |
 | **NOAA/SAME observer** | Receive-only decoder-line parsing and mock/replay input | Origin authentication or field measurement |
