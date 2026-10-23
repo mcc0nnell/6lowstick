@@ -48,7 +48,14 @@ The first executable slice implements opt-in, in-memory presence and ping/ACK fr
 
 **Information should travel even when cellular service doesn't.** 6lowBang is the proposed opt-in caption distribution layer: finalized stage captions and explicitly source-authored sound descriptions, eventually delivered through independently verified local transports.
 
-**C11 is now the 6lowBang protocol and transport owner**, built with CMake and OpenSSL Ed25519: signed finalized text, pinned publisher keys, replay and expiry checks, bounded reordering, explicit missing-caption reporting, plus a reusable bounded binary codec and opt-in IPv6 loopback transport. Try `npm run bang:native:demo` and `npm run bang:native:test`. The Node.js `npm run bang:demo` remains a **software reference**, not the production runtime. See the [6lowBang architecture, trust and test gates](docs/6lowbang.md). The 6s-owned C transport guide (docs/6lowbang-transport.md) covers native two-process binary UDP tests and the opt-in simulated OpenThread CLI lab using the bang:posix script with a reviewed OT_CLI_PATH. **There is no speech recognition, physical RF, native OpenThread C binding, LoRa caption feed, receiver device UI, encrypted private conversation or human receipt in this slice.**
+**C11 is now the 6lowBang protocol and transport owner**, built with CMake and OpenSSL Ed25519: signed finalized text, pinned publisher keys, replay and expiry checks, bounded reordering, explicit missing-caption reporting, plus a reusable bounded binary codec and opt-in IPv6 loopback transport. Try `npm run bang:native:demo` and `npm run bang:native:test`. The Node.js `npm run bang:demo` remains a **software reference**, not the production runtime. See the [6lowBang architecture, trust and test gates](docs/6lowbang.md). The 6s-owned C transport guide (docs/6lowbang-transport.md) covers native two-process binary UDP tests and the opt-in simulated OpenThread CLI lab using the bang:posix script with a reviewed OT_CLI_PATH. The separate [native C OpenThread UDP pilot](docs/6lowbang-native-openthread.md)
+builds the 6s C extension against pinned OpenThread APIs and moves binary
+signed events between two simulated Thread nodes, with no CLI ASCII-hex
+caption data path. Run the bang:native:ot script on a provisioned machine
+with a reviewed extended binary or a clean pinned OpenThread checkout.
+**There is no speech recognition, physical RF, LoRa caption feed,
+receiver device UI, encrypted private conversation or human receipt
+in this slice.**
 
 ## 6lowFlare: signal what matters
 

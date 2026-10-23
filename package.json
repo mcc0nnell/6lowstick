@@ -20,7 +20,8 @@
     "bang:demo": "node scripts/bang-demo.mjs",
     "bang:native:test": "bash scripts/bang-native.sh",
     "bang:native:demo": "bash scripts/bang-native.sh --demo",
-    "bang:posix": "bash scripts/bang-posix.sh"
+    "bang:posix": "bash scripts/bang-posix.sh",
+    "bang:native:ot": "bash scripts/bang-native-ot.sh"
   },
   "repository": {
     "type": "git",

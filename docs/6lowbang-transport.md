@@ -34,4 +34,16 @@ Tronix can link the exported `lowbang_wire` and `lowbang_udp` targets when suppl
 
 ## Unimplemented gates
 
-Native OpenThread C UDP binding; experimentally verified framing/fragmentation overhead; physical Thread and LoRa radios; secure device provisioning and key revocation; E2E encrypted private captions; CART/ASR acquisition, corrections, translation, user interface and human receipt. No operational alerts.
+Native OpenThread C UDP binding is now implemented in the separately built native C OpenThread simulation (6lowbang-native-openthread.md). Unverified: real-hardware radio integration, detailed framing/fragmentation overhead; physical Thread and LoRa radios; secure device provisioning and key revocation; E2E encrypted private captions; CART/ASR acquisition, corrections, translation, user interface and human receipt. No operational alerts.
+
+
+## Native C OpenThread UDP transport
+
+The 6s-owned lowbang_ot adapter uses direct OpenThread C otUdpOpen,
+otUdpBind with OT_NETIF_THREAD_INTERNAL, and otUdpSend/otUdpReceive.
+The dedicated native test guide (6lowbang-native-openthread.md) documents
+a pinned upstream OpenThread build and actual binary application transfer
+between two simulated nodes. Only the simulated test network control
+plane is operated via the CLI; caption events bypass CLI ASCII hex.
+The native adapter never assumes decoded events are authenticated:
+a caller must use the pinned-key 6lowBang receiver.
