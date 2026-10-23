@@ -52,8 +52,10 @@ The dedicated [native CI workflow](../../.github/workflows/reactor-native.yml) n
 builds a SHA-512-verified Apache Celix 2.4.0 source release, compiles these
 bundles on Ubuntu 22.04, and boots the mock container from its deployment
 directory. The smoke gate asserts that Thread returns no application receipt
-and modeled LoRa provides an authenticated R2 receipt. The container is
-terminated after the bounded observation window. The main Node test workflow
+and modeled LoRa provides an authenticated R2 receipt. A second container omits
+the LoRa service entirely and must report **unconfirmed**, without inventing an
+application receipt. The containers are terminated after bounded observation
+windows. The main Node test workflow
 still requires no Celix SDK. **Bundle stop/start, service withdrawal, real
 radios, and production request concurrency remain unverified.**
 
