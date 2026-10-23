@@ -65,8 +65,8 @@ jobs:
       - name: Boot mock service container and verify fallback
         run: |
           set +e
-          timeout 15s stdbuf -oL \
-            build/celix-reactor/deploy/s6_reactor_demo/s6_reactor_demo \
+          (cd build/celix-reactor/deploy/s6_reactor_demo && \
+            timeout 15s stdbuf -oL ./s6_reactor_demo) \
             > build/celix-reactor-output.log 2>&1
           result=$?
           set -e
