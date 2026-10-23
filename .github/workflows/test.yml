@@ -14,6 +14,8 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npm test
+      - name: Compile and test native C11 6lowBang
+        run: npm run bang:native:test
       - run: npm run site:check
       - name: Validate source release metadata
         run: npm run release:check
@@ -33,5 +35,6 @@ jobs:
           test ! -e .git
           npm ci
           npm test
+          npm run bang:native:test
           npm run release:check
       - run: git diff --check
