@@ -8,6 +8,7 @@
     <a href="https://mcc0nnell.github.io/6lowstick/"><strong>Explore the Field Station ↗</strong></a>
     &nbsp;·&nbsp; <a href="#why-6lowstick">The idea</a>
     &nbsp;·&nbsp; <a href="#6lowloop-find-your-people">6lowLoop</a>
+    &nbsp;·&nbsp; <a href="#6lowspark-power--signal">6lowSpark</a>
     &nbsp;·&nbsp; <a href="#try-the-lab">Try the lab</a>
     &nbsp;·&nbsp; <a href="#what-we-can-show">Evidence and limits</a>
     &nbsp;·&nbsp; <a href="#openthread-and-ai">OpenThread + AI</a>
@@ -40,6 +41,17 @@ Emergency alerting is one demanding application, **not the definition of the pro
 **Matrix is the planned account, verified-device, encrypted messaging and group layer.** 6lowLoop adds local, short-lived friend presence and signaling over separately validated transports. Matrix federation requires a homeserver; an isolated radio mesh is not automatically a Matrix deployment.
 
 The first executable slice implements opt-in, in-memory presence and ping/ACK framing between **pre-paired Matrix-ID-labeled friends**: `npm run loop:demo`. It does **not** connect to Matrix, discover people over a radio, obtain location or prove human receipt. See the [6lowLoop architecture and gates](docs/6lowloop.md).
+
+## 6lowSpark: power + signal
+
+**6lowSpark is the proposed magnetic battery-and-radio accessory for 6lowStick.** When electricity and conventional networks are unreliable, the same pocket device could help keep a phone powered and carry short, authorized messages across a separately validated, low-bandwidth LoRa relay network. Everyday use as a power bank is the reason to carry it; local resilience is the reason to build it.
+
+- **Power:** proposed ~5,000 mAh rechargeable pack, magnetic phone attachment, USB-C and a Qi2 wireless-charging design target. Charging compatibility, power transfer, battery capacity, safety certification and thermal performance are **not verified**.
+- **Connect:** Bluetooth LE is the proposed primary iPhone-to-pack control/data path. A Thread-capable radio could support local 802.15.4 research, but an iPhone's Thread radio does **not** imply open access to arbitrary Thread traffic or transparent forwarding from iOS apps.
+- **Signal:** a separate LoRa point-to-point application transport could eventually relay small messages between consenting 6lowSpark nodes. Multi-hop routing, store-and-forward, duplicate suppression, hop/TTL limits and key management must be built and tested; neither LoRa mesh nor phone interoperability exists here today. **LoRa is not an extension of Thread and does not automatically run IPv6, Matrix or LoRaWAN.**
+- **Stand alone:** a physically separate radio controller and an explicitly budgeted battery reserve could allow a detached pack to act as a short-message relay or show a light/haptic cue when the phone is out of power. A configurable button is a design proposal, not an operational distress transmitter.
+
+**Status:** product concept and test plan only—no schematic, enclosure, firmware, physical prototype, on-air link, charging certification, iOS accessory integration or field reliability claim. This is **not a substitute for 911, cellular/satellite service or a certified emergency-alert device**. Read the [6lowSpark concept and validation gates](docs/6lowspark.md).
 
 ## OpenThread and AI
 
