@@ -10,6 +10,8 @@ A power outage and a communications outage often arrive together. A battery pack
 
 This is a research direction, not a claim of guaranteed off-grid reach, emergency coverage, reliable delivery or a replacement for 911.
 
+**Display extension:** A proposed outward-facing, detachable-device status screen is specified in the [6lowSpark Display design and simulation](6lowspark-display.md). A pure text-frame projection exists for laboratory fixtures only; no screen, buttons or firmware are implemented.
+
 ## Conceptual device and interface
 
 | Component | Proposed design target | What is actually demonstrated |
