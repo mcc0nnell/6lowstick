@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // OPT-IN OpenThread POSIX simulated-radio UDP, NOT hardware RF or notifications.
 import {spawn} from 'node:child_process';
-import {randomBytes, randomInt} from 'node:crypto';
+import {createHash, randomBytes, randomInt} from 'node:crypto';
 import {existsSync, mkdtempSync, mkdirSync, rmSync} from 'node:fs';
 import {isAbsolute, join} from 'node:path';
 import {tmpdir} from 'node:os';
@@ -155,6 +155,7 @@ async function main() {
     await node.command('udp bind :: '+port);
   }
   const pairKey=randomBytes(32),groupKey=randomBytes(32);
+  const sessionId=randomBytes(12).toString('hex');
   const alice=create6lowLoop({friends:[{id:SAM,key:pairKey}],enabled:config.aliceEnabled});
   const sam=create6lowLoop({friends:[{id:ALICE,key:pairKey}],enabled:config.samEnabled});
   const audience=[{id:'friends',key:groupKey,codes:['here']}];
@@ -162,7 +163,8 @@ async function main() {
   const samFlare=create6lowFlare({audiences:audience,enabled:config.samEnabled,
     modalities:['text','haptic']});
   let pingNonce=null,alicePingAck=false,samPingReceived=false,samSignalReceived=false;
-  let samModalities=[],presenceAcceptedBySam=0,presenceAcceptedByAlice=0,duplicatesRejected=0;
+  let samModalities=[],outputRequest=null;
+  let presenceAcceptedBySam=0,presenceAcceptedByAlice=0,duplicatesRejected=0;
   aliceNode.onPacket=async item=>{
     const frame=decodeLoopUdp(item.body);
     if(!frame) return;
@@ -200,6 +202,9 @@ async function main() {
     if(!accepted) {duplicatesRejected++;return;}
     samSignalReceived=true;
     samModalities=[...accepted.requestedModalities];
+    // Receiver-side application request, NOT a physical sensor observation.
+    outputRequest={sessionId,id:createHash('sha256').update(accepted.nonce).digest('hex').slice(0,24),
+      atUnixMs:Date.now(),requestedModalities:[...accepted.requestedModalities]};
     await samNode.command('udp send '+aliceNode.address+' '+PORT_ALICE+' '+
       signFlareAppReceipt({key:groupKey,node:'sam',nonce:accepted.nonce}));
   };
@@ -247,6 +252,7 @@ async function main() {
     ping:{samApplicationReceived:samPingReceived,aliceApplicationAck:alicePingAck},
     signal:{code:'here',samApplicationReceived:samSignalReceived,
       requestedModalities:samSignalReceived?samModalities:[],
+      outputRequest:samSignalReceived?outputRequest:null,
       physicalOutput:'unknown',humanDetection:'unknown',humanComprehension:'unknown'},
     transportEvidence:{nodeStates:['leader','router-or-child'],
       presenceAdmissions:{alice:presenceAcceptedByAlice,sam:presenceAcceptedBySam},

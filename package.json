@@ -17,7 +17,8 @@
     "site:check": "node scripts/check-field-station.mjs",
     "flare:demo": "node scripts/flare-demo.mjs",
     "flare:posix": "node experiments/flare/posix-lab.mjs",
-    "loop:posix": "node experiments/loop/posix-lab.mjs"
+    "loop:posix": "node experiments/loop/posix-lab.mjs",
+    "first-light:review": "node scripts/first-light-review.mjs"
   },
   "repository": {
     "type": "git",

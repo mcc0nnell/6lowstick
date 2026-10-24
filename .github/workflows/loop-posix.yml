@@ -59,6 +59,15 @@ jobs:
             }
             expect(n.presence.mutuallyObserved && n.ping.aliceApplicationAck &&
                    n.signal.samApplicationReceived,"nominal flow missing");
+            expect(typeof n.signal.outputRequest?.atUnixMs==="number" &&
+                   /^[0-9a-f]{24}$/.test(n.signal.outputRequest?.id) &&
+                   /^[0-9a-f]{24}$/.test(n.signal.outputRequest?.sessionId) &&
+                   n.signal.outputRequest?.requestedModalities?.includes("haptic"),
+                   "no distinct receiver-side output request");
+            for (const result of [off,exp]) {
+              expect(result.signal.outputRequest===null,
+                     "missing application receipt was promoted to output request");
+            }
             expect(lost.ping.samApplicationReceived && !lost.ping.aliceApplicationAck &&
                    lost.signal.samApplicationReceived,"lost-ACK state wrong");
             expect(!off.presence.mutuallyObserved && !exp.presence.mutuallyObserved,
