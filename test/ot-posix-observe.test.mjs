@@ -21,3 +21,16 @@ test('POSIX adapter queries only read-only commands and rejects bad responses',(
   assert.equal(spawnSync(process.execPath,[cli,'mesh','query','thread start','--binary',bin,'--node-id','7']).status,2);
  }finally{rmSync(dir,{recursive:true,force:true});}
 });
+
+test('simulator-style carriage returns and prompts are parsed',()=>{
+ const dir=mkdtempSync(join(tmpdir(),'ot-posix-cr-fixture-'));
+ try{
+  const bin=join(dir,'mock-ot-cli-ftd');
+  writeFileSync(bin,`#!/usr/bin/env node\nprocess.stdin.on('data',x=>{const q=x.toString().trim();process.stdout.write('> '+q+'\\r'+(q==='state'?'disabled':'0xfffe')+'\\rDone\\r> ');});\n`);
+  chmodSync(bin,0o700);
+  for(const [cmd,want] of [['state','disabled'],['rloc16','fffe']]){
+   const r=spawnSync(process.execPath,[cli,'mesh','query',cmd,'--binary',bin,'--node-id','7'],{encoding:'utf8',timeout:5000});
+   assert.equal(r.status,0,r.stderr);assert.equal(JSON.parse(r.stdout).value,want);
+  }
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
