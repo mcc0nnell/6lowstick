@@ -1,0 +1,67 @@
+name: 6lowLoop POSIX simulated network
+on:
+  pull_request:
+    paths:
+      - 'experiments/loop/**'
+      - 'src/loop/**'
+      - 'test/loop-posix.test.mjs'
+      - '.github/workflows/loop-posix.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  posix-network:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout 6lowStick
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Checkout pinned OpenThread simulation source
+        uses: actions/checkout@v4
+        with:
+          repository: openthread/openthread
+          ref: 53e8322140dde7b26827332100504507cec9cc4e
+          path: vendor/openthread
+          submodules: recursive
+          persist-credentials: false
+      - name: Build OpenThread POSIX simulated-radio CLI
+        run: |
+          cmake -S vendor/openthread -B "$RUNNER_TEMP/ot-simulation" -GNinja \
+            -DOT_PLATFORM=simulation -DOT_APP_CLI=ON -DOT_FTD=ON \
+            -DOT_COMPILE_WARNING_AS_ERROR=OFF -DOT_COVERAGE=OFF
+          cmake --build "$RUNNER_TEMP/ot-simulation" --target ot-cli-ftd --parallel 2
+          test -x "$RUNNER_TEMP/ot-simulation/examples/apps/cli/ot-cli-ftd"
+      - name: Run two-node friend journey over actual POSIX simulator
+        env:
+          LOOP_POSIX_BASE_ID: '14'
+          LOOP_POSIX_PORT_OFFSET: '327'
+        run: |
+          set -euo pipefail
+          export OT_CLI_PATH="$RUNNER_TEMP/ot-simulation/examples/apps/cli/ot-cli-ftd"
+          node experiments/loop/posix-lab.mjs --scenario nominal --json > "$RUNNER_TEMP/nominal.json"
+          node experiments/loop/posix-lab.mjs --scenario drop-ack --json > "$RUNNER_TEMP/drop-ack.json"
+          node experiments/loop/posix-lab.mjs --scenario offline --json > "$RUNNER_TEMP/offline.json"
+          node experiments/loop/posix-lab.mjs --scenario expired --json > "$RUNNER_TEMP/expired.json"
+          node --input-type=module -e '
+            import {readFileSync} from "node:fs";
+            const dir=process.env.RUNNER_TEMP;
+            const read=name=>JSON.parse(readFileSync(dir+"/"+name+".json","utf8"));
+            const n=read("nominal"), lost=read("drop-ack"), off=read("offline"), exp=read("expired");
+            const expect=(ok,message)=>{if(!ok)throw new Error(message);};
+            for(const v of [n,lost,off,exp]) {
+              expect(v.transport==="openthread-posix-simulated-radio-ipv6-udp","wrong transport");
+              expect(v.simulationOnly===true && v.physicalRadioVerified===false,"false RF claim");
+              expect(v.signal.humanDetection==="unknown","false human claim");
+            }
+            expect(n.presence.mutuallyObserved && n.ping.aliceApplicationAck &&
+                   n.signal.samApplicationReceived,"nominal flow missing");
+            expect(lost.ping.samApplicationReceived && !lost.ping.aliceApplicationAck &&
+                   lost.signal.samApplicationReceived,"lost-ACK state wrong");
+            expect(!off.presence.mutuallyObserved && !exp.presence.mutuallyObserved,
+                   "negative fault scenario wrongly admitted");
+            console.log("Four POSIX simulated-network scenarios verified; no physical RF or human outcome.");
+          '
