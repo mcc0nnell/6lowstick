@@ -47,6 +47,8 @@ The first executable slice implements opt-in, in-memory presence and ping/ACK fr
 
 **OpenThread POSIX follow-up:** with a separately built `ot-cli-ftd`, run `OT_CLI_PATH=/absolute/path/to/ot-cli-ftd npm run loop:posix` for the same presence → ping/ACK → `here` flow over two **POSIX simulated-radio IPv6 UDP nodes**, with a signed application receipt and explicit loss/expiry cases. Without the simulator, this optional live lab refuses to run. [POSIX reproduction and limitations →](docs/6lowloop-posix.md).
 
+**First Light evidence seam:** the POSIX receiver now records a separate output request with a timestamp and run-local ID. `npm run first-light:review -- --journey /tmp/journey.json --capture /path/to/separate-sensor.json` can compare that request to an *independently supplied* sensor trace, without declaring physical output or human receipt. [First Light capture gate →](docs/first-light/sensor-evidence.md).
+
 ## 6lowFlare: signal what matters
 
 **6lowLoop finds your people. 6lowFlare lets your people signal.** Send a short-lived `here`, `rendezvous`, `attention`, or `assistance` code to an explicitly provisioned audience; an authorized neighbor can relay it with a bounded hop budget. No location, free text, or Matrix IDs are placed in the frame.
