@@ -5,6 +5,7 @@
 const HEX24 = /^[0-9a-f]{24}$/;
 const HEX64 = /^[0-9a-f]{64}$/;
 const MODES = ['light', 'haptic'];
+const REQUESTED = ['text', 'light', 'haptic'];
 const validMs = n => Number.isSafeInteger(n) && n >= 0;
 const SCHEMA = '6lowstick.first-light-capture.v0';
 
@@ -24,9 +25,9 @@ function assertJourney(journey) {
       !validMs(request.atUnixMs) ||
       !Array.isArray(request.requestedModalities) ||
       request.requestedModalities.length < 1 ||
-      request.requestedModalities.length > 2 ||
+      request.requestedModalities.length > 3 ||
       new Set(request.requestedModalities).size !== request.requestedModalities.length ||
-      request.requestedModalities.some(mode => !MODES.includes(mode)) ||
+      request.requestedModalities.some(mode => !REQUESTED.includes(mode)) ||
       !Array.isArray(journey.signal.requestedModalities) ||
       request.requestedModalities.join(',') !== journey.signal.requestedModalities.join(',')) {
     throw new TypeError('missing or invalid receiver-side output request');
@@ -67,7 +68,8 @@ export function reviewFirstLightCapture({journey, capture, windowMs = 500}) {
   assertCapture(capture);
   if (request && capture.sessionId !== request.sessionId)
     throw new Error('capture and application request belong to different sessions');
-  const modalities = request?.requestedModalities ?? [];
+  const requested = request?.requestedModalities ?? [];
+  const modalities = requested.filter(mode => MODES.includes(mode));
   const observations = modalities.map(modality => {
     const matches = capture.observations.filter(item =>
       item.modality === modality && item.atUnixMs >=
@@ -92,6 +94,7 @@ export function reviewFirstLightCapture({journey, capture, windowMs = 500}) {
     claimedCalibrationSha256: capture.calibrationSha256,
     sourceProvenance: 'unverified-operator-supplied-capture',
     observations,
+    notSensorMeasured: requested.filter(mode => !MODES.includes(mode)),
     physicalOutputVerified: false,
     humanDetected: 'unknown',
     humanUnderstood: 'unknown',
