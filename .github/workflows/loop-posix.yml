@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: openthread/openthread
-          ref: 4b8dae16f3912d57f17bd0370095960c54c36f43
+          ref: 53e8322140dde7b26827332100504507cec9cc4e
           path: vendor/openthread
           submodules: recursive
           persist-credentials: false
