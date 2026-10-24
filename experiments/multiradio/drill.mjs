@@ -11,11 +11,6 @@ import {ReplayJournal} from '../thread-alert/replay.mjs';
 import {createSyntheticFabric} from '../../src/fabric/delivery.mjs';
 import {createScriptedLink, createSyntheticReceiver} from '../../src/fabric/simulation.mjs';
 
-const directory = mkdtempSync(join(tmpdir(), '6lowstick-dual-radio-'));
-const key = randomBytes(32); // ephemeral lab-only key, never written to trace
-let sequence = 0;
-// Deterministic *test-only* challenges; production adapters must use crypto-random nonces.
-const nonceFactory = () => (++sequence).toString(16).padStart(24, '0');
 const scenarios = [
   {name: 'thread_unavailable_lora_receipt', id: 'drill100',
     thread: ['down'], lora: ['deliver'], expected: 'lora-p2p', activations: 1},
@@ -29,9 +24,26 @@ const scenarios = [
     thread: ['deliver'], lora: ['down'], expected: 'thread', activations: 1}
 ];
 
+const args = process.argv.slice(2);
+if (args.length === 1 && args[0] === '--list-scenarios') {
+  console.log(scenarios.map(({name}) => name).join('\n'));
+  process.exit(0);
+}
+if (args.length && (args.length !== 2 || args[0] !== '--scenario' ||
+    !scenarios.some(({name}) => name === args[1]))) {
+  console.error('Usage: node experiments/multiradio/drill.mjs [--list-scenarios | --scenario NAME]');
+  process.exit(2);
+}
+const selected = args.length ? scenarios.filter(({name}) => name === args[1]) : scenarios;
+const directory = mkdtempSync(join(tmpdir(), '6lowstick-dual-radio-'));
+const key = randomBytes(32); // ephemeral lab-only key, never written to trace
+let sequence = 0;
+// Deterministic *test-only* challenges; production adapters must use crypto-random nonces.
+const nonceFactory = () => (++sequence).toString(16).padStart(24, '0');
+
 try {
   const reports = [];
-  for (const scenario of scenarios) {
+  for (const scenario of selected) {
     const journal = new ReplayJournal(join(directory, scenario.name + '-replay.log'));
     const receiver = createSyntheticReceiver({name: 'haptic', key, journal});
     const adapters = {
