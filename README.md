@@ -45,6 +45,8 @@ The first executable slice implements opt-in, in-memory presence and ping/ACK fr
 
 **First complete software-only journey:** `node scripts/loop-experience-demo.mjs` joins that pairwise presence and ping/ACK model to a `here` signal via 6lowFlare, with an accessible text report. Try `--scenario drop-ack`, `--scenario offline` or `--sam-disabled`, and `--json` for machine-readable outcomes. It is a *scripted in-memory application transport*, not OpenThread POSIX or real radio. [Reproduce the First Journey →](docs/6lowloop-first-journey.md).
 
+**OpenThread POSIX follow-up:** with a separately built `ot-cli-ftd`, run `OT_CLI_PATH=/absolute/path/to/ot-cli-ftd npm run loop:posix` for the same presence → ping/ACK → `here` flow over two **POSIX simulated-radio IPv6 UDP nodes**, with a signed application receipt and explicit loss/expiry cases. Without the simulator, this optional live lab refuses to run. [POSIX reproduction and limitations →](docs/6lowloop-posix.md).
+
 ## 6lowFlare: signal what matters
 
 **6lowLoop finds your people. 6lowFlare lets your people signal.** Send a short-lived `here`, `rendezvous`, `attention`, or `assistance` code to an explicitly provisioned audience; an authorized neighbor can relay it with a bounded hop budget. No location, free text, or Matrix IDs are placed in the frame.
