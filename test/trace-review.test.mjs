@@ -32,6 +32,57 @@ test('review identifies supported application observations and preserves unknown
   }
 });
 
+test('multiple synthetic activations for one delivery are rejected despite a valid receipt', () => {
+  for (const corruption of ['replace_suppression', 'repeat_activation']) {
+    const bad = clone(fixture);
+    const scenario = bad.scenarios.find(s => s.scenario === 'lost_thread_ack_lora_duplicate');
+    const originalReceipt = clone(scenario.receipt);
+    const activation = scenario.receiverEvents.find(e => e.outcome === 'synthetic_activation');
+    const duplicate = scenario.receiverEvents.find(e => e.outcome === 'duplicate_suppressed');
+    assert.ok(activation);
+    assert.ok(duplicate);
+    assert.equal(activation.id, duplicate.id);
+    assert.notEqual(activation.route, duplicate.route);
+    if (corruption === 'replace_suppression') {
+      duplicate.outcome = 'synthetic_activation';
+    } else {
+      scenario.receiverEvents.push(clone(activation));
+    }
+    assert.deepEqual(scenario.receipt, originalReceipt);
+    assert.equal(scenario.receipt.status, 'app_acknowledged');
+    assert.equal(scenario.receipt.attempts.at(-1).outcome, 'authenticated_app_receipt');
+    assert.equal(scenario.receipt.confirmedRoute, scenario.receipt.attempts.at(-1).route);
+    assert.throws(() => reviewFixture(bad),
+      /Inconsistent synthetic receiver journal: multiple synthetic activations for the same delivery id/,
+      corruption);
+  }
+});
+
+test('legitimate lost-ACK retry preserves suppression evidence and unknown physical outcomes', () => {
+  const input = clone(fixture);
+  const before = clone(input);
+  const result = reviewFixture(input);
+  const index = input.scenarios.findIndex(s => s.scenario === 'lost_thread_ack_lora_duplicate');
+  const source = input.scenarios[index];
+  const scenario = result.scenarios[index];
+  assert.equal(scenario.synthetic_activations, 1);
+  assert.equal(scenario.duplicate_suppressions, 1);
+  assert.equal(scenario.receiver_journal_state, 'synthetic_activation_recorded');
+  assert.equal(scenario.application_state, 'authenticated_application_receipt');
+  assert.equal(scenario.confirmed_route, 'lora-p2p');
+  assert.deepEqual(scenario.evidence_references, [
+    ...source.receipt.attempts.map((_, i) => `scenarios[${index}].receipt.attempts[${i}]`),
+    ...source.receiverEvents.map((_, i) => `scenarios[${index}].receiverEvents[${i}]`),
+  ]);
+  assert.deepEqual(scenario.unknowns, {physical_output: 'unknown',
+    human_detection: 'unknown', human_comprehension: 'unknown'});
+  assert.equal(result.simulation_only, true);
+  assert.equal(result.physical_radio_verified, false);
+  assert.equal(result.human_receipt_verified, false);
+  assert.equal(checkClaims(result, claimsTemplate(result)).result, 'PASS');
+  assert.deepEqual(input, before);
+});
+
 test('typed template passes but invented outcomes, receipt, and references fail independently', () => {
   const good = claimsTemplate(review);
   assert.deepEqual(checkClaims(review, good), {schema: '6lowstick.trace-claim-check.v1',
@@ -111,4 +162,36 @@ test('offline CLI emits a digest and returns nonzero on hallucinated typed claim
       {cwd: root, encoding: 'utf8'});
     assert.equal(malformed.status, 2);
   } finally { rmSync(directory, {recursive: true, force: true}); }
+});
+
+
+test('CLI can review a generated synthetic drill JSON without changing claim bounds', () => {
+  const root = fileURLToPath(new URL('../', import.meta.url));
+  const dir = mkdtempSync(join(tmpdir(), '6low-generated-trace-'));
+  try {
+    const input = join(dir, 'drill.json');
+    const claims = join(dir, 'claims.json');
+    writeFileSync(input, JSON.stringify(fixture));
+    const reviewResult = spawnSync(process.execPath, ['scripts/review-traces.mjs', '--fixture', input],
+      {cwd: root, encoding: 'utf8'});
+    assert.equal(reviewResult.status, 0, reviewResult.stderr);
+    assert.equal(JSON.parse(reviewResult.stdout).scenarios.length, 5);
+    writeFileSync(claims, JSON.stringify(claimsTemplate(review)));
+    const check = spawnSync(process.execPath,
+      ['scripts/review-traces.mjs', '--fixture', input, '--check', claims],
+      {cwd: root, encoding: 'utf8'});
+    assert.equal(check.status, 0, check.stderr);
+    assert.equal(JSON.parse(check.stdout).result, 'PASS');
+    const corrupted = clone(fixture);
+    corrupted.scenarioCount = 42;
+    writeFileSync(input, JSON.stringify(corrupted));
+    const refusal = spawnSync(process.execPath, ['scripts/review-traces.mjs', '--fixture', input],
+      {cwd: root, encoding: 'utf8'});
+    assert.equal(refusal.status, 2);
+    assert.match(refusal.stderr, /Inconsistent scenario count/);
+    const mixed = spawnSync(process.execPath,
+      ['scripts/review-traces.mjs', '--fixture', input, '--posix', input],
+      {cwd: root, encoding: 'utf8'});
+    assert.equal(mixed.status, 2);
+  } finally { rmSync(dir, {recursive: true, force: true}); }
 });

@@ -59,6 +59,9 @@ export function reviewFixture(fixture) {
       if (event.outcome === 'synthetic_activation') activations.push(reference);
       if (event.outcome === 'duplicate_suppressed') duplicates.push(reference);
     }
+    // Every event above belongs to this scenario's delivery id, across all routes.
+    if (activations.length > 1)
+      throw new Error('Inconsistent synthetic receiver journal: multiple synthetic activations for the same delivery id');
     const applicationState = acknowledged.length ? 'authenticated_application_receipt' : 'unconfirmed';
     const nextTest = applicationState === 'unconfirmed'
       ? 'Repeat a bounded synthetic trial with independent receiver-side logging; distinguish message arrival from a missing return receipt.'
