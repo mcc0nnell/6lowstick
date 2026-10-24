@@ -9,7 +9,15 @@ bridge, emergency alerting system, or physical accessible actuator.
 ```sh
 npm test
 node experiments/multiradio/drill.mjs > multiradio-trace.json
+node experiments/multiradio/drill.mjs --list-scenarios
+node experiments/multiradio/drill.mjs --scenario lost_thread_ack_lora_duplicate > one-scenario.json
 ```
+
+The default remains the original five-scenario drill. `--scenario NAME` runs
+only the exact named scripted case, and retains the same evidence schema with
+`scenarioCount: 1`. Invalid or unknown scenario names exit with status 2 before
+creating the replay journal. This selection is software-only; it does not
+establish RF behavior or human delivery.
 
 Node 22 with repository dependencies installed. The experiment uses a private,
 deleted-after-run replay journal. It emits a JSON artifact recording per-path

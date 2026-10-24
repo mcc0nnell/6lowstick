@@ -207,3 +207,34 @@ test('reproducible drill CLI generates five explicit, verified simulation traces
   assert.equal(evidence.scenarios[3].receipt.status, 'unconfirmed');
   assert.equal(evidence.scenarios[4].receipt.confirmedRoute, 'thread');
 });
+
+
+test('synthetic multi-radio drill selects one named scenario without changing the default five', () => {
+  const script = 'experiments/multiradio/drill.mjs';
+  const names = spawnSync(process.execPath, [script, '--list-scenarios'],
+    {encoding: 'utf8', timeout: 10000});
+  assert.equal(names.status, 0, names.stderr);
+  assert.deepEqual(names.stdout.trim().split('\n'), [
+    'thread_unavailable_lora_receipt',
+    'lost_thread_ack_lora_duplicate',
+    'invalid_thread_receipt_lora_receipt',
+    'both_links_unavailable',
+    'thread_healthy'
+  ]);
+  const run = spawnSync(process.execPath, [script, '--scenario', 'lost_thread_ack_lora_duplicate'],
+    {encoding: 'utf8', timeout: 10000});
+  assert.equal(run.status, 0, run.stderr);
+  const report = JSON.parse(run.stdout);
+  assert.equal(report.schema, '6lowstick.multiradio-research.v0');
+  assert.equal(report.scenarioCount, 1);
+  assert.deepEqual(report.scenarios.map(x => x.scenario), ['lost_thread_ack_lora_duplicate']);
+  assert.deepEqual(report.scenarios[0].receiverEvents.map(x => x.outcome),
+    ['synthetic_activation', 'duplicate_suppressed']);
+  assert.equal(report.physicalRadio, false);
+  assert.equal(report.humanDelivery, false);
+  const invalid = spawnSync(process.execPath, [script, '--scenario', 'unknown'],
+    {encoding: 'utf8', timeout: 10000});
+  assert.equal(invalid.status, 2);
+  assert.match(invalid.stderr, /Usage:/);
+  assert.equal(invalid.stdout, '');
+});
