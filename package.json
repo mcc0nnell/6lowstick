@@ -16,7 +16,8 @@
     "release:source": "bash scripts/package-release.sh",
     "site:check": "node scripts/check-field-station.mjs",
     "flare:demo": "node scripts/flare-demo.mjs",
-    "flare:posix": "node experiments/flare/posix-lab.mjs"
+    "flare:posix": "node experiments/flare/posix-lab.mjs",
+    "cli": "node bin/6low.mjs"
   },
   "repository": {
     "type": "git",
@@ -36,5 +37,8 @@
   "type": "module",
   "engines": {
     "node": ">=22"
+  },
+  "bin": {
+    "6low": "./bin/6low.mjs"
   }
 }
