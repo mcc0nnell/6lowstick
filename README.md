@@ -43,6 +43,8 @@ Emergency alerting is one demanding application, **not the definition of the pro
 
 The first executable slice implements opt-in, in-memory presence and ping/ACK framing between **pre-paired Matrix-ID-labeled friends**: `npm run loop:demo`. It does **not** connect to Matrix, discover people over a radio, obtain location or prove human receipt. See the [6lowLoop architecture and gates](docs/6lowloop.md).
 
+**First complete software-only journey:** `node scripts/loop-experience-demo.mjs` joins that pairwise presence and ping/ACK model to a `here` signal via 6lowFlare, with an accessible text report. Try `--scenario drop-ack`, `--scenario offline` or `--sam-disabled`, and `--json` for machine-readable outcomes. It is a *scripted in-memory application transport*, not OpenThread POSIX or real radio. [Reproduce the First Journey →](docs/6lowloop-first-journey.md).
+
 ## 6lowFlare: signal what matters
 
 **6lowLoop finds your people. 6lowFlare lets your people signal.** Send a short-lived `here`, `rendezvous`, `attention`, or `assistance` code to an explicitly provisioned audience; an authorized neighbor can relay it with a bounded hop budget. No location, free text, or Matrix IDs are placed in the frame.
