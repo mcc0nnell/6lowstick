@@ -60,7 +60,7 @@ test('signed application receipts cannot be forged, relabeled or replayed as oth
   assert.equal(verifyLoopAppReceipt({wire,key,node:'sam',kind:'ping',nonce}),false);
   assert.equal(verifyLoopAppReceipt({wire,key,node:'sam',kind:'presence',nonce:'cd'.repeat(12)}),false);
   assert.equal(verifyLoopAppReceipt({wire,key:groupKey,node:'sam',kind:'presence',nonce}),false);
-  assert.equal(verifyLoopAppReceipt({wire:wire.slice(0,-1)+'0',key,node:'sam',kind:'presence',nonce}),false);
+  assert.equal(verifyLoopAppReceipt({wire:wire.slice(0,-1)+(wire.endsWith('0')?'1':'0'),key,node:'sam',kind:'presence',nonce}),false);
   assert.throws(()=>signLoopAppReceipt({key,node:'bob',kind:'presence',nonce}),/invalid/);
 });
 
