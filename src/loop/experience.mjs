@@ -114,6 +114,8 @@ export function render6lowLoopJourney(result) {
       (result.signal.requestedModalities.join(', ') || 'none') +
       ' (request only; not actuated)',
     'Physical output: unknown. Human detection: unknown. Human understanding: unknown.',
-    'No radio link, Matrix session, physical notification, or human receipt was measured.'
+    (result.transport === 'openthread-posix-simulated-radio-ipv6-udp'
+      ? 'Transport: OpenThread POSIX simulated-radio IPv6 UDP. No physical RF, Matrix session, physical notification, or human receipt was measured.'
+      : 'No radio link, Matrix session, physical notification, or human receipt was measured.')
   ].join('\n');
 }
