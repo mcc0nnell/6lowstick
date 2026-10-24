@@ -11,6 +11,10 @@ and requested text/haptic modalities.
 That record is **an application request**, not proof the output device
 activated or somebody noticed it.
 
+The review CLI also records SHA-256 over the **exact bytes** of both supplied
+input files to support reproducibility. Checksums do not authenticate an
+instrument, prove sample accuracy, or convert capture claims into measurements.
+
 ## Receiver request -> separate sensor capture -> offline comparison
 
 With a separately built OpenThread simulated CLI:
