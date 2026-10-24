@@ -125,6 +125,9 @@ test('CLI needs independent journey and capture JSON files; output never asserts
     const result=JSON.parse(ok.stdout);
     assert.equal(result.physicalOutputVerified,false);
     assert.equal(result.observations[0].status,'time-correlated-candidate');
+    assert.match(result.inputBytesSha256.journey,/^[0-9a-f]{64}$/);
+    assert.match(result.inputBytesSha256.capture,/^[0-9a-f]{64}$/);
+    assert.notEqual(result.inputBytesSha256.journey,result.inputBytesSha256.capture);
     const missing=spawnSync(process.execPath,[script,'--journey',j],{encoding:'utf8'});
     assert.equal(missing.status,2);
     assert.match(missing.stderr,/Usage:/);
