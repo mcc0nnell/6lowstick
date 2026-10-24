@@ -112,3 +112,35 @@ test('offline CLI emits a digest and returns nonzero on hallucinated typed claim
     assert.equal(malformed.status, 2);
   } finally { rmSync(directory, {recursive: true, force: true}); }
 });
+
+
+test('CLI can review a generated synthetic drill JSON without changing claim bounds', () => {
+  const root = fileURLToPath(new URL('../', import.meta.url));
+  const dir = mkdtempSync(join(tmpdir(), '6low-generated-trace-'));
+  try {
+    const input = join(dir, 'drill.json');
+    const claims = join(dir, 'claims.json');
+    writeFileSync(input, JSON.stringify(fixture));
+    const reviewResult = spawnSync(process.execPath, ['scripts/review-traces.mjs', '--fixture', input],
+      {cwd: root, encoding: 'utf8'});
+    assert.equal(reviewResult.status, 0, reviewResult.stderr);
+    assert.equal(JSON.parse(reviewResult.stdout).scenarios.length, 5);
+    writeFileSync(claims, JSON.stringify(claimsTemplate(review)));
+    const check = spawnSync(process.execPath,
+      ['scripts/review-traces.mjs', '--fixture', input, '--check', claims],
+      {cwd: root, encoding: 'utf8'});
+    assert.equal(check.status, 0, check.stderr);
+    assert.equal(JSON.parse(check.stdout).result, 'PASS');
+    const corrupted = clone(fixture);
+    corrupted.scenarioCount = 42;
+    writeFileSync(input, JSON.stringify(corrupted));
+    const refusal = spawnSync(process.execPath, ['scripts/review-traces.mjs', '--fixture', input],
+      {cwd: root, encoding: 'utf8'});
+    assert.equal(refusal.status, 2);
+    assert.match(refusal.stderr, /Inconsistent scenario count/);
+    const mixed = spawnSync(process.execPath,
+      ['scripts/review-traces.mjs', '--fixture', input, '--posix', input],
+      {cwd: root, encoding: 'utf8'});
+    assert.equal(mixed.status, 2);
+  } finally { rmSync(dir, {recursive: true, force: true}); }
+});

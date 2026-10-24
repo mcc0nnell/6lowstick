@@ -26,8 +26,15 @@ From the repo root with Node.js 22+:
 npm run evidence:review
 npm run evidence:review -- --template > /tmp/6lowstick-claims.json
 npm run evidence:review -- --check /tmp/6lowstick-claims.json
+node experiments/multiradio/drill.mjs > /tmp/drill.json
+npm run evidence:review -- --fixture /tmp/drill.json
 npm test
 ```
+
+`--fixture PATH` reads separately generated *synthetic* multi-radio drill JSON,
+including a named case. It reuses the same strict claims and journal checks.
+The digest identifies input bytes, not provenance, radio transmission or human
+receipt. This option is mutually exclusive with `--posix`.
 
 The default command emits `6lowstick.trace-review.v1` JSON with a SHA-256 of
 the exact committed synthetic evidence file. `--template` produces a

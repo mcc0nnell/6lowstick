@@ -19,13 +19,15 @@ function boundedJson(path) {
 }
 try {
   const posix = args[0] === '--posix';
-  const remaining = posix ? args.slice(2) : args;
-  if ((posix && (!args[1] || args[1].startsWith('--'))) ||
+  const customFixture = args[0] === '--fixture';
+  const hasInput = posix || customFixture;
+  const remaining = hasInput ? args.slice(2) : args;
+  if ((hasInput && (!args[1] || args[1].startsWith('--'))) ||
       remaining.length > 2 ||
       (remaining.length === 1 && remaining[0] !== '--template') ||
       (remaining.length === 2 && remaining[0] !== '--check'))
-    throw new Error('Usage: node scripts/review-traces.mjs [--posix mesh-run.json] [--template | --check claims.json]');
-  const raw = boundedRaw(posix ? args[1] : fixturePath);
+    throw new Error('Usage: node scripts/review-traces.mjs [--fixture synthetic.json | --posix mesh-run.json] [--template | --check claims.json]');
+  const raw = boundedRaw(hasInput ? args[1] : fixturePath);
   const review = posix ? reviewPosixEvidence(JSON.parse(raw.toString('utf8')))
     : reviewFixture(JSON.parse(raw.toString('utf8')));
   const fixtureSha256 = createHash('sha256').update(raw).digest('hex');
